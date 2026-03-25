@@ -12,6 +12,7 @@ import Rotas from "./pages/Rotas";
 import Catalogo from "./pages/Catalogo";
 import Estoque from "./pages/Estoque";
 import Financeiro from "./pages/Financeiro";
+import CuponsPromocoes from "./pages/CuponsPromocoes";
 import { AppLayout } from "./layouts/AppLayout";
 import NotFound from "./pages/NotFound";
 
@@ -33,7 +34,7 @@ const App = () => (
             <Route path="/catalogo" element={<Catalogo />} />
             <Route path="/estoque" element={<Estoque />} />
             <Route path="/financeiro" element={<Financeiro />} />
-            <Route path="/cupons" element={<PlaceholderPage title="Cupons e Promoções" />} />
+            <Route path="/cupons" element={<CuponsPromocoes />} />
             <Route path="/parceiros" element={<PlaceholderPage title="Parceiros" />} />
             <Route path="/configuracoes" element={<PlaceholderPage title="Configurações" />} />
           </Route>
