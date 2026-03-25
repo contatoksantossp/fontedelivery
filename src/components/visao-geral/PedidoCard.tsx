@@ -107,7 +107,12 @@ export function PedidoCard({ pedido, selected, selectionMode, inRota, onSelect, 
               <Button
                 size="sm"
                 className="h-7 px-2.5 text-xs"
-                onClick={(e) => { e.stopPropagation(); onAction(pedido.id, "despachar"); }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toast.info("Selecione uma rota à direita ou crie uma nova para despachar este pedido.", {
+                    duration: 4000,
+                  });
+                }}
               >
                 <Truck className="h-3 w-3 mr-0.5" />
                 Despachar
