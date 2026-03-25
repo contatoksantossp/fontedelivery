@@ -12,7 +12,7 @@ interface MetricCardProps {
 
 export function MetricCard({ icon: Icon, label, value, subtitle, trend, className }: MetricCardProps) {
   return (
-    <div className={cn("rounded-lg border bg-card p-5 transition-all hover:border-primary/30", className)}>
+    <div className={cn("rounded-lg border bg-card p-6 transition-all hover:border-primary/30 min-h-[120px]", className)}>
       <div className="flex items-start justify-between">
         <div className="space-y-1">
           <p className="text-sm text-muted-foreground">{label}</p>
