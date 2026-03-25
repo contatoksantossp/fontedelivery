@@ -1,17 +1,82 @@
+import { useState } from "react";
 import { PageContainer } from "@/components/PageContainer";
 import { MetricCard } from "@/components/MetricCard";
-import { ShoppingCart, Clock, TrendingUp, AlertTriangle, Package, CheckCircle2 } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { DivergenciaDialog } from "@/components/dashboard/DivergenciaDialog";
+import { ShoppingCart, Clock, TrendingUp, AlertTriangle, Package, CheckCircle2, Check } from "lucide-react";
+import { toast } from "sonner";
 
-const quickCountItems = [
-  { name: "Skol Lata 350ml", lastCount: "18/03/2026", qty: 96 },
-  { name: "Heineken Long Neck", lastCount: "17/03/2026", qty: 48 },
-  { name: "Coca-Cola 350ml", lastCount: "16/03/2026", qty: 72 },
-  { name: "Carvão Vegetal 4kg", lastCount: "15/03/2026", qty: 15 },
-  { name: "Gelo 5kg", lastCount: "14/03/2026", qty: 30 },
-  { name: "Marlboro Box", lastCount: "13/03/2026", qty: 20 },
+interface CountItem {
+  id: string;
+  name: string;
+  lastCount: string;
+  qty: number;
+}
+
+const initialItems: CountItem[] = [
+  { id: "1", name: "Skol Lata 350ml", lastCount: "18/03/2026", qty: 96 },
+  { id: "2", name: "Heineken Long Neck", lastCount: "17/03/2026", qty: 48 },
+  { id: "3", name: "Coca-Cola 350ml", lastCount: "16/03/2026", qty: 72 },
+  { id: "4", name: "Carvão Vegetal 4kg", lastCount: "15/03/2026", qty: 15 },
+  { id: "5", name: "Gelo 5kg", lastCount: "14/03/2026", qty: 30 },
+  { id: "6", name: "Marlboro Box", lastCount: "13/03/2026", qty: 20 },
 ];
 
+const today = () => {
+  const d = new Date();
+  return `${String(d.getDate()).padStart(2, "0")}/${String(d.getMonth() + 1).padStart(2, "0")}/${d.getFullYear()}`;
+};
+
 export default function Dashboard() {
+  const [items, setItems] = useState<CountItem[]>(initialItems);
+  const [inputValues, setInputValues] = useState<Record<string, string>>({});
+  const [divergencia, setDivergencia] = useState<{ item: CountItem; contagem: number } | null>(null);
+
+  const handleCount = (item: CountItem) => {
+    const raw = inputValues[item.id];
+    if (raw === undefined || raw === "") return;
+    const contagem = Number(raw);
+    if (isNaN(contagem) || contagem < 0) {
+      toast.error("Quantidade inválida");
+      return;
+    }
+
+    if (contagem !== item.qty) {
+      setDivergencia({ item, contagem });
+    } else {
+      finalizarContagem(item, contagem);
+    }
+  };
+
+  const finalizarContagem = (item: CountItem, contagem: number) => {
+    setItems(prev => {
+      const updated = prev.map(i =>
+        i.id === item.id ? { ...i, qty: contagem, lastCount: today() } : i
+      );
+      const target = updated.find(i => i.id === item.id)!;
+      const rest = updated.filter(i => i.id !== item.id);
+      return [...rest, target];
+    });
+    setInputValues(prev => {
+      const copy = { ...prev };
+      delete copy[item.id];
+      return copy;
+    });
+    toast.success(`${item.name} contado com sucesso`);
+  };
+
+  const handleDivergenciaConfirm = (descricao: string) => {
+    if (!divergencia) return;
+    const { item, contagem } = divergencia;
+    const diferenca = contagem - item.qty;
+    finalizarContagem(item, contagem);
+    setDivergencia(null);
+    toast.info(
+      `${diferenca > 0 ? "Adição" : "Perda"} de ${Math.abs(diferenca)} un. registrada${descricao ? `: ${descricao}` : ""}`
+    );
+  };
+
   return (
     <PageContainer title="Página Inicial" subtitle="Resumo operacional do mês — Março 2026">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -32,21 +97,50 @@ export default function Dashboard() {
             <p className="text-xs text-muted-foreground mt-0.5">Produtos ordenados pela última contagem</p>
           </div>
           <div className="space-y-3">
-            {quickCountItems.map((item) => (
+            {items.map((item) => (
               <div
-                key={item.name}
-                className="flex items-center justify-between rounded-md border border-border bg-secondary/50 px-3 py-2.5"
+                key={item.id}
+                className="flex items-center gap-2 rounded-md border border-border bg-secondary/50 px-3 py-2.5"
               >
-                <div>
-                  <p className="text-sm font-medium text-foreground">{item.name}</p>
-                  <p className="text-xs text-muted-foreground">Última: {item.lastCount}</p>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-foreground truncate">{item.name}</p>
+                  <p className="text-xs text-muted-foreground">
+                    Última: {item.lastCount} · Est: <span className="font-semibold text-primary">{item.qty}</span>
+                  </p>
                 </div>
-                <span className="text-sm font-bold font-display text-primary">{item.qty}</span>
+                <Input
+                  type="number"
+                  min={0}
+                  placeholder="Qtd"
+                  value={inputValues[item.id] ?? ""}
+                  onChange={e => setInputValues(prev => ({ ...prev, [item.id]: e.target.value }))}
+                  onKeyDown={e => { if (e.key === "Enter") handleCount(item); }}
+                  className="w-20 h-8 text-sm"
+                />
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="h-8 w-8 shrink-0 text-primary hover:bg-primary/10"
+                  onClick={() => handleCount(item)}
+                >
+                  <Check className="h-4 w-4" />
+                </Button>
               </div>
             ))}
           </div>
         </div>
       </div>
+
+      {divergencia && (
+        <DivergenciaDialog
+          open={!!divergencia}
+          onClose={() => setDivergencia(null)}
+          onConfirm={handleDivergenciaConfirm}
+          productName={divergencia.item.name}
+          estoqueAnterior={divergencia.item.qty}
+          contagemAtual={divergencia.contagem}
+        />
+      )}
     </PageContainer>
   );
 }
