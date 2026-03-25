@@ -40,7 +40,7 @@ export default function VisaoGeral() {
   return (
     <div className="flex-1 flex overflow-hidden">
       {/* Coluna Esquerda — Kanbans */}
-      <div className="w-[40%] flex flex-col gap-2 p-3 border-r border-border overflow-hidden">
+      <div className="w-[35%] flex flex-col gap-2 p-3 border-r border-border overflow-hidden">
         <KanbanColumn title="Pedidos Pendentes" count={pendentes.length} className="flex-1 min-h-0">
           {pendentes.map((p) => (
             <PedidoCard
@@ -90,7 +90,7 @@ export default function VisaoGeral() {
       </div>
 
       {/* Coluna Central — Detalhes */}
-      <div className="w-[20%] border-r border-border flex flex-col overflow-hidden">
+      <div className="w-[25%] border-r border-border flex flex-col overflow-hidden">
         <PedidoDetalhes pedido={selectedPedido} />
       </div>
 
