@@ -1,66 +1,77 @@
 
 
-## Módulo 2: Visão Geral — Layout Frontend
+## Modulo 3: Rotas e Logistica — Plano de Implementacao
 
-Construir a tela de Visão Geral com layout de 3 colunas, sistema Kanban, painel de detalhes e área de mapa/rotas. Tudo com dados mockados, sem backend.
+### Arquivos
+
+```text
+src/pages/Rotas.tsx                         — Pagina principal (layout 3 colunas)
+src/components/rotas/
+  mockRotasData.ts                          — Dados mock de rotas, paradas e entregadores
+  RotaCard.tsx                              — Card de rota no Kanban (entregador, mini-cards horizontais, status)
+  RotaDetalhes.tsx                          — Coluna central com detalhes da rota selecionada
+  RotaAcerto.tsx                            — Coluna direita: conferencia de pagamentos (rota finalizada)
+  RotaTimeline.tsx                          — Timeline vertical de paradas (usado dentro de RotaDetalhes)
+```
+
+Atualizar `src/App.tsx` para importar `Rotas` na rota `/rotas`.
 
 ---
 
-### Estrutura de Arquivos
+### 1. Mock Data (`mockRotasData.ts`)
 
-```text
-src/pages/VisaoGeral.tsx          — Página principal (layout 3 colunas)
-src/components/visao-geral/
-  KanbanColumn.tsx                — Coluna genérica de Kanban
-  PedidoCard.tsx                  — Card de pedido (reutilizável)
-  PedidoDetalhes.tsx              — Painel central de detalhes
-  MapaRotas.tsx                   — Área do mapa + slots de rota
-  SlotRota.tsx                    — Slot individual de rota
-  mockData.ts                     — Dados fictícios de pedidos
-```
+Tipos: `RotaStatus = "pendente" | "em_rota" | "finalizada" | "concluida"`, `ParadaStatus = "pendente" | "entregue"`.
 
-### 1. Layout de 3 Colunas
+Interface `Parada`: pedido id, cliente, endereco, km, taxaEntrega, totalPedido, itens, formaPagamento, paradaStatus.
 
-- **Coluna Esquerda (40%)**: Dois Kanbans empilhados — "Pedidos Pendentes" e "Pedidos Prontos" (subdividido em Entregas e Retiradas)
-- **Coluna Central (20%)**: Detalhes do pedido selecionado (nome, endereço, telefone, itens, financeiro)
-- **Coluna Direita (40%)**: Mapa placeholder no topo + 2 slots de rota embaixo
+Interface `Rota`: id, entregadorId/nome/veiculo, paradas[], status, acaoAnterior, proximaAcao, tempoEstimado, kmTotal, bonificacao.
 
-A sidebar será forçada ao estado colapsado (apenas ícones) nesta página para maximizar espaço.
+Criar 4-5 rotas mock com status variados, reutilizando `entregadoresMock` do modulo 2.
 
-### 2. Componentes
+---
 
-**PedidoCard**: Exibe código, cliente, endereço, timer. Botões de ação (Cancelar, Pronto/Despachar/Finalizar) com visual dark premium. Clicável para selecionar e mostrar detalhes na coluna central.
+### 2. Layout da Pagina (`Rotas.tsx`)
 
-**KanbanColumn**: Container scrollável com título, contagem de pedidos e lista de PedidoCards. O Kanban 2 terá tabs ou separadores para "Entregas" vs "Retiradas".
+Mesmo pattern do `VisaoGeral.tsx`: sidebar colapsada via `useSidebar`, layout flex com 3 colunas (40%-20%-40%).
 
-**PedidoDetalhes**: Exibe dados completos do pedido selecionado — informações do cliente, lista de itens, observações, e resumo financeiro (subtotal, descontos, taxa, total, formas de pagamento).
+Estado: `rotas[]`, `selectedRotaId`, geridos com `useState`.
 
-**MapaRotas**: Placeholder visual para o mapa (retângulo com ícone de mapa) + 2 SlotRota abaixo.
+- **Coluna esquerda (40%)**: Kanban unico vertical com `RotaCard`s. Rotas ativas no topo, concluidas (cinza) embaixo.
+- **Coluna central (20%)**: `RotaDetalhes` da rota selecionada (ou placeholder "Selecione uma rota").
+- **Coluna direita (40%)**: Condicional por status:
+  - Nenhuma selecionada / Pendente / Em Rota: Mapa placeholder (reutilizar visual do `MapaRotas`).
+  - Finalizada: `RotaAcerto` (conferencia de pagamentos).
 
-**SlotRota**: Estado inicial com botão "Criar Nova Rota". Modo expandido (ao clicar) toma a coluna central mostrando: seletor de entregador, lista de entregas arrastáveis (drag & drop visual com mock), resumo de KM/taxas, campo de bonificação, botão "Despachar". Modo espera: mostra entregas selecionadas resumidas.
+---
 
-### 3. Dados Mock
+### 3. Componentes
 
-~6 pedidos fictícios com clientes, endereços, itens e valores variados para popular os kanbans.
+**RotaCard**: Cabecalho com nome do entregador, acao anterior/proxima. Centro com mini-cards de pedidos rolando horizontal (`overflow-x-auto`), pedidos entregues ficam cinza. Rodape com badge de status colorido (pendente=amarelo, em_rota=azul, finalizada=laranja, concluida=cinza). Clicavel para selecionar.
 
-### 4. Interações (Frontend Only)
+**RotaDetalhes**: Cabecalho com nome do entregador. Lista de pedidos verticais com: cliente, endereco, km, taxa, total. Cada pedido tem botao "expandir" (accordion) mostrando itens e observacoes. Rodape com metricas consolidadas (tempo estimado, km total).
 
-- Clicar em um card seleciona-o e exibe detalhes na coluna central
-- Botão "Pronto" move card do Kanban 1 para Kanban 2 (estado local)
-- Botão "Criar Nova Rota" expande o slot e transforma o layout central
-- Botão "Fechar (X)" retorna ao layout padrão com slot em modo espera
-- Drag & drop visual nos itens da rota (reordenação)
-- Todos os estados geridos com useState/useReducer local
+**RotaTimeline**: Steps verticais com linha conectora. Icone por status da parada (check verde = entregue, clock amarelo = pendente). Usado dentro do RotaDetalhes.
 
-### 5. Integração
+**RotaAcerto**: Lista de pedidos com forma de pagamento editavel (Select). Botao "Dar Baixa" por pedido. Ao dar baixa em todos, habilita botao "Concluir Rota" que muda status para "concluida", card fica cinza no Kanban.
 
-- Substituir o placeholder em `App.tsx` pela nova página `VisaoGeral`
-- Rota `/visao-geral` aponta para o novo componente
+---
 
-### Detalhes Técnicos
+### 4. Interacoes (Frontend Only)
 
-- Usar `@dnd-kit/core` + `@dnd-kit/sortable` para drag & drop na lista de rotas
-- Sidebar colapsada via prop ou efeito ao montar a página
-- Scroll independente em cada coluna Kanban com `overflow-y-auto`
-- Cores: cards em `bg-card`, bordas `border-border`, ações em `bg-primary`, cancelar em `bg-destructive`
+- Clicar em RotaCard seleciona e preenche coluna central
+- Rota finalizada selecionada troca coluna direita para RotaAcerto
+- "Dar Baixa" individual marca parada como conferida (estado local)
+- "Concluir Rota" muda status para concluida, card fica cinza
+- Accordion para expandir detalhes de cada pedido na coluna central
+- Todos os estados via useState local
+
+---
+
+### Detalhes Tecnicos
+
+- Reutilizar `KanbanColumn`, `ScrollArea`, `Tabs`, `Select`, `Accordion` do shadcn
+- Cores dos status: pendente `bg-yellow-500/15`, em_rota `bg-blue-500/15`, finalizada `bg-orange-500/15`, concluida `bg-muted`
+- Card concluido: `opacity-60` + `bg-muted` para visual cinza
+- Mini-cards horizontais: `flex overflow-x-auto gap-2` com `min-w-[120px]` cada
+- Nenhuma dependencia nova necessaria
 
