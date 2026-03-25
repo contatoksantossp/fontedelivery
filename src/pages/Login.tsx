@@ -7,13 +7,19 @@ import { Flame, Eye, EyeOff } from "lucide-react";
 
 export default function Login() {
   const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setError(false);
-    navigate("/dashboard");
+    if (email === "admin@admin.com" && password === "admin") {
+      setError(false);
+      navigate("/dashboard");
+    } else {
+      setError(true);
+    }
   };
 
   return (
@@ -39,6 +45,8 @@ export default function Login() {
               type="email"
               placeholder="operador@afonte.com"
               className="bg-card border-border focus:border-primary"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
             />
           </div>
@@ -51,6 +59,8 @@ export default function Login() {
                 type={showPassword ? "text" : "password"}
                 placeholder="••••••••"
                 className="bg-card border-border focus:border-primary pr-10"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 required
               />
               <button
