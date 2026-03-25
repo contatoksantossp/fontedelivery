@@ -59,7 +59,7 @@ export default function VisaoGeral() {
   }, []);
 
   const handleAction = (pedidoId: string, action: string) => {
-    if (action === "cancelar") {
+    if (action === "cancelar" || action === "finalizar") {
       setPedidos((prev) => prev.filter((p) => p.id !== pedidoId));
       if (selectedId === pedidoId) setSelectedId(null);
     } else if (action === "pronto") {
