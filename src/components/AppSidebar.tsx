@@ -12,8 +12,8 @@ import {
 const menuItems = [
   { title: "Página Inicial", url: "/dashboard", icon: Home },
   { title: "Visão Geral", url: "/visao-geral", icon: LayoutDashboard },
-  { title: "PDV", url: "/pdv", icon: ShoppingCart },
   { title: "Rotas e Logística", url: "/rotas", icon: Truck },
+  { title: "PDV", url: "/pdv", icon: ShoppingCart },
   { title: "Catálogo", url: "/catalogo", icon: BookOpen },
   { title: "Estoque", url: "/estoque", icon: Package },
   { title: "Financeiro", url: "/financeiro", icon: DollarSign },
