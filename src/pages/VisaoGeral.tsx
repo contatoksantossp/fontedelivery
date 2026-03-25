@@ -103,8 +103,7 @@ export default function VisaoGeral() {
         <KanbanColumn
           title="Pedidos Prontos"
           count={prontos.length}
-          className="min-h-0"
-          style={{ flex: Math.max(prontos.length, 3) }}
+          className="w-1/2 h-full"
         >
           <Tabs defaultValue="entregas" className="w-full">
             <TabsList className="w-full h-8 mb-2">
