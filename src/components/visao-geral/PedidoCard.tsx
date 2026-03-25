@@ -1,5 +1,5 @@
 import { Pedido } from "./mockData";
-import { Clock, X, Check, Truck, MapPin } from "lucide-react";
+import { Clock, X, Check, Truck, MapPin, Route } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
@@ -7,6 +7,8 @@ import { useEffect, useState } from "react";
 interface PedidoCardProps {
   pedido: Pedido;
   selected?: boolean;
+  selectionMode?: boolean;
+  inRota?: boolean;
   onSelect: (pedido: Pedido) => void;
   onAction: (pedidoId: string, action: "cancelar" | "pronto" | "despachar" | "finalizar") => void;
 }
@@ -27,16 +29,23 @@ function useTimer(criadoEm: Date) {
   return elapsed;
 }
 
-export function PedidoCard({ pedido, selected, onSelect, onAction }: PedidoCardProps) {
+export function PedidoCard({ pedido, selected, selectionMode, inRota, onSelect, onAction }: PedidoCardProps) {
   const elapsed = useTimer(pedido.criadoEm);
   const isPendente = pedido.status === "pendente";
+  const isEligible = selectionMode && pedido.status === "pronto" && pedido.tipo === "entrega" && !inRota;
 
   return (
     <div
-      onClick={() => onSelect(pedido)}
+      onClick={() => {
+        if (inRota) return;
+        onSelect(pedido);
+      }}
       className={cn(
-        "rounded-lg border bg-card p-3 cursor-pointer transition-all hover:border-primary/50",
-        selected && "border-primary ring-1 ring-primary/30"
+        "rounded-lg border bg-card p-3 transition-all",
+        inRota && "opacity-50 cursor-not-allowed",
+        !inRota && "cursor-pointer hover:border-primary/50",
+        selected && !inRota && "border-primary ring-1 ring-primary/30",
+        isEligible && "border-dashed border-primary/60 animate-pulse"
       )}
     >
       <div className="flex items-center justify-between mb-2">
@@ -51,6 +60,12 @@ export function PedidoCard({ pedido, selected, onSelect, onAction }: PedidoCardP
             {pedido.tipo === "entrega" ? <Truck className="inline h-3 w-3 mr-0.5" /> : <MapPin className="inline h-3 w-3 mr-0.5" />}
             {pedido.tipo}
           </span>
+          {inRota && (
+            <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground flex items-center gap-0.5">
+              <Route className="h-3 w-3" />
+              Na Rota
+            </span>
+          )}
         </div>
         <div className="flex items-center gap-1 text-muted-foreground">
           <Clock className="h-3 w-3" />
@@ -67,36 +82,41 @@ export function PedidoCard({ pedido, selected, onSelect, onAction }: PedidoCardP
         <span className="text-sm font-bold text-foreground">
           R$ {pedido.total.toFixed(2)}
         </span>
-        <div className="flex gap-1.5">
-          <Button
-            size="sm"
-            variant="ghost"
-            className="h-7 px-2 text-xs text-destructive hover:bg-destructive/10"
-            onClick={(e) => { e.stopPropagation(); onAction(pedido.id, "cancelar"); }}
-          >
-            <X className="h-3 w-3 mr-0.5" />
-            Cancelar
-          </Button>
-          {isPendente ? (
+        {!selectionMode && (
+          <div className="flex gap-1.5">
             <Button
               size="sm"
-              className="h-7 px-2.5 text-xs"
-              onClick={(e) => { e.stopPropagation(); onAction(pedido.id, "pronto"); }}
+              variant="ghost"
+              className="h-7 px-2 text-xs text-destructive hover:bg-destructive/10"
+              onClick={(e) => { e.stopPropagation(); onAction(pedido.id, "cancelar"); }}
             >
-              <Check className="h-3 w-3 mr-0.5" />
-              Pronto
+              <X className="h-3 w-3 mr-0.5" />
+              Cancelar
             </Button>
-          ) : (
-            <Button
-              size="sm"
-              className="h-7 px-2.5 text-xs"
-              onClick={(e) => { e.stopPropagation(); onAction(pedido.id, "despachar"); }}
-            >
-              <Truck className="h-3 w-3 mr-0.5" />
-              Despachar
-            </Button>
-          )}
-        </div>
+            {isPendente ? (
+              <Button
+                size="sm"
+                className="h-7 px-2.5 text-xs"
+                onClick={(e) => { e.stopPropagation(); onAction(pedido.id, "pronto"); }}
+              >
+                <Check className="h-3 w-3 mr-0.5" />
+                Pronto
+              </Button>
+            ) : (
+              <Button
+                size="sm"
+                className="h-7 px-2.5 text-xs"
+                onClick={(e) => { e.stopPropagation(); onAction(pedido.id, "despachar"); }}
+              >
+                <Truck className="h-3 w-3 mr-0.5" />
+                Despachar
+              </Button>
+            )}
+          </div>
+        )}
+        {isEligible && (
+          <span className="text-xs text-primary font-medium">+ Adicionar</span>
+        )}
       </div>
     </div>
   );

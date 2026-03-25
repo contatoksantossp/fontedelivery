@@ -1,9 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { pedidosMock, Pedido } from "@/components/visao-geral/mockData";
 import { KanbanColumn } from "@/components/visao-geral/KanbanColumn";
 import { PedidoCard } from "@/components/visao-geral/PedidoCard";
 import { PedidoDetalhes } from "@/components/visao-geral/PedidoDetalhes";
 import { MapaRotas } from "@/components/visao-geral/MapaRotas";
+import { SlotRotaExpanded } from "@/components/visao-geral/SlotRota";
 import { useSidebar } from "@/components/ui/sidebar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Truck, MapPin } from "lucide-react";
@@ -12,9 +13,9 @@ export default function VisaoGeral() {
   const [pedidos, setPedidos] = useState<Pedido[]>(pedidosMock);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [expandedSlot, setExpandedSlot] = useState<number | null>(null);
+  const [rotasItens, setRotasItens] = useState<[Pedido[], Pedido[]]>([[], []]);
   const { setOpen } = useSidebar();
 
-  // Collapse sidebar on mount
   useEffect(() => {
     setOpen(false);
     return () => setOpen(true);
@@ -26,6 +27,37 @@ export default function VisaoGeral() {
   const prontosRetirada = prontos.filter((p) => p.tipo === "retirada");
   const selectedPedido = pedidos.find((p) => p.id === selectedId) || null;
 
+  const pedidosNaRota = useMemo(
+    () => new Set(rotasItens.flat().map((p) => p.id)),
+    [rotasItens]
+  );
+
+  const selectionMode = expandedSlot !== null;
+
+  const addToRota = useCallback((slotIndex: number, pedido: Pedido) => {
+    setRotasItens((prev) => {
+      const copy: [Pedido[], Pedido[]] = [prev[0].slice(), prev[1].slice()];
+      copy[slotIndex].push(pedido);
+      return copy;
+    });
+  }, []);
+
+  const removeFromRota = useCallback((slotIndex: number, pedidoId: string) => {
+    setRotasItens((prev) => {
+      const copy: [Pedido[], Pedido[]] = [prev[0].slice(), prev[1].slice()];
+      copy[slotIndex] = copy[slotIndex].filter((p) => p.id !== pedidoId);
+      return copy;
+    });
+  }, []);
+
+  const reorderRota = useCallback((slotIndex: number, items: Pedido[]) => {
+    setRotasItens((prev) => {
+      const copy: [Pedido[], Pedido[]] = [prev[0].slice(), prev[1].slice()];
+      copy[slotIndex] = items;
+      return copy;
+    });
+  }, []);
+
   const handleAction = (pedidoId: string, action: string) => {
     if (action === "cancelar") {
       setPedidos((prev) => prev.filter((p) => p.id !== pedidoId));
@@ -34,6 +66,14 @@ export default function VisaoGeral() {
       setPedidos((prev) =>
         prev.map((p) => (p.id === pedidoId ? { ...p, status: "pronto" as const } : p))
       );
+    }
+  };
+
+  const handleCardClick = (pedido: Pedido) => {
+    if (selectionMode && pedido.status === "pronto" && pedido.tipo === "entrega" && !pedidosNaRota.has(pedido.id)) {
+      addToRota(expandedSlot!, pedido);
+    } else if (!selectionMode) {
+      setSelectedId(pedido.id);
     }
   };
 
@@ -51,8 +91,10 @@ export default function VisaoGeral() {
             <PedidoCard
               key={p.id}
               pedido={p}
-              selected={selectedId === p.id}
-              onSelect={(ped) => setSelectedId(ped.id)}
+              selected={!selectionMode && selectedId === p.id}
+              selectionMode={selectionMode}
+              inRota={pedidosNaRota.has(p.id)}
+              onSelect={handleCardClick}
               onAction={handleAction}
             />
           ))}
@@ -78,8 +120,10 @@ export default function VisaoGeral() {
                 <PedidoCard
                   key={p.id}
                   pedido={p}
-                  selected={selectedId === p.id}
-                  onSelect={(ped) => setSelectedId(ped.id)}
+                  selected={!selectionMode && selectedId === p.id}
+                  selectionMode={selectionMode}
+                  inRota={pedidosNaRota.has(p.id)}
+                  onSelect={handleCardClick}
                   onAction={handleAction}
                 />
               ))}
@@ -89,8 +133,10 @@ export default function VisaoGeral() {
                 <PedidoCard
                   key={p.id}
                   pedido={p}
-                  selected={selectedId === p.id}
-                  onSelect={(ped) => setSelectedId(ped.id)}
+                  selected={!selectionMode && selectedId === p.id}
+                  selectionMode={selectionMode}
+                  inRota={pedidosNaRota.has(p.id)}
+                  onSelect={handleCardClick}
                   onAction={handleAction}
                 />
               ))}
@@ -99,9 +145,19 @@ export default function VisaoGeral() {
         </KanbanColumn>
       </div>
 
-      {/* Coluna Central — Detalhes */}
+      {/* Coluna Central — Detalhes ou Rota Expandida */}
       <div className="w-[25%] border-r border-border flex flex-col overflow-hidden">
-        <PedidoDetalhes pedido={selectedPedido} />
+        {selectionMode ? (
+          <SlotRotaExpanded
+            slotIndex={expandedSlot!}
+            rotaItens={rotasItens[expandedSlot!]}
+            onCollapse={() => setExpandedSlot(null)}
+            onRemove={(pedidoId) => removeFromRota(expandedSlot!, pedidoId)}
+            onReorder={(items) => reorderRota(expandedSlot!, items)}
+          />
+        ) : (
+          <PedidoDetalhes pedido={selectedPedido} />
+        )}
       </div>
 
       {/* Coluna Direita — Mapa + Rotas */}
@@ -111,6 +167,9 @@ export default function VisaoGeral() {
           expandedSlot={expandedSlot}
           onExpandSlot={setExpandedSlot}
           onCollapseSlot={() => setExpandedSlot(null)}
+          rotasItens={rotasItens}
+          onRemoveFromRota={removeFromRota}
+          onReorderRota={reorderRota}
         />
       </div>
     </div>

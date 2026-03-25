@@ -7,9 +7,12 @@ interface MapaRotasProps {
   expandedSlot: number | null;
   onExpandSlot: (index: number) => void;
   onCollapseSlot: () => void;
+  rotasItens: [Pedido[], Pedido[]];
+  onRemoveFromRota: (slotIndex: number, pedidoId: string) => void;
+  onReorderRota: (slotIndex: number, items: Pedido[]) => void;
 }
 
-export function MapaRotas({ pedidosProntos, expandedSlot, onExpandSlot, onCollapseSlot }: MapaRotasProps) {
+export function MapaRotas({ expandedSlot, onExpandSlot, onCollapseSlot, rotasItens, onRemoveFromRota, onReorderRota }: MapaRotasProps) {
   return (
     <div className="flex flex-col h-full gap-3">
       {/* Map Placeholder */}
@@ -26,10 +29,12 @@ export function MapaRotas({ pedidosProntos, expandedSlot, onExpandSlot, onCollap
           <SlotRota
             key={i}
             slotIndex={i}
-            pedidosProntos={pedidosProntos}
+            rotaItens={rotasItens[i]}
             expanded={expandedSlot === i}
             onExpand={() => onExpandSlot(i)}
             onCollapse={onCollapseSlot}
+            onRemove={(pedidoId) => onRemoveFromRota(i, pedidoId)}
+            onReorder={(items) => onReorderRota(i, items)}
           />
         ))}
       </div>
