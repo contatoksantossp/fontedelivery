@@ -1,69 +1,43 @@
 
 
-## Modulo 10: Configuracoes — Plano de Implementacao
+## Modo Selecao de Rota — Plano
 
-### Arquivos
+### Resumo
 
-```text
-src/pages/Configuracoes.tsx                    — Pagina principal com 2 abas
-src/components/configuracoes/
-  mockConfigData.ts                            — Dados mock: perfil da loja, horarios, faixas de entrega
-  AbaPerfilLoja.tsx                            — Aba 1: dados basicos, horarios, toggle de status
-  AbaConfiguracaoEntrega.tsx                   — Aba 2: layout 2 colunas (taxas cliente vs repasse entregador)
-```
+Quando o usuario clica em um slot de rota (Rota 1 ou Rota 2), a coluna central troca de "Detalhes do Pedido" para o card expandido da rota. Entra o **modo selecao**: clicar em um PedidoCard na coluna esquerda adiciona o pedido a rota ativa. Pedidos ja inseridos em qualquer rota ficam indisponiveis para a outra.
 
-Atualizar `src/App.tsx` para trocar o placeholder `/configuracoes` pelo novo componente.
+### Mudancas
 
----
+**1. `VisaoGeral.tsx` — Estado centralizado de rotas**
+- Novo estado: `rotasItens: [Pedido[], Pedido[]]` (array com 2 arrays, um por slot)
+- Funcoes `addToRota(slotIndex, pedido)` e `removeFromRota(slotIndex, pedidoId)`
+- Derivar `pedidosNaRota: Set<string>` com todos os IDs ja alocados em qualquer rota
+- Quando `expandedSlot !== null`: coluna central renderiza `SlotRota` expandido em vez de `PedidoDetalhes`
+- Quando `expandedSlot !== null` e usuario clica num PedidoCard de entrega pronto (que nao esteja em nenhuma rota), chama `addToRota`
+- Ao fechar o slot (collapse), volta a mostrar `PedidoDetalhes`
 
-### 1. Mock Data (`mockConfigData.ts`)
+**2. `PedidoCard.tsx` — Indicacao visual de modo selecao e alocacao**
+- Nova prop opcional `selectionMode?: boolean` e `inRota?: boolean`
+- Quando `inRota === true`: card com opacidade reduzida, badge "Na Rota", click desabilitado
+- Quando `selectionMode === true` e pedido eh elegivel (pronto + entrega + nao na rota): borda pontilhada pulsante, click adiciona a rota em vez de selecionar para detalhes
 
-- **PerfilLoja**: nomeLoja, telefone, endereco, logoUrl (placeholder), lojaAberta (boolean)
-- **HorarioFuncionamento**: dia (string), abertura (string HH:mm), fechamento (string HH:mm), ativo (boolean) — array de 7 dias (Segunda a Domingo)
-- **FaixaKm**: id, kmInicial, kmFinal, preco — usada tanto para taxas do cliente quanto repasse do entregador
+**3. `SlotRota.tsx` — Receber itens via props em vez de estado interno**
+- Props: `rotaItens`, `onAddPedido`, `onRemovePedido`, `onReorder` (em vez de estado local)
+- Remover a secao "Adicionar entregas" interna (agora a selecao vem do click nos cards da coluna esquerda)
+- Manter: selecao de entregador, lista sortable com drag-and-drop, resumo financeiro, botao despachar
 
-Mock: loja "A Fonte Delivery", horarios padrao 08:00-22:00, ~4 faixas de km para cada tabela.
+**4. `MapaRotas.tsx` — Passar props de rota**
+- Repassar `rotasItens[i]` e callbacks para cada `SlotRota`
+- Card colapsado mostra os pedidos ja adicionados
 
----
-
-### 2. Aba Perfil da Loja (`AbaPerfilLoja.tsx`)
-
-**Dados Basicos (topo)**:
-- Area de upload de logo (simulada com div placeholder + icone de camera)
-- Inputs: Nome da Loja, Telefone de Contato, Endereco da Loja
-- Botao "Salvar Dados"
-
-**Horarios de Funcionamento (meio)**:
-- Grade com 7 linhas (Seg-Dom), cada uma com: nome do dia, Switch ativo/inativo, inputs de horario abertura e fechamento (type="time")
-- Dias desativados ficam com inputs desabilitados
-
-**Status Manual da Loja (destaque)**:
-- Card com Switch grande (verde/vermelho) + texto "Loja Aberta" ou "Loja Fechada"
-- Descricao de uso pratico (botao de panico)
-
----
-
-### 3. Aba Configuracao de Entrega (`AbaConfiguracaoEntrega.tsx`)
-
-**Layout 2 colunas** (grid 50/50):
-
-**Coluna Esquerda — Taxas do Cliente**:
-- Titulo + descricao
-- Tabela dinamica: KM Inicial, KM Final, Preco (R$)
-- Botao "+ Adicionar Faixa" insere linha editavel
-- Cada linha: inputs inline + botao salvar + botao excluir (lixeira)
-
-**Coluna Direita — Repasse do Entregador**:
-- Estrutura identica a esquerda
-- Campos: KM Inicial, KM Final, Repasse (R$)
-
----
+**5. Coluna Central — Alternancia condicional**
+- `expandedSlot !== null` → renderiza o conteudo expandido do SlotRota (entregador, lista sortable, resumo, despachar) ocupando a coluna central inteira
+- `expandedSlot === null` → renderiza `PedidoDetalhes` normalmente
 
 ### Detalhes Tecnicos
 
-- Reutilizar `Tabs`, `Table`, `Input`, `Switch`, `Button`, `Card` do shadcn
-- Estado centralizado em `Configuracoes.tsx` via useState
-- Sidebar colapsa ao entrar na pagina (usar `useSidebar` + `useEffect` para `toggleSidebar`)
+- Estado `rotasItens` fica em `VisaoGeral.tsx` e desce via props — evita duplicacao
+- `pedidosNaRota` derivado com `useMemo` para performance
+- `PedidoCard` recebe `onClick` condicional: modo selecao → `addToRota`, modo normal → `setSelectedId`
 - Nenhuma dependencia nova
-- Upload de logo simulado (div placeholder com icone)
 
