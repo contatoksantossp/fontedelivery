@@ -49,12 +49,14 @@ export default function Parceiros() {
       };
       setColaboradores((prev) => [...prev, novo]);
     } else {
+      const cores = ["#3b82f6","#ef4444","#10b981","#f59e0b","#8b5cf6","#ec4899"];
       const novo: Entregador = {
         id: `en${Date.now()}`,
         clienteId,
         veiculo: dados.veiculo || "",
         online: false,
         totalMes: 0,
+        cor: cores[Math.floor(Math.random() * cores.length)],
       };
       setEntregadores((prev) => [...prev, novo]);
     }
