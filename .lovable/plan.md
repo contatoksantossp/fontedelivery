@@ -1,91 +1,69 @@
 
 
-## Modulo 9: Parceiros — Plano de Implementacao
+## Modulo 10: Configuracoes — Plano de Implementacao
 
 ### Arquivos
 
 ```text
-src/pages/Parceiros.tsx                        — Pagina principal com 4 abas
-src/components/parceiros/
-  mockParceirosData.ts                         — Dados mock: clientes, colaboradores, entregadores, fornecedores
-  AbaClientes.tsx                              — Aba 1: tabela de clientes + cadastro + promover
-  ClienteDialog.tsx                            — Dialog para criar/editar cliente (nome, apelido, telefone, enderecos)
-  PromoverDialog.tsx                           — Dialog para promover cliente a Colaborador ou Entregador
-  AbaColaboradores.tsx                         — Aba 2: tabela de colaboradores promovidos
-  ColaboradorDialog.tsx                        — Dialog para editar cargo/data de inicio
-  AbaEntregadores.tsx                          — Aba 3: layout 2 colunas (todos vs online)
-  AbaFornecedores.tsx                          — Aba 4: cards expansiveis com historico de compras
-  FornecedorDialog.tsx                         — Dialog para criar/editar fornecedor (PJ)
+src/pages/Configuracoes.tsx                    — Pagina principal com 2 abas
+src/components/configuracoes/
+  mockConfigData.ts                            — Dados mock: perfil da loja, horarios, faixas de entrega
+  AbaPerfilLoja.tsx                            — Aba 1: dados basicos, horarios, toggle de status
+  AbaConfiguracaoEntrega.tsx                   — Aba 2: layout 2 colunas (taxas cliente vs repasse entregador)
 ```
 
-Atualizar `src/App.tsx` para trocar o placeholder `/parceiros` pelo novo componente.
+Atualizar `src/App.tsx` para trocar o placeholder `/configuracoes` pelo novo componente.
 
 ---
 
-### 1. Mock Data (`mockParceirosData.ts`)
+### 1. Mock Data (`mockConfigData.ts`)
 
-- **Cliente**: id, nome, apelido, telefone, enderecos[] ({rua, numero, bairro, complemento, principal}), dataCadastro
-- **Colaborador**: clienteId (ref), cargo, dataInicio, ativo
-- **Entregador**: clienteId (ref), veiculo, online, totalMes (taxas+caixinhas acumuladas)
-- **Fornecedor**: id, nomeFantasia, razaoSocial, cnpj, contatoNome, telefone, endereco, historico[] ({data, descricao, valor})
+- **PerfilLoja**: nomeLoja, telefone, endereco, logoUrl (placeholder), lojaAberta (boolean)
+- **HorarioFuncionamento**: dia (string), abertura (string HH:mm), fechamento (string HH:mm), ativo (boolean) — array de 7 dias (Segunda a Domingo)
+- **FaixaKm**: id, kmInicial, kmFinal, preco — usada tanto para taxas do cliente quanto repasse do entregador
 
-Mock: ~10 clientes (incluindo nomes dos entregadores de `mockRotasData`), ~3 colaboradores, ~3 entregadores, ~4 fornecedores com historico.
-
-Regra de cadastro unico: colaboradores e entregadores referenciam `clienteId`, nao duplicam dados.
+Mock: loja "A Fonte Delivery", horarios padrao 08:00-22:00, ~4 faixas de km para cada tabela.
 
 ---
 
-### 2. Aba Clientes (`AbaClientes.tsx`)
+### 2. Aba Perfil da Loja (`AbaPerfilLoja.tsx`)
 
-- **Botao "Novo Cliente"** abre `ClienteDialog`
-- **Input de busca** por nome/apelido/telefone
-- **Tabela**: Nome & Apelido, Telefone, Endereco Principal, Enderecos Salvos (contador), Acoes (Editar + Promover)
-- **Promover**: abre `PromoverDialog` com escolha Colaborador ou Entregador. Ao confirmar, adiciona registro na aba correspondente
+**Dados Basicos (topo)**:
+- Area de upload de logo (simulada com div placeholder + icone de camera)
+- Inputs: Nome da Loja, Telefone de Contato, Endereco da Loja
+- Botao "Salvar Dados"
 
-### 3. ClienteDialog
-- Campos: Nome, Apelido, Telefone
-- Secao de enderecos: lista com add/remove, campos rua/numero/bairro/complemento, radio para marcar principal
+**Horarios de Funcionamento (meio)**:
+- Grade com 7 linhas (Seg-Dom), cada uma com: nome do dia, Switch ativo/inativo, inputs de horario abertura e fechamento (type="time")
+- Dias desativados ficam com inputs desabilitados
 
-### 4. PromoverDialog
-- Selecao: Colaborador ou Entregador (radio)
-- Se Colaborador: campo Cargo
-- Se Entregador: campo Veiculo
-- Confirmar cria o registro vinculado
+**Status Manual da Loja (destaque)**:
+- Card com Switch grande (verde/vermelho) + texto "Loja Aberta" ou "Loja Fechada"
+- Descricao de uso pratico (botao de panico)
 
 ---
 
-### 5. Aba Colaboradores (`AbaColaboradores.tsx`)
+### 3. Aba Configuracao de Entrega (`AbaConfiguracaoEntrega.tsx`)
 
-- **Tabela**: Nome (via clienteId lookup), Cargo, Data de Inicio, Acoes (Editar, Demitir)
-- **Editar**: abre `ColaboradorDialog` para alterar cargo/data
-- **Demitir**: remove privilegios (volta a ser apenas cliente), com confirmacao
+**Layout 2 colunas** (grid 50/50):
 
----
+**Coluna Esquerda — Taxas do Cliente**:
+- Titulo + descricao
+- Tabela dinamica: KM Inicial, KM Final, Preco (R$)
+- Botao "+ Adicionar Faixa" insere linha editavel
+- Cada linha: inputs inline + botao salvar + botao excluir (lixeira)
 
-### 6. Aba Entregadores (`AbaEntregadores.tsx`)
-
-- **Layout 2 colunas** (grid 50/50):
-  - **Esquerda "Todos os Entregadores"**: cards com nome, veiculo, total do mes, botoes Editar/Excluir/Ficar Online
-  - **Direita "Online (Em Turno)"**: cards com indicador verde, botao Ficar Offline
-- Clicar "Ficar Online" move card para direita; "Ficar Offline" devolve para esquerda
-- Excluir = rebaixar a cliente (remove registro de entregador)
-
----
-
-### 7. Aba Fornecedores (`AbaFornecedores.tsx`)
-
-- **Botao "Novo Fornecedor"** abre `FornecedorDialog`
-- **Cards**: Nome Fantasia, CNPJ, Contato, Telefone, Endereco
-- **Expandir Historico**: accordion/collapsible revela tabela de compras (data, descricao, valor)
-- `FornecedorDialog`: campos Razao Social, Nome Fantasia, CNPJ, Contato, Telefone, Endereco
+**Coluna Direita — Repasse do Entregador**:
+- Estrutura identica a esquerda
+- Campos: KM Inicial, KM Final, Repasse (R$)
 
 ---
 
 ### Detalhes Tecnicos
 
-- Reutilizar `Tabs`, `Table`, `Dialog`, `Badge`, `Button`, `Input`, `Select`, `Switch`, `RadioGroup`, `Collapsible` do shadcn
-- Estado centralizado em `Parceiros.tsx`: clientes[], colaboradores[], entregadores[], fornecedores[]
-- Callbacks de promover/demitir/online/offline passados como props
+- Reutilizar `Tabs`, `Table`, `Input`, `Switch`, `Button`, `Card` do shadcn
+- Estado centralizado em `Configuracoes.tsx` via useState
+- Sidebar colapsa ao entrar na pagina (usar `useSidebar` + `useEffect` para `toggleSidebar`)
 - Nenhuma dependencia nova
-- Todos os estados via useState local
+- Upload de logo simulado (div placeholder com icone)
 
