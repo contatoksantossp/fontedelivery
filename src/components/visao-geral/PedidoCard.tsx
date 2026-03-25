@@ -103,6 +103,15 @@ export function PedidoCard({ pedido, selected, selectionMode, inRota, onSelect, 
                 <Check className="h-3 w-3 mr-0.5" />
                 Pronto
               </Button>
+            ) : pedido.tipo === "retirada" ? (
+              <Button
+                size="sm"
+                className="h-7 px-2.5 text-xs"
+                onClick={(e) => { e.stopPropagation(); onAction(pedido.id, "finalizar"); }}
+              >
+                <Check className="h-3 w-3 mr-0.5" />
+                Retirado
+              </Button>
             ) : (
               <Button
                 size="sm"
