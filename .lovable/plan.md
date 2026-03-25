@@ -1,69 +1,91 @@
 
 
-## Modulo 8: Cupons e Promocoes — Plano de Implementacao
+## Modulo 9: Parceiros — Plano de Implementacao
 
 ### Arquivos
 
 ```text
-src/pages/CuponsPromocoes.tsx                  — Pagina principal com 2 abas (Cupons, Promocoes e Banners)
-src/components/cupons/
-  mockCuponsData.ts                            — Dados mock: cupons, promocoes/banners
-  AbaCupons.tsx                                — Aba 1: tabela de cupons + dialog de criacao
-  CupomDialog.tsx                              — Dialog para criar/editar cupom
-  AbaPromocoes.tsx                             — Aba 2: grade de cards de banners/promocoes
-  PromocaoDialog.tsx                           — Dialog hibrido para criar/editar promocao/banner
+src/pages/Parceiros.tsx                        — Pagina principal com 4 abas
+src/components/parceiros/
+  mockParceirosData.ts                         — Dados mock: clientes, colaboradores, entregadores, fornecedores
+  AbaClientes.tsx                              — Aba 1: tabela de clientes + cadastro + promover
+  ClienteDialog.tsx                            — Dialog para criar/editar cliente (nome, apelido, telefone, enderecos)
+  PromoverDialog.tsx                           — Dialog para promover cliente a Colaborador ou Entregador
+  AbaColaboradores.tsx                         — Aba 2: tabela de colaboradores promovidos
+  ColaboradorDialog.tsx                        — Dialog para editar cargo/data de inicio
+  AbaEntregadores.tsx                          — Aba 3: layout 2 colunas (todos vs online)
+  AbaFornecedores.tsx                          — Aba 4: cards expansiveis com historico de compras
+  FornecedorDialog.tsx                         — Dialog para criar/editar fornecedor (PJ)
 ```
 
-Atualizar `src/App.tsx` para trocar o placeholder `/cupons` pelo novo componente.
+Atualizar `src/App.tsx` para trocar o placeholder `/parceiros` pelo novo componente.
 
 ---
 
-### 1. Mock Data (`mockCuponsData.ts`)
+### 1. Mock Data (`mockParceirosData.ts`)
 
-- **Cupom**: id, codigo, tipo (`percentual` | `fixo`), valor, pedidoMinimo, totalUsos, expiracao (date string), ativo (boolean)
-- **PromocaoBanner**: id, nome, descricao, imagemUrl (placeholder gradient/cor), tipoDesconto (`percentual` | `fixo` | `nenhum`), valorDesconto, ativo, produtos[] ({produtoNome, varianteNome, precoOriginal, precoFinal}), ordem (number)
+- **Cliente**: id, nome, apelido, telefone, enderecos[] ({rua, numero, bairro, complemento, principal}), dataCadastro
+- **Colaborador**: clienteId (ref), cargo, dataInicio, ativo
+- **Entregador**: clienteId (ref), veiculo, online, totalMes (taxas+caixinhas acumuladas)
+- **Fornecedor**: id, nomeFantasia, razaoSocial, cnpj, contatoNome, telefone, endereco, historico[] ({data, descricao, valor})
 
-Mock: ~6 cupons (PRIMEIRACOMPRA, FRETE10, VERAO25, etc.) e ~4 banners/promocoes (Festival de Cervejas, Noite do Whisky, Banner Informativo Horario, Combo Churrasco).
+Mock: ~10 clientes (incluindo nomes dos entregadores de `mockRotasData`), ~3 colaboradores, ~3 entregadores, ~4 fornecedores com historico.
 
----
-
-### 2. Aba Cupons (`AbaCupons.tsx`)
-
-- **Botao "Novo Cupom"** no topo, abre `CupomDialog`
-- **Tabela**: Colunas: Codigo, Tipo (Badge % ou R$), Valor, Pedido Minimo, Usos, Expiracao, Status (Switch toggle ativo/inativo)
-- Switch inline alterna `ativo` diretamente na tabela
-
-### 3. CupomDialog
-
-- Campos: Codigo (Input uppercase), Tipo de Desconto (toggle % / R$), Valor, Pedido Minimo, Data de Validade
-- Modo criacao e edicao (recebe cupom opcional como prop)
+Regra de cadastro unico: colaboradores e entregadores referenciam `clienteId`, nao duplicam dados.
 
 ---
 
-### 4. Aba Promocoes e Banners (`AbaPromocoes.tsx`)
+### 2. Aba Clientes (`AbaClientes.tsx`)
 
-- **Botao "Nova Promocao/Banner"** no topo
-- **Grade de cards** (grid 1-2 colunas): cada card exibe:
-  - Area colorida/gradiente simulando banner (sem imagem real, usar div com gradiente)
-  - Nome da campanha, descricao, tipo de desconto (Badge)
-  - Lista de produtos vinculados com preco riscado + preco novo (se houver)
-  - Botao editar (Pencil) + Switch de status ativo/inativo
+- **Botao "Novo Cliente"** abre `ClienteDialog`
+- **Input de busca** por nome/apelido/telefone
+- **Tabela**: Nome & Apelido, Telefone, Endereco Principal, Enderecos Salvos (contador), Acoes (Editar + Promover)
+- **Promover**: abre `PromoverDialog` com escolha Colaborador ou Entregador. Ao confirmar, adiciona registro na aba correspondente
 
-### 5. PromocaoDialog
+### 3. ClienteDialog
+- Campos: Nome, Apelido, Telefone
+- Secao de enderecos: lista com add/remove, campos rua/numero/bairro/complemento, radio para marcar principal
 
-- **Configuracao do Banner**: Nome, descricao, area de "upload" (simulada com placeholder)
-- **Configuracao de Desconto**: Toggle entre Percentual / Valor Fixo / Nenhum. Se "Nenhum", oculta secao de produtos
-- **Vinculo de Produtos**: Select com busca para adicionar produtos do catalogo. Calculo automatico do preco final exibido em tempo real
-- Botao "Publicar no Carrossel"
+### 4. PromoverDialog
+- Selecao: Colaborador ou Entregador (radio)
+- Se Colaborador: campo Cargo
+- Se Entregador: campo Veiculo
+- Confirmar cria o registro vinculado
+
+---
+
+### 5. Aba Colaboradores (`AbaColaboradores.tsx`)
+
+- **Tabela**: Nome (via clienteId lookup), Cargo, Data de Inicio, Acoes (Editar, Demitir)
+- **Editar**: abre `ColaboradorDialog` para alterar cargo/data
+- **Demitir**: remove privilegios (volta a ser apenas cliente), com confirmacao
+
+---
+
+### 6. Aba Entregadores (`AbaEntregadores.tsx`)
+
+- **Layout 2 colunas** (grid 50/50):
+  - **Esquerda "Todos os Entregadores"**: cards com nome, veiculo, total do mes, botoes Editar/Excluir/Ficar Online
+  - **Direita "Online (Em Turno)"**: cards com indicador verde, botao Ficar Offline
+- Clicar "Ficar Online" move card para direita; "Ficar Offline" devolve para esquerda
+- Excluir = rebaixar a cliente (remove registro de entregador)
+
+---
+
+### 7. Aba Fornecedores (`AbaFornecedores.tsx`)
+
+- **Botao "Novo Fornecedor"** abre `FornecedorDialog`
+- **Cards**: Nome Fantasia, CNPJ, Contato, Telefone, Endereco
+- **Expandir Historico**: accordion/collapsible revela tabela de compras (data, descricao, valor)
+- `FornecedorDialog`: campos Razao Social, Nome Fantasia, CNPJ, Contato, Telefone, Endereco
 
 ---
 
 ### Detalhes Tecnicos
 
-- Reutilizar `Tabs`, `Table`, `Dialog`, `Badge`, `Button`, `Input`, `Select`, `Switch` do shadcn
-- Importar produtos/variantes do `mockCatalogoData.ts` para o seletor de vinculo
-- Sidebar colapsa via `useSidebar` (padrao dos outros modulos)
-- Gradientes nos cards simulam banners (ex: `bg-gradient-to-r from-orange-500 to-red-500`)
-- Nenhuma dependencia nova necessaria
+- Reutilizar `Tabs`, `Table`, `Dialog`, `Badge`, `Button`, `Input`, `Select`, `Switch`, `RadioGroup`, `Collapsible` do shadcn
+- Estado centralizado em `Parceiros.tsx`: clientes[], colaboradores[], entregadores[], fornecedores[]
+- Callbacks de promover/demitir/online/offline passados como props
+- Nenhuma dependencia nova
 - Todos os estados via useState local
 
