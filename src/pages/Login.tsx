@@ -45,6 +45,8 @@ export default function Login() {
               type="email"
               placeholder="operador@afonte.com"
               className="bg-card border-border focus:border-primary"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
             />
           </div>
