@@ -85,7 +85,7 @@ export default function VisaoGeral() {
           title="Pedidos Pendentes"
           count={pendentes.length}
           className="min-h-0"
-          style={{ flex: pendentes.length || 1 }}
+          style={{ flex: Math.max(pendentes.length, 3) }}
         >
           {pendentes.map((p) => (
             <PedidoCard
@@ -104,7 +104,7 @@ export default function VisaoGeral() {
           title="Pedidos Prontos"
           count={prontos.length}
           className="min-h-0"
-          style={{ flex: prontos.length || 1 }}
+          style={{ flex: Math.max(prontos.length, 3) }}
         >
           <Tabs defaultValue="entregas" className="w-full">
             <TabsList className="w-full h-8 mb-2">
