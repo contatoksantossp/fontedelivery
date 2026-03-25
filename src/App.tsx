@@ -5,7 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
-import PlaceholderPage from "./pages/PlaceholderPage";
+import Configuracoes from "./pages/Configuracoes";
 import PDV from "./pages/PDV";
 import VisaoGeral from "./pages/VisaoGeral";
 import Rotas from "./pages/Rotas";
@@ -37,7 +37,7 @@ const App = () => (
             <Route path="/financeiro" element={<Financeiro />} />
             <Route path="/cupons" element={<CuponsPromocoes />} />
             <Route path="/parceiros" element={<Parceiros />} />
-            <Route path="/configuracoes" element={<PlaceholderPage title="Configurações" />} />
+            <Route path="/configuracoes" element={<Configuracoes />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
