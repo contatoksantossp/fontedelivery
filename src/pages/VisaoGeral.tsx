@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
-import { pedidosMock, Pedido } from "@/components/visao-geral/mockData";
+import { pedidosMock, Pedido, entregadoresMock } from "@/components/visao-geral/mockData";
 import { KanbanColumn } from "@/components/visao-geral/KanbanColumn";
 import { PedidoCard } from "@/components/visao-geral/PedidoCard";
 import { PedidoDetalhes } from "@/components/visao-geral/PedidoDetalhes";
@@ -14,6 +14,7 @@ export default function VisaoGeral() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [expandedSlot, setExpandedSlot] = useState<number | null>(null);
   const [rotasItens, setRotasItens] = useState<[Pedido[], Pedido[]]>([[], []]);
+  const [entregadorPorRota, setEntregadorPorRota] = useState<[string | null, string | null]>([null, null]);
   const { setOpen } = useSidebar();
 
   useEffect(() => {
@@ -33,6 +34,30 @@ export default function VisaoGeral() {
   );
 
   const selectionMode = expandedSlot !== null;
+
+  // Map pedidoId -> cor do entregador atribuído à rota
+  const pedidoCorMap = useMemo(() => {
+    const map = new Map<string, string>();
+    [0, 1].forEach((i) => {
+      const entId = entregadorPorRota[i];
+      if (entId) {
+        const ent = entregadoresMock.find((e) => e.id === entId);
+        if (ent) {
+          rotasItens[i].forEach((p) => map.set(p.id, ent.cor));
+        }
+      }
+    });
+    return map;
+  }, [rotasItens, entregadorPorRota]);
+
+  // Cor do entregador por rota
+  const entregadorCorPorRota = useMemo<[string | null, string | null]>(() => {
+    return [0, 1].map((i) => {
+      const entId = entregadorPorRota[i];
+      if (!entId) return null;
+      return entregadoresMock.find((e) => e.id === entId)?.cor || null;
+    }) as [string | null, string | null];
+  }, [entregadorPorRota]);
 
   const addToRota = useCallback((slotIndex: number, pedido: Pedido) => {
     setRotasItens((prev) => {
@@ -58,6 +83,14 @@ export default function VisaoGeral() {
     });
   }, []);
 
+  const handleSelectEntregador = useCallback((slotIndex: number, entregadorId: string) => {
+    setEntregadorPorRota((prev) => {
+      const copy: [string | null, string | null] = [...prev];
+      copy[slotIndex] = copy[slotIndex] === entregadorId ? null : entregadorId;
+      return copy;
+    });
+  }, []);
+
   const handleAction = (pedidoId: string, action: string) => {
     if (action === "cancelar" || action === "finalizar") {
       setPedidos((prev) => prev.filter((p) => p.id !== pedidoId));
@@ -77,6 +110,14 @@ export default function VisaoGeral() {
     }
   };
 
+  const handleMarkerClick = useCallback((pedido: Pedido) => {
+    if (selectionMode && pedido.status === "pronto" && pedido.tipo === "entrega" && !pedidosNaRota.has(pedido.id)) {
+      addToRota(expandedSlot!, pedido);
+    } else if (!selectionMode) {
+      setSelectedId(pedido.id);
+    }
+  }, [selectionMode, pedidosNaRota, expandedSlot, addToRota]);
+
   return (
     <div className="flex-1 flex overflow-hidden">
       {/* Coluna Esquerda — Kanbans */}
@@ -93,6 +134,7 @@ export default function VisaoGeral() {
               selected={!selectionMode && selectedId === p.id}
               selectionMode={selectionMode}
               inRota={pedidosNaRota.has(p.id)}
+              rotaColor={pedidoCorMap.get(p.id)}
               onSelect={handleCardClick}
               onAction={handleAction}
             />
@@ -121,6 +163,7 @@ export default function VisaoGeral() {
                   selected={!selectionMode && selectedId === p.id}
                   selectionMode={selectionMode}
                   inRota={pedidosNaRota.has(p.id)}
+                  rotaColor={pedidoCorMap.get(p.id)}
                   onSelect={handleCardClick}
                   onAction={handleAction}
                 />
@@ -134,6 +177,7 @@ export default function VisaoGeral() {
                   selected={!selectionMode && selectedId === p.id}
                   selectionMode={selectionMode}
                   inRota={pedidosNaRota.has(p.id)}
+                  rotaColor={pedidoCorMap.get(p.id)}
                   onSelect={handleCardClick}
                   onAction={handleAction}
                 />
@@ -152,6 +196,9 @@ export default function VisaoGeral() {
             onCollapse={() => setExpandedSlot(null)}
             onRemove={(pedidoId) => removeFromRota(expandedSlot!, pedidoId)}
             onReorder={(items) => reorderRota(expandedSlot!, items)}
+            entregadorCor={entregadorCorPorRota[expandedSlot!]}
+            selectedEntregadorId={entregadorPorRota[expandedSlot!]}
+            onSelectEntregador={(id) => handleSelectEntregador(expandedSlot!, id)}
           />
         ) : (
           <PedidoDetalhes pedido={selectedPedido} />
@@ -168,6 +215,12 @@ export default function VisaoGeral() {
           rotasItens={rotasItens}
           onRemoveFromRota={removeFromRota}
           onReorderRota={reorderRota}
+          pedidoCorMap={pedidoCorMap}
+          selectionMode={selectionMode}
+          onMarkerClick={handleMarkerClick}
+          entregadorCorPorRota={entregadorCorPorRota}
+          selectedEntregador={entregadorPorRota}
+          onSelectEntregador={handleSelectEntregador}
         />
       </div>
     </div>
