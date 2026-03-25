@@ -7,13 +7,19 @@ import { Flame, Eye, EyeOff } from "lucide-react";
 
 export default function Login() {
   const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setError(false);
-    navigate("/dashboard");
+    if (email === "admin@admin.com" && password === "admin") {
+      setError(false);
+      navigate("/dashboard");
+    } else {
+      setError(true);
+    }
   };
 
   return (
