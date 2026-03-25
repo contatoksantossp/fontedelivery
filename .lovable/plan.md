@@ -1,71 +1,86 @@
 
 
-## Modulo 6: Estoque — Plano de Implementacao
+## Modulo 7: Financeiro — Plano de Implementacao
 
 ### Arquivos
 
 ```text
-src/pages/Estoque.tsx                          — Pagina principal com 3 abas (Posicao Atual, Historico, Fila de Espera)
-src/components/estoque/
-  mockEstoqueData.ts                           — Dados mock: saldos, movimentacoes, fila de espera
-  PosicaoAtual.tsx                             — Aba 1: dashboard + filtros + tabela com edicao inline
-  Historico.tsx                                — Aba 2: filtros de auditoria + tabela de movimentacoes
-  FilaEspera.tsx                               — Aba 3: lista de clientes aguardando reposicao
+src/pages/Financeiro.tsx                       — Pagina principal com 3 abas (Caixa, Resumo, Extrato)
+src/components/financeiro/
+  mockFinanceiroData.ts                        — Dados mock: caixa, entregadores, transacoes, vendas diarias
+  AbaCaixa.tsx                                 — Aba 1: gestao da gaveta + acerto de entregadores
+  AbaResumo.tsx                                — Aba 2: dashboards diario/semanal/mensal com graficos
+  AbaExtrato.tsx                               — Aba 3: livro razao com filtros e lancamentos manuais
+  LancamentoDialog.tsx                         — Dialog para criar lancamento manual (entrada/saida)
+  EntregadorAcerto.tsx                         — Card expansivel de acerto por entregador
 ```
 
-Atualizar `src/App.tsx` para trocar o placeholder `/estoque` pelo novo componente.
+Atualizar `src/App.tsx` para trocar o placeholder `/financeiro` pelo novo componente.
 
 ---
 
-### 1. Mock Data (`mockEstoqueData.ts`)
+### 1. Mock Data (`mockFinanceiroData.ts`)
 
-Reutiliza tipos do catalogo (`CatalogVariante`, `CatalogProduto`) para montar os saldos. Dados proprios:
+- **CaixaState**: status (`aberto`|`fechado`), fundoInicial, entradas, saidas, saldoEsperado, ultimoFechamento (data, total)
+- **EntregadorTurno**: id, nome, veiculo, entregas, totalTaxas, totalBonificacoes, diaria, extras[] ({valor, descricao}), pago (boolean)
+- **Transacao**: id, dataHora, descricao, tipo (`entrada`|`saida`), metodo (`dinheiro`|`pix`|`cartao`|`qrcode`), valor, origem (`venda`|`acerto`|`sangria`|`reforco`|`manual`)
+- **VendaDiaria**: data, vendasBruto, receitaReal, despesas, resultado, pedidos, ticketMedio
+- **TopProduto**: nome, unidades, valorTotal, lucro
 
-- **EstoqueItem**: varianteId, produtoNome, varianteNome, sku, estoqueMinimo, estoqueAtual, categoriaId, subcategoriaId. Gerado a partir das ~30 variantes do catalogo, com saldos variados (alguns zerados, alguns abaixo do minimo).
-- **Movimentacao**: id, dataHora, produtoNome, varianteNome, tipo (`"entrada" | "saida" | "perda" | "correcao"`), quantidade (com sinal), saldoFinal. ~15 registros mock.
-- **FilaEsperaItem**: id, clienteNome, varianteNome, dataSolicitacao, contato. ~5 registros mock referenciando variantes esgotadas.
-
----
-
-### 2. Layout da Pagina (`Estoque.tsx`)
-
-Sidebar colapsada via `useSidebar`. Pagina com `Tabs` no topo: `[Posicao Atual] [Historico] [Fila de Espera]`. Cada aba renderiza seu componente dedicado.
-
-Estado principal gerenciado em `Estoque.tsx`:
-- `estoqueItems[]` — saldos de todas variantes (mutavel para edicao inline)
-- `movimentacoes[]` — log de movimentacoes (cresce ao ajustar saldo)
-- `filaEspera[]` — lista de clientes aguardando
-
-Callbacks passados para `PosicaoAtual`: `onAjustarSaldo(varianteId, delta)` e `onEditarMinimo(varianteId, novoMin)` que atualizam o array e adicionam movimentacao ao historico.
+Mock: caixa aberto com fundo R$500, ~3 entregadores do turno, ~25 transacoes, 30 dias de vendas diarias, top 10 produtos.
 
 ---
 
-### 3. Componentes
+### 2. Regra do "Olho Magico"
 
-**PosicaoAtual**:
-- **Dashboard**: 3 MetricCards (Total Produtos, Estoque Baixo, Esgotados) calculados a partir dos dados
-- **Filtros**: Input de busca + Select cascata (Categoria > Subcategoria > Todos)
-- **Tabela**: Colunas: Produto, Variante, Estoque Minimo (clicavel para editar), Estoque Atual, Status (Badge verde/amarelo/vermelho), Acoes (+/- botoes para ajuste rapido)
-- Edicao inline do minimo via input que aparece ao clicar no valor
-- Botoes +/- disparam `onAjustarSaldo` e criam movimentacao tipo "correcao"
+Componente helper `ValorOculto`: recebe valor string, renderiza `R$ ****` por padrao. Icone de olho ao lado que alterna visibilidade. Estado local por instancia.
 
-**Historico**:
-- **Filtros**: DatePicker (periodo), Select categoria/subcategoria, Select produto
-- **Tabela**: Colunas: Data/Hora, Produto, Variante, Tipo (Badge colorido), Quantidade (+/-), Saldo Final
-- Badges: Entrada (verde), Saida (azul), Perda (vermelho), Correcao (cinza)
+---
 
-**FilaEspera**:
-- **Tabela simples**: Colunas: Cliente, Variante Desejada, Data Solicitacao, Contato (telefone/WhatsApp)
-- Estado vazio com placeholder se nao houver registros
+### 3. Aba Caixa (`AbaCaixa.tsx`)
+
+**Gestao da Gaveta (topo)**:
+- Estado fechado: aviso + resumo ultimo caixa + input fundo inicial + botao "Abrir Caixa"
+- Estado aberto: 4 cards (Fundo Inicial, Entradas, Saidas, Saldo Esperado) com valores ocultos
+- Botoes: "Sangria/Reforco" (dialog com tipo toggle + valor + descricao) e "Fechar Caixa" (dialog de contagem)
+
+**Acerto de Entregadores (abaixo)**:
+- Lista de `EntregadorAcerto` cards
+- Cada card: nome, veiculo, saldo total. Expansivel ao clicar
+- Expandido: metricas (entregas, taxas, bonificacoes) + inputs (diaria, extras com add/remove) + botao "Registrar"
+
+---
+
+### 4. Aba Resumo (`AbaResumo.tsx`)
+
+Sub-abas: Diario | Semanal | Mensal
+
+**Diario**: Cards operacionais (pedidos aberto/pendente/pronto/entrega) + 4 cards financeiros (Vendas Bruto, Receita, Despesas, Resultado) com olho magico + Top 10 produtos + Recebimentos por metodo
+
+**Semanal**: Grafico de barras (recharts) dos ultimos 7 dias, clicavel para drill-down. Mesmos cards financeiros adaptados. Sem bloco operacional.
+
+**Mensal**: Mesma logica, 30 dias no grafico.
+
+---
+
+### 5. Aba Extrato (`AbaExtrato.tsx`)
+
+**Painel de Saldos (topo)**: 3 cards com olho magico (Saldo Total, Saldo Dinheiro, Saldo Contas)
+
+**Botao "Lancar"**: Abre `LancamentoDialog` com tipo (entrada/saida toggle), valor, metodo (select), descricao
+
+**Tabela de transacoes**: Data/Hora, Descricao, Tipo (badge verde/vermelho), Metodo, Valor (com olho magico). Filtros: metodo, tipo, periodo. Paginacao "Carregar Mais" de 20 em 20.
 
 ---
 
 ### Detalhes Tecnicos
 
-- Reutilizar `Tabs`, `Table`, `Input`, `Select`, `Badge`, `Button` do shadcn
-- Importar categorias/subcategorias do `mockCatalogoData.ts` para filtros cascata
-- MetricCards reutilizam componente `MetricCard` existente
-- Tabelas usam componentes `Table` do shadcn (TableHeader, TableBody, TableRow, TableCell)
-- Edicao inline do minimo: estado local `editingMinId` controla qual celula esta em modo edicao
-- Nenhuma dependencia nova necessaria
+- Dependencia nova: `recharts` para graficos de barras/linhas (semanal/mensal)
+- Reutilizar `Tabs`, `Table`, `Dialog`, `Badge`, `Button`, `Input`, `Select` do shadcn
+- `ValorOculto` como componente inline reutilizavel com `Eye`/`EyeOff` do lucide
+- MetricCards existentes reutilizados onde possivel
+- Graficos recharts: `BarChart` com `Bar`, `XAxis`, `YAxis`, `Tooltip`, `CartesianGrid`
+- Clique no grafico via `onClick` no `Bar` component para filtrar drill-down
+- Entregadores reutilizam nomes do `mockRotasData.ts` para consistencia
+- Todos os estados via useState local, sem backend
 
