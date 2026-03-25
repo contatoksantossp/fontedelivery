@@ -3,12 +3,12 @@ import { MetricCard } from "@/components/MetricCard";
 import { ShoppingCart, Clock, TrendingUp, AlertTriangle, Package, CheckCircle2 } from "lucide-react";
 
 const quickCountItems = [
-  { name: "Skol Lata 350ml", lastCount: "18/03/2026", qty: 48 },
-  { name: "Brahma Litrão", lastCount: "17/03/2026", qty: 22 },
-  { name: "Carvão Saco 4kg", lastCount: "16/03/2026", qty: 15 },
-  { name: "Gelo 5kg", lastCount: "15/03/2026", qty: 30 },
-  { name: "Heineken Long Neck", lastCount: "14/03/2026", qty: 60 },
-  { name: "Coca-Cola 2L", lastCount: "13/03/2026", qty: 18 },
+  { name: "Skol Lata 350ml", lastCount: "18/03/2026", qty: 96 },
+  { name: "Heineken Long Neck", lastCount: "17/03/2026", qty: 48 },
+  { name: "Coca-Cola 350ml", lastCount: "16/03/2026", qty: 72 },
+  { name: "Carvão Vegetal 4kg", lastCount: "15/03/2026", qty: 15 },
+  { name: "Gelo 5kg", lastCount: "14/03/2026", qty: 30 },
+  { name: "Marlboro Box", lastCount: "13/03/2026", qty: 20 },
 ];
 
 export default function Dashboard() {
