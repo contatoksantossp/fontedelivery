@@ -1,5 +1,4 @@
 import { useEffect, useRef } from "react";
-import { MapContainer, TileLayer, Marker, useMap } from "react-leaflet";
 import L from "leaflet";
 import { Pedido } from "./mockData";
 import { SlotRota } from "./SlotRota";
@@ -29,61 +28,6 @@ function createPinIcon(color: string, eligible: boolean) {
   });
 }
 
-function MapMarkers({
-  pedidos,
-  pedidoCorMap,
-  selectionMode,
-  pedidosNaRota,
-  onMarkerClick,
-}: {
-  pedidos: Pedido[];
-  pedidoCorMap: Map<string, string>;
-  selectionMode: boolean;
-  pedidosNaRota: Set<string>;
-  onMarkerClick: (pedido: Pedido) => void;
-}) {
-  const map = useMap();
-  const markersRef = useRef<L.Marker[]>([]);
-
-  useEffect(() => {
-    markersRef.current.forEach((m) => m.remove());
-    markersRef.current = [];
-
-    const entregas = pedidos.filter((p) => p.tipo === "entrega");
-
-    entregas.forEach((pedido) => {
-      const inRota = pedidosNaRota.has(pedido.id);
-      const rotaColor = pedidoCorMap.get(pedido.id);
-      const isEligible = selectionMode && !inRota;
-      const color = rotaColor || (inRota ? "#6b7280" : "#9ca3af");
-
-      const icon = createPinIcon(color, isEligible);
-      const marker = L.marker([pedido.lat, pedido.lng], { icon });
-
-      marker.on("click", () => onMarkerClick(pedido));
-
-      marker.bindTooltip(
-        `<div style="font-size:11px;font-weight:600;">${pedido.codigo}</div><div style="font-size:10px;">${pedido.cliente}</div><div style="font-size:10px;opacity:0.7;">${pedido.endereco}</div>`,
-        {
-          direction: "top",
-          offset: [0, -10],
-          className: "map-tooltip-dark",
-        }
-      );
-
-      marker.addTo(map);
-      markersRef.current.push(marker);
-    });
-
-    return () => {
-      markersRef.current.forEach((m) => m.remove());
-      markersRef.current = [];
-    };
-  }, [pedidos, pedidoCorMap, selectionMode, pedidosNaRota, onMarkerClick, map]);
-
-  return null;
-}
-
 export function MapaRotas({
   pedidosProntos,
   expandedSlot,
@@ -100,33 +44,83 @@ export function MapaRotas({
   onSelectEntregador,
 }: MapaRotasProps) {
   const pedidosNaRota = new Set(rotasItens.flat().map((p) => p.id));
+  const mapContainerRef = useRef<HTMLDivElement | null>(null);
+  const mapRef = useRef<L.Map | null>(null);
+  const markersLayerRef = useRef<L.LayerGroup | null>(null);
+
+  useEffect(() => {
+    if (!mapContainerRef.current || mapRef.current) return;
+
+    const map = L.map(mapContainerRef.current, {
+      zoomControl: true,
+      attributionControl: true,
+    }).setView([-23.558, -46.66], 13);
+
+    L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
+      attribution: '&copy; <a href="https://carto.com/">CARTO</a>',
+      subdomains: "abcd",
+      maxZoom: 20,
+    }).addTo(map);
+
+    markersLayerRef.current = L.layerGroup().addTo(map);
+    mapRef.current = map;
+
+    window.setTimeout(() => {
+      map.invalidateSize();
+    }, 0);
+
+    return () => {
+      markersLayerRef.current?.clearLayers();
+      map.remove();
+      markersLayerRef.current = null;
+      mapRef.current = null;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!mapRef.current || !markersLayerRef.current) return;
+
+    const layer = markersLayerRef.current;
+    layer.clearLayers();
+
+    const entregas = pedidosProntos.filter((p) => p.tipo === "entrega");
+
+    entregas.forEach((pedido) => {
+      const inRota = pedidosNaRota.has(pedido.id);
+      const rotaColor = pedidoCorMap.get(pedido.id);
+      const isEligible = selectionMode && !inRota;
+      const color = rotaColor || (inRota ? "#6b7280" : "#9ca3af");
+
+      const marker = L.marker([pedido.lat, pedido.lng], {
+        icon: createPinIcon(color, isEligible),
+      });
+
+      marker.on("click", () => onMarkerClick(pedido));
+      marker.bindTooltip(
+        `<div style="font-size:11px;font-weight:600;">${pedido.codigo}</div><div style="font-size:10px;">${pedido.cliente}</div><div style="font-size:10px;opacity:0.7;">${pedido.endereco}</div>`,
+        {
+          direction: "top",
+          offset: [0, -10],
+        }
+      );
+
+      layer.addLayer(marker);
+    });
+
+    if (entregas.length === 1) {
+      mapRef.current.setView([entregas[0].lat, entregas[0].lng], 14);
+    } else if (entregas.length > 1) {
+      const bounds = L.latLngBounds(entregas.map((pedido) => [pedido.lat, pedido.lng] as [number, number]));
+      mapRef.current.fitBounds(bounds.pad(0.2));
+    }
+  }, [pedidosProntos, pedidosNaRota, pedidoCorMap, selectionMode, onMarkerClick]);
 
   return (
     <div className="flex flex-col h-full gap-3">
-      {/* Mapa Real */}
-      <div className="rounded-lg border border-border overflow-hidden flex-1 min-h-[200px]">
-        <MapContainer
-          center={[-23.558, -46.660]}
-          zoom={13}
-          className="h-full w-full"
-          zoomControl={true}
-          attributionControl={true}
-        >
-          <TileLayer
-            attribution='&copy; <a href="https://carto.com/">CARTO</a>'
-            url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-          />
-          <MapMarkers
-            pedidos={pedidosProntos}
-            pedidoCorMap={pedidoCorMap}
-            selectionMode={selectionMode}
-            pedidosNaRota={pedidosNaRota}
-            onMarkerClick={onMarkerClick}
-          />
-        </MapContainer>
+      <div className="rounded-lg border border-border overflow-hidden flex-1 min-h-[200px] bg-card">
+        <div ref={mapContainerRef} className="h-full w-full" />
       </div>
 
-      {/* Slots de Rota */}
       <div className="grid grid-cols-2 gap-2">
         {[0, 1].map((i) => (
           <SlotRota
