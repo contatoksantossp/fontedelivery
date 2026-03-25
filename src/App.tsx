@@ -13,6 +13,7 @@ import Catalogo from "./pages/Catalogo";
 import Estoque from "./pages/Estoque";
 import Financeiro from "./pages/Financeiro";
 import CuponsPromocoes from "./pages/CuponsPromocoes";
+import Parceiros from "./pages/Parceiros";
 import { AppLayout } from "./layouts/AppLayout";
 import NotFound from "./pages/NotFound";
 
