@@ -80,12 +80,11 @@ export default function VisaoGeral() {
   return (
     <div className="flex-1 flex overflow-hidden">
       {/* Coluna Esquerda — Kanbans */}
-      <div className="w-[35%] flex flex-col gap-2 p-3 border-r border-border overflow-hidden">
+      <div className="w-[35%] flex flex-row gap-2 p-3 border-r border-border overflow-hidden">
         <KanbanColumn
           title="Pedidos Pendentes"
           count={pendentes.length}
-          className="min-h-0"
-          style={{ flex: Math.max(pendentes.length, 3) }}
+          className="w-1/2 h-full"
         >
           {pendentes.map((p) => (
             <PedidoCard
