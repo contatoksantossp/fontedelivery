@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import PlaceholderPage from "./pages/PlaceholderPage";
+import VisaoGeral from "./pages/VisaoGeral";
 import { AppLayout } from "./layouts/AppLayout";
 import NotFound from "./pages/NotFound";
 

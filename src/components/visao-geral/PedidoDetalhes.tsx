@@ -95,7 +95,7 @@ export function PedidoDetalhes({ pedido }: PedidoDetalhesProps) {
             </div>
           )}
           {pedido.desconto > 0 && (
-            <div className="flex justify-between text-green-400">
+            <div className="flex justify-between text-primary">
               <span>Desconto</span>
               <span>-R$ {pedido.desconto.toFixed(2)}</span>
             </div>
