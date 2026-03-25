@@ -12,6 +12,8 @@ export interface Pedido {
   telefone: string;
   endereco: string;
   bairro: string;
+  lat: number;
+  lng: number;
   tipo: "entrega" | "retirada";
   status: "pendente" | "pronto";
   criadoEm: Date;
@@ -32,6 +34,8 @@ export const pedidosMock: Pedido[] = [
     telefone: "(11) 98765-4321",
     endereco: "Rua das Flores, 123",
     bairro: "Centro",
+    lat: -23.5505,
+    lng: -46.6340,
     tipo: "entrega",
     status: "pendente",
     criadoEm: new Date(Date.now() - 15 * 60000),
@@ -54,6 +58,8 @@ export const pedidosMock: Pedido[] = [
     telefone: "(11) 91234-5678",
     endereco: "Av. Brasil, 456",
     bairro: "Jardim Paulista",
+    lat: -23.5640,
+    lng: -46.6520,
     tipo: "entrega",
     status: "pendente",
     criadoEm: new Date(Date.now() - 8 * 60000),
@@ -75,6 +81,8 @@ export const pedidosMock: Pedido[] = [
     telefone: "(11) 99876-1234",
     endereco: "Rua Ipê, 789",
     bairro: "Vila Nova",
+    lat: -23.5580,
+    lng: -46.6450,
     tipo: "retirada",
     status: "pendente",
     criadoEm: new Date(Date.now() - 22 * 60000),
@@ -97,6 +105,8 @@ export const pedidosMock: Pedido[] = [
     telefone: "(11) 92345-6789",
     endereco: "Rua Harmonia, 55",
     bairro: "Pinheiros",
+    lat: -23.5620,
+    lng: -46.6880,
     tipo: "entrega",
     status: "pronto",
     criadoEm: new Date(Date.now() - 35 * 60000),
@@ -118,6 +128,8 @@ export const pedidosMock: Pedido[] = [
     telefone: "(11) 93456-7890",
     endereco: "Av. Paulista, 1000",
     bairro: "Bela Vista",
+    lat: -23.5614,
+    lng: -46.6558,
     tipo: "retirada",
     status: "pronto",
     criadoEm: new Date(Date.now() - 40 * 60000),
@@ -138,6 +150,8 @@ export const pedidosMock: Pedido[] = [
     telefone: "(11) 94567-8901",
     endereco: "Rua Augusta, 200",
     bairro: "Consolação",
+    lat: -23.5530,
+    lng: -46.6560,
     tipo: "entrega",
     status: "pendente",
     criadoEm: new Date(Date.now() - 3 * 60000),
@@ -153,16 +167,64 @@ export const pedidosMock: Pedido[] = [
     formaPagamento: "Cartão Crédito",
     observacoes: "Deixar na portaria",
   },
+  {
+    id: "7",
+    codigo: "#1048",
+    cliente: "Lucia Ferreira",
+    telefone: "(11) 95678-9012",
+    endereco: "Rua Oscar Freire, 340",
+    bairro: "Jardins",
+    lat: -23.5660,
+    lng: -46.6720,
+    tipo: "entrega",
+    status: "pronto",
+    criadoEm: new Date(Date.now() - 25 * 60000),
+    itens: [
+      { nome: "Corona Extra 355ml", qtd: 12, preco: 7.00 },
+      { nome: "Limão Siciliano", qtd: 3, preco: 2.50 },
+    ],
+    subtotal: 91.50,
+    taxaEntrega: 5.00,
+    desconto: 0,
+    total: 96.50,
+    formaPagamento: "PIX",
+  },
+  {
+    id: "8",
+    codigo: "#1049",
+    cliente: "Roberto Almeida",
+    telefone: "(11) 96789-0123",
+    endereco: "Av. Rebouças, 800",
+    bairro: "Pinheiros",
+    lat: -23.5700,
+    lng: -46.6780,
+    tipo: "entrega",
+    status: "pronto",
+    criadoEm: new Date(Date.now() - 30 * 60000),
+    itens: [
+      { nome: "Whisky Jack Daniel's 750ml", qtd: 1, preco: 149.90 },
+      { nome: "Gelo 10kg", qtd: 2, preco: 15.90 },
+    ],
+    subtotal: 181.70,
+    taxaEntrega: 7.00,
+    desconto: 15.00,
+    total: 173.70,
+    formaPagamento: "Cartão Crédito",
+  },
 ];
 
 export interface Entregador {
   id: string;
   nome: string;
   veiculo: string;
+  cor: string;
 }
 
 export const entregadoresMock: Entregador[] = [
-  { id: "e1", nome: "Ricardo Moto", veiculo: "Moto" },
-  { id: "e2", nome: "Lucas Bike", veiculo: "Bicicleta" },
-  { id: "e3", nome: "André Carro", veiculo: "Carro" },
+  { id: "e1", nome: "Ricardo Moto", veiculo: "Moto", cor: "#3b82f6" },
+  { id: "e2", nome: "Lucas Bike", veiculo: "Bicicleta", cor: "#10b981" },
+  { id: "e3", nome: "André Carro", veiculo: "Carro", cor: "#f59e0b" },
+  { id: "e4", nome: "Felipe Souza", veiculo: "Moto", cor: "#8b5cf6" },
+  { id: "e5", nome: "Marcos Silva", veiculo: "Carro", cor: "#ec4899" },
+  { id: "e6", nome: "Diego Costa", veiculo: "Bicicleta", cor: "#ef4444" },
 ];

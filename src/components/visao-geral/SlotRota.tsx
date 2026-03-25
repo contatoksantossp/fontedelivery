@@ -1,8 +1,7 @@
 import { useState } from "react";
-import { X, GripVertical, Truck } from "lucide-react";
+import { X, GripVertical, Truck, Bike, Car } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Pedido, entregadoresMock } from "./mockData";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import {
   DndContext,
@@ -30,6 +29,9 @@ interface SlotRotaProps {
   onCollapse: () => void;
   onRemove: (pedidoId: string) => void;
   onReorder: (items: Pedido[]) => void;
+  entregadorCor?: string | null;
+  selectedEntregadorId?: string | null;
+  onSelectEntregador?: (entregadorId: string) => void;
 }
 
 function SortableItem({ pedido, onRemove }: { pedido: Pedido; onRemove: (id: string) => void }) {
@@ -56,64 +58,57 @@ function SortableItem({ pedido, onRemove }: { pedido: Pedido; onRemove: (id: str
   );
 }
 
-export function SlotRota({ slotIndex, rotaItens, expanded, onExpand, onCollapse, onRemove, onReorder }: SlotRotaProps) {
-  const [entregadorId, setEntregadorId] = useState("");
-  const [bonificacao, setBonificacao] = useState("");
+const veiculoIcon = (v: string) => {
+  if (v.toLowerCase().includes("moto")) return <Bike className="h-3 w-3" />;
+  if (v.toLowerCase().includes("carro")) return <Car className="h-3 w-3" />;
+  return <Bike className="h-3 w-3" />;
+};
 
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
-  );
+export function SlotRota({ slotIndex, rotaItens, expanded, onExpand, entregadorCor }: SlotRotaProps) {
+  if (expanded) return null;
 
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-    if (over && active.id !== over.id) {
-      const oldIndex = rotaItens.findIndex((i) => i.id === active.id);
-      const newIndex = rotaItens.findIndex((i) => i.id === over.id);
-      onReorder(arrayMove(rotaItens, oldIndex, newIndex));
-    }
-  };
-
-  const kmEstimado = rotaItens.length * 3.2;
-  const taxaTotal = rotaItens.reduce((s, p) => s + p.taxaEntrega, 0);
-
-  if (!expanded) {
-    return (
-      <div
-        className="rounded-lg border bg-card/50 p-3 cursor-pointer hover:border-primary/40 transition-colors"
-        onClick={onExpand}
-      >
-        <div className="flex items-center justify-between mb-2">
-          <h4 className="text-xs font-display font-semibold text-foreground uppercase tracking-wider">
-            Rota {slotIndex + 1}
-          </h4>
-          {rotaItens.length > 0 && (
-            <span className="text-[10px] font-bold bg-primary/15 text-primary px-1.5 py-0.5 rounded-full">
-              {rotaItens.length}
-            </span>
-          )}
-        </div>
-        {rotaItens.length > 0 ? (
-          <div className="space-y-1">
-            {rotaItens.map((p) => (
-              <p key={p.id} className="text-xs text-muted-foreground truncate">
-                {p.codigo} — {p.cliente}
-              </p>
-            ))}
-          </div>
-        ) : (
-          <p className="text-xs text-muted-foreground">Clique para criar rota</p>
+  return (
+    <div
+      className="rounded-lg border bg-card/50 p-3 cursor-pointer hover:border-primary/40 transition-colors"
+      style={entregadorCor ? { borderLeftWidth: 3, borderLeftColor: entregadorCor } : undefined}
+      onClick={onExpand}
+    >
+      <div className="flex items-center justify-between mb-2">
+        <h4 className="text-xs font-display font-semibold text-foreground uppercase tracking-wider">
+          Rota {slotIndex + 1}
+        </h4>
+        {rotaItens.length > 0 && (
+          <span className="text-[10px] font-bold bg-primary/15 text-primary px-1.5 py-0.5 rounded-full">
+            {rotaItens.length}
+          </span>
         )}
       </div>
-    );
-  }
-
-  return null; // Expanded content renders in center column
+      {rotaItens.length > 0 ? (
+        <div className="space-y-1">
+          {rotaItens.map((p) => (
+            <p key={p.id} className="text-xs text-muted-foreground truncate">
+              {p.codigo} — {p.cliente}
+            </p>
+          ))}
+        </div>
+      ) : (
+        <p className="text-xs text-muted-foreground">Clique para criar rota</p>
+      )}
+    </div>
+  );
 }
 
 // Expanded route content for the center column
-export function SlotRotaExpanded({ slotIndex, rotaItens, onCollapse, onRemove, onReorder }: Omit<SlotRotaProps, "expanded" | "onExpand">) {
-  const [entregadorId, setEntregadorId] = useState("");
+export function SlotRotaExpanded({
+  slotIndex,
+  rotaItens,
+  onCollapse,
+  onRemove,
+  onReorder,
+  entregadorCor,
+  selectedEntregadorId,
+  onSelectEntregador,
+}: Omit<SlotRotaProps, "expanded" | "onExpand">) {
   const [bonificacao, setBonificacao] = useState("");
 
   const sensors = useSensors(
@@ -136,33 +131,52 @@ export function SlotRotaExpanded({ slotIndex, rotaItens, onCollapse, onRemove, o
   return (
     <div className="flex flex-col h-full p-4 space-y-4 overflow-y-auto">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-display font-bold text-foreground">
-          Montar Rota {slotIndex + 1}
-        </h3>
+        <div className="flex items-center gap-2">
+          {entregadorCor && (
+            <div className="w-3 h-3 rounded-full" style={{ backgroundColor: entregadorCor }} />
+          )}
+          <h3 className="text-sm font-display font-bold text-foreground">
+            Montar Rota {slotIndex + 1}
+          </h3>
+        </div>
         <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onCollapse}>
           <X className="h-4 w-4" />
         </Button>
       </div>
 
       <p className="text-xs text-muted-foreground bg-primary/5 rounded-md p-2 border border-dashed border-primary/30">
-        Clique nos pedidos prontos de entrega na coluna à esquerda para adicioná-los a esta rota.
+        Clique nos pedidos prontos de entrega na coluna à esquerda ou no mapa para adicioná-los a esta rota.
       </p>
 
-      {/* Entregador */}
+      {/* Entregador - Grid de botões */}
       <div>
-        <label className="text-xs text-muted-foreground mb-1 block">Entregador</label>
-        <Select value={entregadorId} onValueChange={setEntregadorId}>
-          <SelectTrigger className="h-8 text-sm">
-            <SelectValue placeholder="Selecionar entregador" />
-          </SelectTrigger>
-          <SelectContent>
-            {entregadoresMock.map((e) => (
-              <SelectItem key={e.id} value={e.id}>
-                {e.nome} ({e.veiculo})
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <label className="text-xs text-muted-foreground mb-1.5 block">Entregador</label>
+        <div className="grid grid-cols-2 gap-1.5 max-h-[120px] overflow-y-auto pr-1">
+          {entregadoresMock.map((e) => (
+            <button
+              key={e.id}
+              onClick={() => onSelectEntregador?.(e.id)}
+              className="flex items-center gap-2 rounded-md border bg-card p-2 text-left text-xs transition-all hover:bg-secondary"
+              style={
+                selectedEntregadorId === e.id
+                  ? { borderColor: e.cor, boxShadow: `0 0 0 1px ${e.cor}` }
+                  : undefined
+              }
+            >
+              <div
+                className="w-2.5 h-2.5 rounded-full shrink-0"
+                style={{ backgroundColor: e.cor }}
+              />
+              <div className="min-w-0 flex-1">
+                <p className="font-medium text-foreground truncate">{e.nome}</p>
+                <div className="flex items-center gap-1 text-muted-foreground">
+                  {veiculoIcon(e.veiculo)}
+                  <span>{e.veiculo}</span>
+                </div>
+              </div>
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Sortable List */}
@@ -205,7 +219,10 @@ export function SlotRotaExpanded({ slotIndex, rotaItens, onCollapse, onRemove, o
               onChange={(e) => setBonificacao(e.target.value)}
             />
           </div>
-          <Button className="w-full h-9 text-sm font-semibold">
+          <Button
+            className="w-full h-9 text-sm font-semibold"
+            style={entregadorCor ? { backgroundColor: entregadorCor } : undefined}
+          >
             <Truck className="h-4 w-4 mr-1.5" />
             Despachar Rota
           </Button>

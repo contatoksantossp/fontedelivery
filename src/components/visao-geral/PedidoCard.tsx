@@ -10,6 +10,7 @@ interface PedidoCardProps {
   selected?: boolean;
   selectionMode?: boolean;
   inRota?: boolean;
+  rotaColor?: string;
   onSelect: (pedido: Pedido) => void;
   onAction: (pedidoId: string, action: "cancelar" | "pronto" | "despachar" | "finalizar") => void;
 }
@@ -30,7 +31,7 @@ function useTimer(criadoEm: Date) {
   return elapsed;
 }
 
-export function PedidoCard({ pedido, selected, selectionMode, inRota, onSelect, onAction }: PedidoCardProps) {
+export function PedidoCard({ pedido, selected, selectionMode, inRota, rotaColor, onSelect, onAction }: PedidoCardProps) {
   const elapsed = useTimer(pedido.criadoEm);
   const isPendente = pedido.status === "pendente";
   const isEligible = selectionMode && pedido.status === "pronto" && pedido.tipo === "entrega" && !inRota;
@@ -43,11 +44,17 @@ export function PedidoCard({ pedido, selected, selectionMode, inRota, onSelect, 
       }}
       className={cn(
         "rounded-lg border bg-card p-3 transition-all",
-        inRota && "opacity-50 cursor-not-allowed",
+        inRota && !rotaColor && "opacity-50 cursor-not-allowed",
+        inRota && rotaColor && "cursor-not-allowed",
         !inRota && "cursor-pointer hover:border-primary/50",
         selected && !inRota && "border-primary ring-1 ring-primary/30",
         isEligible && "border-dashed border-primary/60 animate-pulse"
       )}
+      style={
+        inRota && rotaColor
+          ? { backgroundColor: rotaColor + "20", borderColor: rotaColor + "50" }
+          : undefined
+      }
     >
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
@@ -62,7 +69,10 @@ export function PedidoCard({ pedido, selected, selectionMode, inRota, onSelect, 
             {pedido.tipo}
           </span>
           {inRota && (
-            <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground flex items-center gap-0.5">
+            <span
+              className="text-[10px] font-medium px-1.5 py-0.5 rounded-full flex items-center gap-0.5"
+              style={rotaColor ? { backgroundColor: rotaColor + "30", color: rotaColor } : undefined}
+            >
               <Route className="h-3 w-3" />
               Na Rota
             </span>

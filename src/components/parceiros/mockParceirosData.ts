@@ -29,6 +29,7 @@ export interface Entregador {
   veiculo: string;
   online: boolean;
   totalMes: number;
+  cor: string;
 }
 
 export interface HistoricoCompra {
@@ -157,9 +158,9 @@ export const colaboradoresMock: Colaborador[] = [
 ];
 
 export const entregadoresMock: Entregador[] = [
-  { id: "en1", clienteId: "cl4", veiculo: "Moto", online: true, totalMes: 1250.0 },
-  { id: "en2", clienteId: "cl5", veiculo: "Bicicleta", online: false, totalMes: 680.0 },
-  { id: "en3", clienteId: "cl6", veiculo: "Carro", online: false, totalMes: 1890.0 },
+  { id: "en1", clienteId: "cl4", veiculo: "Moto", online: true, totalMes: 1250.0, cor: "#3b82f6" },
+  { id: "en2", clienteId: "cl5", veiculo: "Bicicleta", online: false, totalMes: 680.0, cor: "#10b981" },
+  { id: "en3", clienteId: "cl6", veiculo: "Carro", online: false, totalMes: 1890.0, cor: "#f59e0b" },
 ];
 
 export const fornecedoresMock: Fornecedor[] = [

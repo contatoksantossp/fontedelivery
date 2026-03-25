@@ -24,9 +24,10 @@ export function AbaEntregadores({ entregadores, clientes, onToggleOnline, onExcl
   const online = entregadores.filter((e) => e.online);
 
   const renderCard = (ent: Entregador, isOnline: boolean) => (
-    <Card key={ent.id} className="relative">
+    <Card key={ent.id} className="relative" style={{ borderLeftWidth: 3, borderLeftColor: ent.cor }}>
       <CardContent className="p-4 space-y-2">
         <div className="flex items-center gap-2">
+          <div className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: ent.cor }} />
           {isOnline && <CircleDot className="h-3 w-3 text-emerald-500 animate-pulse" />}
           <span className="font-semibold">{getNome(ent.clienteId)}</span>
         </div>
