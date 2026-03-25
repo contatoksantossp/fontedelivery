@@ -1,77 +1,101 @@
 
 
-## Modulo 3: Rotas e Logistica — Plano de Implementacao
+## Modulo 4: PDV (Ponto de Venda) — Plano de Implementacao
 
 ### Arquivos
 
 ```text
-src/pages/Rotas.tsx                         — Pagina principal (layout 3 colunas)
-src/components/rotas/
-  mockRotasData.ts                          — Dados mock de rotas, paradas e entregadores
-  RotaCard.tsx                              — Card de rota no Kanban (entregador, mini-cards horizontais, status)
-  RotaDetalhes.tsx                          — Coluna central com detalhes da rota selecionada
-  RotaAcerto.tsx                            — Coluna direita: conferencia de pagamentos (rota finalizada)
-  RotaTimeline.tsx                          — Timeline vertical de paradas (usado dentro de RotaDetalhes)
+src/pages/PDV.tsx                              — Pagina principal (layout 3 colunas: 20/50/30)
+src/components/pdv/
+  mockPdvData.ts                               — Produtos, categorias, clientes mock
+  FilaPedidos.tsx                               — Coluna esquerda: lista de pedidos pendentes
+  FilaPedidoCard.tsx                            — Card individual na fila
+  Vitrine.tsx                                   — Coluna central: busca + categorias + grid de produtos
+  ProdutoCard.tsx                               — Card de produto na grade (com drawer de variantes)
+  ComboSlots.tsx                                — Rodape da vitrine: slots de combo/kit
+  Carrinho.tsx                                  — Coluna direita: sistema de abas (3 passos)
+  AbaIdentificacao.tsx                          — Aba 1: canal, cliente, modalidade, endereco
+  AbaCarrinho.tsx                               — Aba 2: itens do pedido, qty, remocao
+  AbaPagamentos.tsx                             — Aba 3: multi-pagamento, troco, finalizacao
 ```
 
-Atualizar `src/App.tsx` para importar `Rotas` na rota `/rotas`.
+Atualizar `src/App.tsx` para trocar o placeholder `/pdv` pelo novo componente.
 
 ---
 
-### 1. Mock Data (`mockRotasData.ts`)
+### 1. Mock Data (`mockPdvData.ts`)
 
-Tipos: `RotaStatus = "pendente" | "em_rota" | "finalizada" | "concluida"`, `ParadaStatus = "pendente" | "entregue"`.
+**Categorias**: ~5 categorias (Lanches, Bebidas, Acai, Pizzas, Combos) com subcategorias.
 
-Interface `Parada`: pedido id, cliente, endereco, km, taxaEntrega, totalPedido, itens, formaPagamento, paradaStatus.
+**Produtos**: ~15 produtos com interface:
+- `id`, `nome`, `preco`, `categoriaId`, `subcategoriaId`, `imagem?`, `codigoBarras?`
+- `variantes[]`: array de `{ id, nome, preco }`. Se length === 1, adicao direta.
+- `comboConfig?`: `{ slots: number, desconto: number }` para kits.
 
-Interface `Rota`: id, entregadorId/nome/veiculo, paradas[], status, acaoAnterior, proximaAcao, tempoEstimado, kmTotal, bonificacao.
+**Clientes mock**: ~4 clientes com nome, telefone, apelido, enderecos[].
 
-Criar 4-5 rotas mock com status variados, reutilizando `entregadoresMock` do modulo 2.
+**Pedidos pendentes**: Reutilizar 2-3 do `pedidosMock` existente para popular a fila esquerda.
 
 ---
 
-### 2. Layout da Pagina (`Rotas.tsx`)
+### 2. Layout da Pagina (`PDV.tsx`)
 
-Mesmo pattern do `VisaoGeral.tsx`: sidebar colapsada via `useSidebar`, layout flex com 3 colunas (40%-20%-40%).
+Mesmo pattern: sidebar colapsada via `useSidebar`, layout flex 3 colunas (20%-50%-30%).
 
-Estado: `rotas[]`, `selectedRotaId`, geridos com `useState`.
-
-- **Coluna esquerda (40%)**: Kanban unico vertical com `RotaCard`s. Rotas ativas no topo, concluidas (cinza) embaixo.
-- **Coluna central (20%)**: `RotaDetalhes` da rota selecionada (ou placeholder "Selecione uma rota").
-- **Coluna direita (40%)**: Condicional por status:
-  - Nenhuma selecionada / Pendente / Em Rota: Mapa placeholder (reutilizar visual do `MapaRotas`).
-  - Finalizada: `RotaAcerto` (conferencia de pagamentos).
+Estado principal:
+- `filaPedidos[]` — pedidos pendentes na fila
+- `selectedPedidoId` — pedido carregado para edicao
+- `carrinho: ItemCarrinho[]` — itens do pedido atual
+- `activeTab: "identificacao" | "carrinho" | "pagamentos"`
+- `clienteSelecionado`, `modalidade`, `canalVenda`, `pagamentos[]`
 
 ---
 
 ### 3. Componentes
 
-**RotaCard**: Cabecalho com nome do entregador, acao anterior/proxima. Centro com mini-cards de pedidos rolando horizontal (`overflow-x-auto`), pedidos entregues ficam cinza. Rodape com badge de status colorido (pendente=amarelo, em_rota=azul, finalizada=laranja, concluida=cinza). Clicavel para selecionar.
+**FilaPedidos + FilaPedidoCard**: Lista vertical scrollavel com cards mostrando codigo, cliente, valor, modalidade, hora. Clicar carrega o pedido no carrinho da coluna direita.
 
-**RotaDetalhes**: Cabecalho com nome do entregador. Lista de pedidos verticais com: cliente, endereco, km, taxa, total. Cada pedido tem botao "expandir" (accordion) mostrando itens e observacoes. Rodape com metricas consolidadas (tempo estimado, km total).
+**Vitrine**: 
+- Topo: Input de busca + seletor de quantidade (counter +/-).
+- Abaixo: Categorias como pilulas horizontais (`overflow-x-auto`). Subcategorias aparecem ao selecionar uma categoria.
+- Grid de produtos: Cards em grid responsivo (3-4 colunas). Cada `ProdutoCard` mostra nome e preco.
+- Clique com 1 variante: adiciona direto ao carrinho com qty selecionada.
+- Clique com multiplas variantes: expande drawer inline abaixo do card mostrando variantes.
 
-**RotaTimeline**: Steps verticais com linha conectora. Icone por status da parada (check verde = entregue, clock amarelo = pendente). Usado dentro do RotaDetalhes.
+**ComboSlots**: Rodape condicional da vitrine. Aparece se a subcategoria selecionada tem kit/combo. Exibe linhas de slots (Slot 2, Slot 3) com produtos clicaveis. Quando todos slots preenchidos, aplica desconto automatico no carrinho.
 
-**RotaAcerto**: Lista de pedidos com forma de pagamento editavel (Select). Botao "Dar Baixa" por pedido. Ao dar baixa em todos, habilita botao "Concluir Rota" que muda status para "concluida", card fica cinza no Kanban.
+**Carrinho (3 abas)**:
+- Header fixo com 3 botoes [1. Identificacao] [2. Carrinho] [3. Pagamentos], aba ativa com destaque.
+- **AbaIdentificacao**: Botoes de canal (Balcao, WhatsApp, 99, iFood, App). Campo localizador condicional (99/iFood). Busca de cliente com resultados + botao "Novo Cliente". Modalidade (Entrega/Retirada). Lista de enderecos se entrega. Botao "Proximo".
+- **AbaCarrinho**: Lista de itens com +/- quantidade e lixeira. Estado vazio com placeholder. Logica de combo: remover item de kit desfaz desconto. Botao "Proximo".
+- **AbaPagamentos**: Demonstrativo (subtotal, desconto, taxa, total). Indicador "Falta R$ X". Botoes de fracao (1/3, Metade, Total). Input de valor + botoes de metodo (Dinheiro, Pix, Cartao, QR). Lista de pagamentos adicionados. Logica de troco para dinheiro. Regras de excedente (gorjeta) e faltante (desconto). Botao "Finalizar Pedido".
 
 ---
 
 ### 4. Interacoes (Frontend Only)
 
-- Clicar em RotaCard seleciona e preenche coluna central
-- Rota finalizada selecionada troca coluna direita para RotaAcerto
-- "Dar Baixa" individual marca parada como conferida (estado local)
-- "Concluir Rota" muda status para concluida, card fica cinza
-- Accordion para expandir detalhes de cada pedido na coluna central
+- Clicar card na fila carrega pedido existente no carrinho
+- Busca filtra produtos por nome/codigo
+- Categorias/subcategorias filtram a grade
+- Quantidade pre-selecionada no topo define qty ao adicionar
+- Drawer inline de variantes expande/colapsa abaixo do card
+- Combo: slots preenchidos aplicam desconto automatico
+- Remover item de combo desfaz desconto
+- Navegacao entre abas via botoes ou "Proximo"
+- Multi-pagamento: soma parcial atualiza "Falta" em tempo real
+- Dinheiro: dialog de troco com atalhos (+2, +5, +50)
+- Finalizar: verifica excedente/faltante, salva e limpa carrinho
 - Todos os estados via useState local
 
 ---
 
 ### Detalhes Tecnicos
 
-- Reutilizar `KanbanColumn`, `ScrollArea`, `Tabs`, `Select`, `Accordion` do shadcn
-- Cores dos status: pendente `bg-yellow-500/15`, em_rota `bg-blue-500/15`, finalizada `bg-orange-500/15`, concluida `bg-muted`
-- Card concluido: `opacity-60` + `bg-muted` para visual cinza
-- Mini-cards horizontais: `flex overflow-x-auto gap-2` com `min-w-[120px]` cada
+- Reutilizar `ScrollArea`, `Tabs`, `Select`, `Dialog`, `Button`, `Input`, `Badge` do shadcn
+- Grid de produtos: `grid grid-cols-3 gap-3` (ou `grid-cols-4` se couber)
+- Drawer de variantes: `Collapsible` do shadcn com animacao
+- Pilulas de categoria: `flex overflow-x-auto gap-2` com botoes `rounded-full`
+- Canais de venda: botoes com icones, estilo toggle group
+- Cores: canal ativo `bg-primary text-primary-foreground`, inativo `bg-muted`
 - Nenhuma dependencia nova necessaria
 
