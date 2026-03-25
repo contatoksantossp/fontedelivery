@@ -11,6 +11,7 @@ import VisaoGeral from "./pages/VisaoGeral";
 import Rotas from "./pages/Rotas";
 import Catalogo from "./pages/Catalogo";
 import Estoque from "./pages/Estoque";
+import Financeiro from "./pages/Financeiro";
 import { AppLayout } from "./layouts/AppLayout";
 import NotFound from "./pages/NotFound";
 
@@ -31,7 +32,7 @@ const App = () => (
             <Route path="/rotas" element={<Rotas />} />
             <Route path="/catalogo" element={<Catalogo />} />
             <Route path="/estoque" element={<Estoque />} />
-            <Route path="/financeiro" element={<PlaceholderPage title="Financeiro" />} />
+            <Route path="/financeiro" element={<Financeiro />} />
             <Route path="/cupons" element={<PlaceholderPage title="Cupons e Promoções" />} />
             <Route path="/parceiros" element={<PlaceholderPage title="Parceiros" />} />
             <Route path="/configuracoes" element={<PlaceholderPage title="Configurações" />} />
