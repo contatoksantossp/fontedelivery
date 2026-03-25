@@ -1,101 +1,93 @@
 
 
-## Modulo 4: PDV (Ponto de Venda) — Plano de Implementacao
+## Modulo 5: Catalogo — Plano de Implementacao
 
 ### Arquivos
 
 ```text
-src/pages/PDV.tsx                              — Pagina principal (layout 3 colunas: 20/50/30)
-src/components/pdv/
-  mockPdvData.ts                               — Produtos, categorias, clientes mock
-  FilaPedidos.tsx                               — Coluna esquerda: lista de pedidos pendentes
-  FilaPedidoCard.tsx                            — Card individual na fila
-  Vitrine.tsx                                   — Coluna central: busca + categorias + grid de produtos
-  ProdutoCard.tsx                               — Card de produto na grade (com drawer de variantes)
-  ComboSlots.tsx                                — Rodape da vitrine: slots de combo/kit
-  Carrinho.tsx                                  — Coluna direita: sistema de abas (3 passos)
-  AbaIdentificacao.tsx                          — Aba 1: canal, cliente, modalidade, endereco
-  AbaCarrinho.tsx                               — Aba 2: itens do pedido, qty, remocao
-  AbaPagamentos.tsx                             — Aba 3: multi-pagamento, troco, finalizacao
+src/pages/Catalogo.tsx                         — Pagina principal (cascata: categorias > subcategorias > produtos)
+src/components/catalogo/
+  mockCatalogoData.ts                          — Dados mock estendidos (categorias, subcategorias, produtos com variantes completas, kits)
+  CategoriaCard.tsx                            — Card grande de categoria (foto, nome, editar, excluir)
+  SubcategoriaCard.tsx                         — Card pilula de subcategoria
+  ProdutoPaiCard.tsx                           — Card de produto pai com variantes horizontais
+  VarianteCard.tsx                             — Card menor de variante individual
+  CategoriaDialog.tsx                          — Dialog para criar/editar categoria
+  SubcategoriaDialog.tsx                       — Dialog para criar/editar subcategoria
+  ProdutoDialog.tsx                            — Dialog para criar/editar produto + variantes
+  KitComboDialog.tsx                           — Dialog para criar/editar kit/combo com slots de subcategorias
+  KitComboCard.tsx                             — Card de kit/combo na aba separada
 ```
 
-Atualizar `src/App.tsx` para trocar o placeholder `/pdv` pelo novo componente.
+Atualizar `src/App.tsx` para trocar o placeholder `/catalogo` pelo novo componente.
 
 ---
 
-### 1. Mock Data (`mockPdvData.ts`)
+### 1. Mock Data (`mockCatalogoData.ts`)
 
-**Categorias**: ~5 categorias (Lanches, Bebidas, Acai, Pizzas, Combos) com subcategorias.
+Interfaces estendidas do PDV com campos adicionais para gestao:
 
-**Produtos**: ~15 produtos com interface:
-- `id`, `nome`, `preco`, `categoriaId`, `subcategoriaId`, `imagem?`, `codigoBarras?`
-- `variantes[]`: array de `{ id, nome, preco }`. Se length === 1, adicao direta.
-- `comboConfig?`: `{ slots: number, desconto: number }` para kits.
+- **CatalogCategoria**: id, nome, descricao, imagem (placeholder URL), ativo (boolean)
+- **CatalogSubcategoria**: id, nome, descricao, imagem, ativo, categoriaId
+- **CatalogProduto**: id, nome, descricao, foto, destaque (boolean), subcategoriaId, categoriaId
+- **CatalogVariante**: id, nome, descricao, foto, tags[], sku, custo, valorVenda, estoqueMinimo, produtoId
+- **KitCombo**: id, nome, imagem, ativo, tipo ("kit"|"combo"), tipoDesconto ("%"|"R$"), valorDesconto, subcategoriaVinculo, slots[] (cada slot = subcategoriaId + nome)
 
-**Clientes mock**: ~4 clientes com nome, telefone, apelido, enderecos[].
-
-**Pedidos pendentes**: Reutilizar 2-3 do `pedidosMock` existente para popular a fila esquerda.
+Dados mock: reutilizar as 5 categorias do PDV, expandir com campos extras. ~8 produtos com 2-3 variantes cada. 2 kits mock.
 
 ---
 
-### 2. Layout da Pagina (`PDV.tsx`)
+### 2. Layout da Pagina (`Catalogo.tsx`)
 
-Mesmo pattern: sidebar colapsada via `useSidebar`, layout flex 3 colunas (20%-50%-30%).
+Sidebar colapsada via `useSidebar`. Pagina unica fluida com navegacao em cascata:
 
-Estado principal:
-- `filaPedidos[]` — pedidos pendentes na fila
-- `selectedPedidoId` — pedido carregado para edicao
-- `carrinho: ItemCarrinho[]` — itens do pedido atual
-- `activeTab: "identificacao" | "carrinho" | "pagamentos"`
-- `clienteSelecionado`, `modalidade`, `canalVenda`, `pagamentos[]`
+- **Nivel 1 — Categorias**: Rolagem horizontal de `CategoriaCard`s grandes + botao "Nova Categoria"
+- **Nivel 2 — Subcategorias**: Aparece abaixo ao clicar categoria. Rolagem horizontal de pilulas `SubcategoriaCard` + botao "Nova Subcategoria"
+- **Nivel 3 — Produtos**: Aparece abaixo ao clicar subcategoria. Lista vertical de `ProdutoPaiCard` com variantes em rolagem horizontal. Botao "Adicionar Novo Produto" fixo no topo.
+- **Aba separada (Tabs)**: Toggle "Produtos" / "Kits e Combos" no topo da pagina. A aba Kits exibe cards de kits/combos com filtros Kit/Combo.
+
+Estado: `selectedCategoriaId`, `selectedSubcategoriaId`, `categorias[]`, `produtos[]`, `kits[]`, etc.
 
 ---
 
 ### 3. Componentes
 
-**FilaPedidos + FilaPedidoCard**: Lista vertical scrollavel com cards mostrando codigo, cliente, valor, modalidade, hora. Clicar carrega o pedido no carrinho da coluna direita.
+**CategoriaCard**: Card grande com imagem placeholder, nome, botoes "Editar" e "Excluir". Clicavel para selecionar e revelar subcategorias.
 
-**Vitrine**: 
-- Topo: Input de busca + seletor de quantidade (counter +/-).
-- Abaixo: Categorias como pilulas horizontais (`overflow-x-auto`). Subcategorias aparecem ao selecionar uma categoria.
-- Grid de produtos: Cards em grid responsivo (3-4 colunas). Cada `ProdutoCard` mostra nome e preco.
-- Clique com 1 variante: adiciona direto ao carrinho com qty selecionada.
-- Clique com multiplas variantes: expande drawer inline abaixo do card mostrando variantes.
+**SubcategoriaCard**: Pilula horizontal com icone/foto e nome. Botoes editar/excluir. Clicavel para revelar produtos.
 
-**ComboSlots**: Rodape condicional da vitrine. Aparece se a subcategoria selecionada tem kit/combo. Exibe linhas de slots (Slot 2, Slot 3) com produtos clicaveis. Quando todos slots preenchidos, aplica desconto automatico no carrinho.
+**ProdutoPaiCard**: Card maior com foto, nome, descricao, estrela de destaque (toggle), botoes editar/excluir. Variantes rolam horizontalmente ao lado/abaixo.
 
-**Carrinho (3 abas)**:
-- Header fixo com 3 botoes [1. Identificacao] [2. Carrinho] [3. Pagamentos], aba ativa com destaque.
-- **AbaIdentificacao**: Botoes de canal (Balcao, WhatsApp, 99, iFood, App). Campo localizador condicional (99/iFood). Busca de cliente com resultados + botao "Novo Cliente". Modalidade (Entrega/Retirada). Lista de enderecos se entrega. Botao "Proximo".
-- **AbaCarrinho**: Lista de itens com +/- quantidade e lixeira. Estado vazio com placeholder. Logica de combo: remover item de kit desfaz desconto. Botao "Proximo".
-- **AbaPagamentos**: Demonstrativo (subtotal, desconto, taxa, total). Indicador "Falta R$ X". Botoes de fracao (1/3, Metade, Total). Input de valor + botoes de metodo (Dinheiro, Pix, Cartao, QR). Lista de pagamentos adicionados. Logica de troco para dinheiro. Regras de excedente (gorjeta) e faltante (desconto). Botao "Finalizar Pedido".
+**VarianteCard**: Card menor com foto, nome, preco, SKU. Botoes editar/excluir proprios.
+
+**CategoriaDialog / SubcategoriaDialog**: Dialog com campos de imagem (input URL), nome, descricao, status ativo/inativo (Switch).
+
+**ProdutoDialog**: Dialog com duas secoes — produto pai (foto, nome, descricao) e secao de variantes abaixo (foto, nome, tags, SKU, custo, valor venda, estoque minimo). Botao "+ Variante" para adicionar linhas.
+
+**KitComboDialog**: Dialog com nome, imagem, status, tipo de desconto e valor. Seletor de subcategoria vinculo. Secao de slots onde cada slot aponta para uma subcategoria (Select).
+
+**KitComboCard**: Card com nome, imagem, tipo (badge), desconto, status. Botoes editar/excluir.
 
 ---
 
 ### 4. Interacoes (Frontend Only)
 
-- Clicar card na fila carrega pedido existente no carrinho
-- Busca filtra produtos por nome/codigo
-- Categorias/subcategorias filtram a grade
-- Quantidade pre-selecionada no topo define qty ao adicionar
-- Drawer inline de variantes expande/colapsa abaixo do card
-- Combo: slots preenchidos aplicam desconto automatico
-- Remover item de combo desfaz desconto
-- Navegacao entre abas via botoes ou "Proximo"
-- Multi-pagamento: soma parcial atualiza "Falta" em tempo real
-- Dinheiro: dialog de troco com atalhos (+2, +5, +50)
-- Finalizar: verifica excedente/faltante, salva e limpa carrinho
-- Todos os estados via useState local
+- Clicar categoria revela subcategorias (scroll horizontal)
+- Clicar subcategoria revela produtos (scroll vertical)
+- CRUD completo via dialogs: criar, editar, excluir (com confirmacao AlertDialog)
+- Estrela de destaque toggle no produto pai
+- Excluir com AlertDialog de confirmacao
+- Aba Kits/Combos com filtro toggle
+- Todos os estados via useState local, CRUD opera sobre arrays em memoria
 
 ---
 
 ### Detalhes Tecnicos
 
-- Reutilizar `ScrollArea`, `Tabs`, `Select`, `Dialog`, `Button`, `Input`, `Badge` do shadcn
-- Grid de produtos: `grid grid-cols-3 gap-3` (ou `grid-cols-4` se couber)
-- Drawer de variantes: `Collapsible` do shadcn com animacao
-- Pilulas de categoria: `flex overflow-x-auto gap-2` com botoes `rounded-full`
-- Canais de venda: botoes com icones, estilo toggle group
-- Cores: canal ativo `bg-primary text-primary-foreground`, inativo `bg-muted`
+- Reutilizar `ScrollArea`, `Dialog`, `AlertDialog`, `Button`, `Input`, `Switch`, `Select`, `Badge`, `Tabs` do shadcn
+- Categorias: `flex overflow-x-auto gap-4` com cards ~200px largura
+- Subcategorias: `flex overflow-x-auto gap-2` com pilulas `rounded-full`
+- Variantes: `flex overflow-x-auto gap-3` dentro do card do produto pai
+- Animacao de cascata: transicao suave ao revelar niveis (CSS transition ou condicional render)
 - Nenhuma dependencia nova necessaria
 
