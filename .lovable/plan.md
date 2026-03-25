@@ -1,86 +1,69 @@
 
 
-## Modulo 7: Financeiro — Plano de Implementacao
+## Modulo 8: Cupons e Promocoes — Plano de Implementacao
 
 ### Arquivos
 
 ```text
-src/pages/Financeiro.tsx                       — Pagina principal com 3 abas (Caixa, Resumo, Extrato)
-src/components/financeiro/
-  mockFinanceiroData.ts                        — Dados mock: caixa, entregadores, transacoes, vendas diarias
-  AbaCaixa.tsx                                 — Aba 1: gestao da gaveta + acerto de entregadores
-  AbaResumo.tsx                                — Aba 2: dashboards diario/semanal/mensal com graficos
-  AbaExtrato.tsx                               — Aba 3: livro razao com filtros e lancamentos manuais
-  LancamentoDialog.tsx                         — Dialog para criar lancamento manual (entrada/saida)
-  EntregadorAcerto.tsx                         — Card expansivel de acerto por entregador
+src/pages/CuponsPromocoes.tsx                  — Pagina principal com 2 abas (Cupons, Promocoes e Banners)
+src/components/cupons/
+  mockCuponsData.ts                            — Dados mock: cupons, promocoes/banners
+  AbaCupons.tsx                                — Aba 1: tabela de cupons + dialog de criacao
+  CupomDialog.tsx                              — Dialog para criar/editar cupom
+  AbaPromocoes.tsx                             — Aba 2: grade de cards de banners/promocoes
+  PromocaoDialog.tsx                           — Dialog hibrido para criar/editar promocao/banner
 ```
 
-Atualizar `src/App.tsx` para trocar o placeholder `/financeiro` pelo novo componente.
+Atualizar `src/App.tsx` para trocar o placeholder `/cupons` pelo novo componente.
 
 ---
 
-### 1. Mock Data (`mockFinanceiroData.ts`)
+### 1. Mock Data (`mockCuponsData.ts`)
 
-- **CaixaState**: status (`aberto`|`fechado`), fundoInicial, entradas, saidas, saldoEsperado, ultimoFechamento (data, total)
-- **EntregadorTurno**: id, nome, veiculo, entregas, totalTaxas, totalBonificacoes, diaria, extras[] ({valor, descricao}), pago (boolean)
-- **Transacao**: id, dataHora, descricao, tipo (`entrada`|`saida`), metodo (`dinheiro`|`pix`|`cartao`|`qrcode`), valor, origem (`venda`|`acerto`|`sangria`|`reforco`|`manual`)
-- **VendaDiaria**: data, vendasBruto, receitaReal, despesas, resultado, pedidos, ticketMedio
-- **TopProduto**: nome, unidades, valorTotal, lucro
+- **Cupom**: id, codigo, tipo (`percentual` | `fixo`), valor, pedidoMinimo, totalUsos, expiracao (date string), ativo (boolean)
+- **PromocaoBanner**: id, nome, descricao, imagemUrl (placeholder gradient/cor), tipoDesconto (`percentual` | `fixo` | `nenhum`), valorDesconto, ativo, produtos[] ({produtoNome, varianteNome, precoOriginal, precoFinal}), ordem (number)
 
-Mock: caixa aberto com fundo R$500, ~3 entregadores do turno, ~25 transacoes, 30 dias de vendas diarias, top 10 produtos.
+Mock: ~6 cupons (PRIMEIRACOMPRA, FRETE10, VERAO25, etc.) e ~4 banners/promocoes (Festival de Cervejas, Noite do Whisky, Banner Informativo Horario, Combo Churrasco).
 
 ---
 
-### 2. Regra do "Olho Magico"
+### 2. Aba Cupons (`AbaCupons.tsx`)
 
-Componente helper `ValorOculto`: recebe valor string, renderiza `R$ ****` por padrao. Icone de olho ao lado que alterna visibilidade. Estado local por instancia.
+- **Botao "Novo Cupom"** no topo, abre `CupomDialog`
+- **Tabela**: Colunas: Codigo, Tipo (Badge % ou R$), Valor, Pedido Minimo, Usos, Expiracao, Status (Switch toggle ativo/inativo)
+- Switch inline alterna `ativo` diretamente na tabela
 
----
+### 3. CupomDialog
 
-### 3. Aba Caixa (`AbaCaixa.tsx`)
-
-**Gestao da Gaveta (topo)**:
-- Estado fechado: aviso + resumo ultimo caixa + input fundo inicial + botao "Abrir Caixa"
-- Estado aberto: 4 cards (Fundo Inicial, Entradas, Saidas, Saldo Esperado) com valores ocultos
-- Botoes: "Sangria/Reforco" (dialog com tipo toggle + valor + descricao) e "Fechar Caixa" (dialog de contagem)
-
-**Acerto de Entregadores (abaixo)**:
-- Lista de `EntregadorAcerto` cards
-- Cada card: nome, veiculo, saldo total. Expansivel ao clicar
-- Expandido: metricas (entregas, taxas, bonificacoes) + inputs (diaria, extras com add/remove) + botao "Registrar"
+- Campos: Codigo (Input uppercase), Tipo de Desconto (toggle % / R$), Valor, Pedido Minimo, Data de Validade
+- Modo criacao e edicao (recebe cupom opcional como prop)
 
 ---
 
-### 4. Aba Resumo (`AbaResumo.tsx`)
+### 4. Aba Promocoes e Banners (`AbaPromocoes.tsx`)
 
-Sub-abas: Diario | Semanal | Mensal
+- **Botao "Nova Promocao/Banner"** no topo
+- **Grade de cards** (grid 1-2 colunas): cada card exibe:
+  - Area colorida/gradiente simulando banner (sem imagem real, usar div com gradiente)
+  - Nome da campanha, descricao, tipo de desconto (Badge)
+  - Lista de produtos vinculados com preco riscado + preco novo (se houver)
+  - Botao editar (Pencil) + Switch de status ativo/inativo
 
-**Diario**: Cards operacionais (pedidos aberto/pendente/pronto/entrega) + 4 cards financeiros (Vendas Bruto, Receita, Despesas, Resultado) com olho magico + Top 10 produtos + Recebimentos por metodo
+### 5. PromocaoDialog
 
-**Semanal**: Grafico de barras (recharts) dos ultimos 7 dias, clicavel para drill-down. Mesmos cards financeiros adaptados. Sem bloco operacional.
-
-**Mensal**: Mesma logica, 30 dias no grafico.
-
----
-
-### 5. Aba Extrato (`AbaExtrato.tsx`)
-
-**Painel de Saldos (topo)**: 3 cards com olho magico (Saldo Total, Saldo Dinheiro, Saldo Contas)
-
-**Botao "Lancar"**: Abre `LancamentoDialog` com tipo (entrada/saida toggle), valor, metodo (select), descricao
-
-**Tabela de transacoes**: Data/Hora, Descricao, Tipo (badge verde/vermelho), Metodo, Valor (com olho magico). Filtros: metodo, tipo, periodo. Paginacao "Carregar Mais" de 20 em 20.
+- **Configuracao do Banner**: Nome, descricao, area de "upload" (simulada com placeholder)
+- **Configuracao de Desconto**: Toggle entre Percentual / Valor Fixo / Nenhum. Se "Nenhum", oculta secao de produtos
+- **Vinculo de Produtos**: Select com busca para adicionar produtos do catalogo. Calculo automatico do preco final exibido em tempo real
+- Botao "Publicar no Carrossel"
 
 ---
 
 ### Detalhes Tecnicos
 
-- Dependencia nova: `recharts` para graficos de barras/linhas (semanal/mensal)
-- Reutilizar `Tabs`, `Table`, `Dialog`, `Badge`, `Button`, `Input`, `Select` do shadcn
-- `ValorOculto` como componente inline reutilizavel com `Eye`/`EyeOff` do lucide
-- MetricCards existentes reutilizados onde possivel
-- Graficos recharts: `BarChart` com `Bar`, `XAxis`, `YAxis`, `Tooltip`, `CartesianGrid`
-- Clique no grafico via `onClick` no `Bar` component para filtrar drill-down
-- Entregadores reutilizam nomes do `mockRotasData.ts` para consistencia
-- Todos os estados via useState local, sem backend
+- Reutilizar `Tabs`, `Table`, `Dialog`, `Badge`, `Button`, `Input`, `Select`, `Switch` do shadcn
+- Importar produtos/variantes do `mockCatalogoData.ts` para o seletor de vinculo
+- Sidebar colapsa via `useSidebar` (padrao dos outros modulos)
+- Gradientes nos cards simulam banners (ex: `bg-gradient-to-r from-orange-500 to-red-500`)
+- Nenhuma dependencia nova necessaria
+- Todos os estados via useState local
 
