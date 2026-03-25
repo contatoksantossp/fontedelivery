@@ -10,6 +10,7 @@ import PDV from "./pages/PDV";
 import VisaoGeral from "./pages/VisaoGeral";
 import Rotas from "./pages/Rotas";
 import Catalogo from "./pages/Catalogo";
+import Estoque from "./pages/Estoque";
 import { AppLayout } from "./layouts/AppLayout";
 import NotFound from "./pages/NotFound";
 
@@ -29,7 +30,7 @@ const App = () => (
             <Route path="/pdv" element={<PDV />} />
             <Route path="/rotas" element={<Rotas />} />
             <Route path="/catalogo" element={<Catalogo />} />
-            <Route path="/estoque" element={<PlaceholderPage title="Estoque" />} />
+            <Route path="/estoque" element={<Estoque />} />
             <Route path="/financeiro" element={<PlaceholderPage title="Financeiro" />} />
             <Route path="/cupons" element={<PlaceholderPage title="Cupons e Promoções" />} />
             <Route path="/parceiros" element={<PlaceholderPage title="Parceiros" />} />
