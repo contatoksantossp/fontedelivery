@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import PlaceholderPage from "./pages/PlaceholderPage";
+import PDV from "./pages/PDV";
 import VisaoGeral from "./pages/VisaoGeral";
 import Rotas from "./pages/Rotas";
 import { AppLayout } from "./layouts/AppLayout";
