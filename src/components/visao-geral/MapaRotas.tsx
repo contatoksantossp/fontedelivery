@@ -21,7 +21,7 @@ export function MapaRotas({ pedidosProntos, expandedSlot, onExpandSlot, onCollap
       </div>
 
       {/* Slots de Rota */}
-      <div className="space-y-2">
+      <div className="grid grid-cols-2 gap-2">
         {[0, 1].map((i) => (
           <SlotRota
             key={i}
