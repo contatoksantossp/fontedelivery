@@ -7,6 +7,7 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import PlaceholderPage from "./pages/PlaceholderPage";
 import VisaoGeral from "./pages/VisaoGeral";
+import Rotas from "./pages/Rotas";
 import { AppLayout } from "./layouts/AppLayout";
 import NotFound from "./pages/NotFound";
 
@@ -24,7 +25,7 @@ const App = () => (
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/visao-geral" element={<VisaoGeral />} />
             <Route path="/pdv" element={<PlaceholderPage title="PDV — Ponto de Venda" />} />
-            <Route path="/rotas" element={<PlaceholderPage title="Rotas e Logística" />} />
+            <Route path="/rotas" element={<Rotas />} />
             <Route path="/catalogo" element={<PlaceholderPage title="Catálogo" />} />
             <Route path="/estoque" element={<PlaceholderPage title="Estoque" />} />
             <Route path="/financeiro" element={<PlaceholderPage title="Financeiro" />} />
