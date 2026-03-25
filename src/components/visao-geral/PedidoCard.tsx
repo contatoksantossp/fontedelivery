@@ -3,6 +3,7 @@ import { Clock, X, Check, Truck, MapPin, Route } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 interface PedidoCardProps {
   pedido: Pedido;
