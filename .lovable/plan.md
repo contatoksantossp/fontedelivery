@@ -1,46 +1,71 @@
 
 
-## Plano: Atualizar todos os mocks para Bebidas, Adega, Tabacaria, Conveniencia e Mercearia
+## Modulo 6: Estoque — Plano de Implementacao
 
-### Escopo
-
-4 arquivos de mock data + Dashboard precisam ser atualizados para refletir o negocio real do usuario.
-
-### Novas Categorias e Subcategorias
+### Arquivos
 
 ```text
-cat1: Bebidas        → Refrigerantes, Sucos, Energeticos, Agua
-cat2: Adega          → Cervejas, Vinhos, Destilados, Espumantes
-cat3: Tabacaria      → Cigarros, Seda/Papel, Essencias, Acessorios
-cat4: Conveniencia   → Snacks, Sorvetes, Doces, Descartaveis
-cat5: Mercearia      → Carvao/Gelo, Enlatados, Biscoitos, Higiene
+src/pages/Estoque.tsx                          — Pagina principal com 3 abas (Posicao Atual, Historico, Fila de Espera)
+src/components/estoque/
+  mockEstoqueData.ts                           — Dados mock: saldos, movimentacoes, fila de espera
+  PosicaoAtual.tsx                             — Aba 1: dashboard + filtros + tabela com edicao inline
+  Historico.tsx                                — Aba 2: filtros de auditoria + tabela de movimentacoes
+  FilaEspera.tsx                               — Aba 3: lista de clientes aguardando reposicao
 ```
 
-### Produtos (~15-18 produtos com variantes realistas)
+Atualizar `src/App.tsx` para trocar o placeholder `/estoque` pelo novo componente.
 
-- **Bebidas**: Coca-Cola (350ml/600ml/2L), Guarana Antarctica (350ml/2L), Red Bull (250ml/473ml), Agua Mineral (500ml/1.5L)
-- **Adega**: Skol Lata, Heineken Long Neck, Brahma Litrao, Vinho Tinto Reservado, Absolut Vodka
-- **Tabacaria**: Marlboro Box, Seda Smoking, Essencia Narguile, Isqueiro BIC
-- **Conveniencia**: Doritos, Trident, Picole Kibon, Copo Descartavel
-- **Mercearia**: Carvao 4kg, Gelo 5kg, Atum Lata, Biscoito Cream Cracker
+---
 
-### Arquivos a Editar
+### 1. Mock Data (`mockEstoqueData.ts`)
 
-1. **`src/components/catalogo/mockCatalogoData.ts`** — Categorias, subcategorias, produtos, variantes e kits/combos todos do novo dominio
-2. **`src/components/pdv/mockPdvData.ts`** — Mesmas categorias/produtos adaptados ao formato PDV. Pedidos da fila com itens do novo dominio
-3. **`src/components/visao-geral/mockData.ts`** — Pedidos mock com itens de bebidas, adega, tabacaria, etc.
-4. **`src/components/rotas/mockRotasData.ts`** — Paradas/itens das rotas com produtos do novo dominio
-5. **`src/pages/Dashboard.tsx`** — `quickCountItems` ja esta parcialmente correto (Skol, Brahma, Carvao), ajustar os restantes
+Reutiliza tipos do catalogo (`CatalogVariante`, `CatalogProduto`) para montar os saldos. Dados proprios:
 
-### Kits/Combos adaptados
+- **EstoqueItem**: varianteId, produtoNome, varianteNome, sku, estoqueMinimo, estoqueAtual, categoriaId, subcategoriaId. Gerado a partir das ~30 variantes do catalogo, com saldos variados (alguns zerados, alguns abaixo do minimo).
+- **Movimentacao**: id, dataHora, produtoNome, varianteNome, tipo (`"entrada" | "saida" | "perda" | "correcao"`), quantidade (com sinal), saldoFinal. ~15 registros mock.
+- **FilaEsperaItem**: id, clienteNome, varianteNome, dataSolicitacao, contato. ~5 registros mock referenciando variantes esgotadas.
 
-- "Kit Churrasco" (Carvao + Gelo + Cerveja)
-- "Combo Happy Hour" (Destilado + Energetico + Gelo)
+---
+
+### 2. Layout da Pagina (`Estoque.tsx`)
+
+Sidebar colapsada via `useSidebar`. Pagina com `Tabs` no topo: `[Posicao Atual] [Historico] [Fila de Espera]`. Cada aba renderiza seu componente dedicado.
+
+Estado principal gerenciado em `Estoque.tsx`:
+- `estoqueItems[]` — saldos de todas variantes (mutavel para edicao inline)
+- `movimentacoes[]` — log de movimentacoes (cresce ao ajustar saldo)
+- `filaEspera[]` — lista de clientes aguardando
+
+Callbacks passados para `PosicaoAtual`: `onAjustarSaldo(varianteId, delta)` e `onEditarMinimo(varianteId, novoMin)` que atualizam o array e adicionam movimentacao ao historico.
+
+---
+
+### 3. Componentes
+
+**PosicaoAtual**:
+- **Dashboard**: 3 MetricCards (Total Produtos, Estoque Baixo, Esgotados) calculados a partir dos dados
+- **Filtros**: Input de busca + Select cascata (Categoria > Subcategoria > Todos)
+- **Tabela**: Colunas: Produto, Variante, Estoque Minimo (clicavel para editar), Estoque Atual, Status (Badge verde/amarelo/vermelho), Acoes (+/- botoes para ajuste rapido)
+- Edicao inline do minimo via input que aparece ao clicar no valor
+- Botoes +/- disparam `onAjustarSaldo` e criam movimentacao tipo "correcao"
+
+**Historico**:
+- **Filtros**: DatePicker (periodo), Select categoria/subcategoria, Select produto
+- **Tabela**: Colunas: Data/Hora, Produto, Variante, Tipo (Badge colorido), Quantidade (+/-), Saldo Final
+- Badges: Entrada (verde), Saida (azul), Perda (vermelho), Correcao (cinza)
+
+**FilaEspera**:
+- **Tabela simples**: Colunas: Cliente, Variante Desejada, Data Solicitacao, Contato (telefone/WhatsApp)
+- Estado vazio com placeholder se nao houver registros
+
+---
 
 ### Detalhes Tecnicos
 
-- Manter todos os IDs (`cat1`, `sub1a`, `p1`, `v1`, etc.) consistentes entre os 4 arquivos
-- Interfaces e tipos nao mudam, apenas os dados mock
-- Precos realistas de conveniencia/adega brasileira
-- SKUs coerentes (ex: `SKL-350`, `HNK-LN`, `MRL-BOX`)
+- Reutilizar `Tabs`, `Table`, `Input`, `Select`, `Badge`, `Button` do shadcn
+- Importar categorias/subcategorias do `mockCatalogoData.ts` para filtros cascata
+- MetricCards reutilizam componente `MetricCard` existente
+- Tabelas usam componentes `Table` do shadcn (TableHeader, TableBody, TableRow, TableCell)
+- Edicao inline do minimo: estado local `editingMinId` controla qual celula esta em modo edicao
+- Nenhuma dependencia nova necessaria
 
