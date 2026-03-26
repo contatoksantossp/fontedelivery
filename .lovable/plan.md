@@ -1,28 +1,22 @@
 
 
-## Fornecedores: scroll horizontal + histórico com filtros e itens expandíveis
+## Acerto de Entregadores: novo fluxo
 
-### Mudanças
+### Conceito
+Taxas já são acumuladas automaticamente conforme pedidos são finalizados. No acerto de fim de turno, o gestor só precisa definir a diária e adicionais (chuva, bonificação, etc.).
 
-**1. Layout horizontal**
-- Trocar `grid grid-cols-1 md:grid-cols-2` por `flex overflow-x-auto gap-4 pb-2`
-- Cada card com `w-[340px] flex-shrink-0`
+### Mudanças no card colapsado (header)
+- Mostrar resumo: taxas acumuladas + bonificações de rota + qtd entregas
+- Exemplo: `R$ 85,00 em taxas · R$ 12,00 bonificações · 8 entregas`
+- Total à direita continua sendo taxas + bonificações + diária + extras
 
-**2. Histórico com filtros de período**
-- Adicionar estado de filtro por fornecedor: `7d`, `30d`, `12m`, `intervalo`
-- Botões de filtro rápido (7 dias, 30 dias, 12 meses) como grupo de toggles acima da tabela
-- Filtro por intervalo de datas com dois DatePickers (de/até) usando Popover+Calendar
-- Filtrar `f.historico` pela data antes de renderizar
-
-**3. Pedidos expandíveis**
-- Atualizar `HistoricoCompra` no mock para incluir campo `itens: { nome: string; qtd: number; valorUnit: number }[]`
-- Cada linha do histórico vira um `Collapsible` — ao clicar expande e mostra os itens comprados em sub-lista
-- Adicionar ícone ChevronRight que rotaciona ao expandir
-
-### Mock data
-- Adicionar `itens` nos registros existentes de `fornecedoresMock`
+### Mudanças no card expandido
+- Remover o grid de 3 colunas (Taxas/Bonificações/Entregas) — essa info já está no header
+- Manter apenas:
+  1. Input de **Diária** com label
+  2. Seção **Adicionais** (renomear de "Extras") com botão Adicionar — cada linha tem descrição (ex: "Adicional chuva") + valor
+  3. Separador + linha de **Total** + botão Registrar Acerto
 
 ### Arquivos editados
-- `src/components/parceiros/mockParceirosData.ts` — interface `HistoricoCompra` + itens nos mocks
-- `src/components/parceiros/AbaFornecedores.tsx` — layout horizontal, filtros de data, linhas expandíveis
+- `src/components/financeiro/EntregadorAcerto.tsx` — reestruturar header e conteúdo expandido
 
