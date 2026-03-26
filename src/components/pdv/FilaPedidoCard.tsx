@@ -2,6 +2,7 @@ import { PedidoFila } from "./mockPdvData";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { Truck, MapPin, Banknote, QrCode, CreditCard } from "lucide-react";
+import { PedidoRastreio } from "@/components/PedidoRastreio";
 
 interface FilaPedidoCardProps {
   pedido: PedidoFila;
@@ -78,6 +79,11 @@ export function FilaPedidoCard({ pedido, selected, onSelect }: FilaPedidoCardPro
             <Icon key={idx} className="h-3 w-3 text-muted-foreground" />
           ))}
         </div>
+      </div>
+
+      {/* Rastreio */}
+      <div className="border-t border-border/50 mt-1.5 pt-1.5">
+        <PedidoRastreio status="rascunho" criadoEm={pedido.criadoEm} />
       </div>
     </button>
   );
