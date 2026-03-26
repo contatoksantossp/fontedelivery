@@ -1,27 +1,13 @@
 
 
-## Duas mudanças no PromocaoDialog
+## Scroll horizontal para cards de promoções
 
-### 1. Banner: trocar gradiente por upload de imagem
-- Substituir o `<div>` com gradiente (linha 107-109) pelo componente `BannerUpload` igual ao do `KitComboDialog` (botão clicável com preview da imagem, overlay de upload no hover)
-- Adicionar estado `imagem` ao dialog, inicializado com `"/placeholder.svg"`
-- Remover o array `gradientes` e o estado/select de `gradiente`
-- Atualizar `PromocaoBanner` no `mockCuponsData.ts`: trocar campo `gradiente: string` por `imagem: string`
-- Atualizar `AbaPromocoes.tsx`: trocar o `<div>` com gradiente pelo `<img>` usando `p.imagem`
-- Atualizar mock data com `/placeholder.svg`
-- Atualizar `handleSalvar` para enviar `imagem` em vez de `gradiente`
+### O que muda
+- Trocar o grid vertical (`grid grid-cols-1 lg:grid-cols-2`) por um container com scroll horizontal (`flex overflow-x-auto`)
+- Cada card ganha largura fixa (~380px) e `flex-shrink-0` para não comprimir
+- Cards ficam lado a lado, rolando horizontalmente
+- Altura dos cards fica livre (sem limitar), permitindo listar muitos produtos para baixo
 
-### 2. Vincular Produtos: trocar Select por busca com autocomplete
-- Remover o `<Select>` + botão `<Plus>` (linhas 153-165)
-- Adicionar estado `buscaProduto` (string) e lógica de filtragem
-- Colocar um `<Input>` com placeholder "Buscar produto..."
-- Ao digitar, filtrar `variantesDisponiveis` com `.filter()` + `.slice(0, 3)` para mostrar no máximo 3 resultados
-- Exibir resultados como lista clicável abaixo do input (div com border, rounded)
-- Ao clicar num resultado, adicionar o produto e limpar o input
-- Remover imports de `Select`, `SelectContent`, `SelectItem`, `SelectTrigger`, `SelectValue`
-
-### Arquivos editados
-- `src/components/cupons/mockCuponsData.ts` — tipo + mock
-- `src/components/cupons/PromocaoDialog.tsx` — banner upload + busca
-- `src/components/cupons/AbaPromocoes.tsx` — exibir imagem no card
+### Arquivo editado
+- `src/components/cupons/AbaPromocoes.tsx` — linha 56: trocar `div.grid` por `div.flex overflow-x-auto gap-4 pb-2` e adicionar `w-[380px] flex-shrink-0` em cada Card
 
