@@ -1,38 +1,33 @@
 
 
-## Redesign da visualizacao de produtos no Catalogo
+## Mover botões Edit/Delete para baixo do card de categoria
 
-### O que muda
+### Problema
+Os botões de editar/excluir ficam como overlay no meio da imagem, bloqueando o clique de seleção da categoria.
 
-**1. Cards de Categoria maiores** (`CategoriaCard.tsx`)
-- Container: `w-20` → `w-24`
-- Imagem: `h-14 w-14` → `h-16 w-16`
-- Texto: `text-[10px]` → `text-[11px]`
-- Botoes de hover tambem ligeiramente maiores
+### Solução
+Remover o overlay da imagem e colocar os botões **abaixo do nome**, visíveis apenas no hover (`group-hover`) ou quando a categoria está selecionada. Isso empurra o conteúdo abaixo (subcategorias) naturalmente.
 
-**2. Produto em lista vertical** (`ProdutoPaiCard.tsx`)
-- Redesign completo: de card com imagem aspect-square para linha horizontal compacta
-- Linha fechada: imagem 48x48 a esquerda + nome + preco minimo a direita + chevron
-- Estrela de destaque visivel na linha fechada (ao lado do nome)
-- Ao expandir: area abaixo com descricao, botoes de acao (estrela toggle, editar, excluir), e variantes em scroll horizontal
-- Toda funcionalidade CRUD mantida
+### Arquivo: `src/components/catalogo/CategoriaCard.tsx`
 
-```text
-┌──────────────────────────────────────────────┐
-│ [img48] Nome do Produto    ★   R$ X,XX    ▼ │
-├──────────────────────────────────────────────┤
-│ Descricao do produto...    [★] [✎] [🗑]     │
-│ Variantes (3):                                │
-│ [var1] [var2] [var3] ──────────────────────>  │
-└──────────────────────────────────────────────┘
+- Remover o `<div>` overlay (linhas 27-44) de dentro da imagem
+- Adicionar uma `<div>` após o `<span>` do nome com os botões Edit/Delete
+- Essa div usa `hidden group-hover:flex` + mostrar também quando `selected`
+- Botões pequenos lado a lado: `h-5 w-5` com ícones `h-3 w-3`
+- Layout: `flex items-center justify-center gap-1`
+
+```tsx
+{/* Botões aparecem abaixo no hover ou quando selecionado */}
+<div className={`flex items-center justify-center gap-1 ${selected ? "flex" : "hidden group-hover:flex"}`}>
+  <Button size="icon" variant="ghost" className="h-5 w-5" onClick={...}>
+    <Edit className="h-3 w-3" />
+  </Button>
+  <Button size="icon" variant="ghost" className="h-5 w-5" onClick={...}>
+    <Trash2 className="h-3 w-3" />
+  </Button>
+</div>
 ```
 
-**3. Layout no Catalogo.tsx**
-- Trocar `grid grid-cols-2 sm:grid-cols-3...gap-3` por `flex flex-col gap-2`
-- Produtos agora empilham verticalmente como uma lista
-
-### Arquivos editados
-- `src/components/catalogo/CategoriaCard.tsx` — dimensoes maiores
-- `src/components/catalogo/ProdutoPaiCard.tsx` — redesign para linha horizontal com expansao
-- `src/pages/Catalogo.tsx` — grid → lista vertical (linha 212)
+### Arquivo editado
+- `src/components/catalogo/CategoriaCard.tsx`
 
