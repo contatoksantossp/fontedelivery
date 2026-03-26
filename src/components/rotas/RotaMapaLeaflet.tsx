@@ -9,12 +9,15 @@ interface RotaMapaLeafletProps {
   corMap: Record<string, string>;
 }
 
-function createPinIcon(color: string, size = 14) {
+function createPinIcon(color: string, index: number, clientName: string) {
   return L.divIcon({
     className: "",
-    iconSize: [size, size],
-    iconAnchor: [size / 2, size / 2],
-    html: `<div class="map-pin" style="background:${color};color:${color};"></div>`,
+    iconSize: [0, 0],
+    iconAnchor: [12, 12],
+    html: `<div style="display:flex;align-items:center;gap:4px;white-space:nowrap;">
+      <div style="width:24px;height:24px;border-radius:50%;background:${color};border:2px solid white;box-shadow:0 2px 6px rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;">${index}</div>
+      <span style="font-size:10px;font-weight:600;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,0.8);max-width:100px;overflow:hidden;text-overflow:ellipsis;">${clientName}</span>
+    </div>`,
   });
 }
 
@@ -69,9 +72,9 @@ export function RotaMapaLeaflet({ rota, cor, allRotas, corMap }: RotaMapaLeaflet
 
     if (rota) {
       // Selected route: show stops + driver
-      rota.paradas.forEach((p) => {
-        const pinColor = p.paradaStatus === "entregue" ? "#6b7280" : "#eab308";
-        const marker = L.marker([p.lat, p.lng], { icon: createPinIcon(pinColor) });
+      rota.paradas.forEach((p, index) => {
+        const pinColor = p.paradaStatus === "entregue" ? "#6b7280" : cor;
+        const marker = L.marker([p.lat, p.lng], { icon: createPinIcon(pinColor, index + 1, p.cliente) });
         marker.bindTooltip(
           `<div style="font-size:11px;font-weight:600;">${p.pedidoCodigo}</div><div style="font-size:10px;">${p.cliente}</div><div style="font-size:10px;opacity:0.7;">${p.endereco}</div>`,
           { direction: "top", offset: [0, -10] }
