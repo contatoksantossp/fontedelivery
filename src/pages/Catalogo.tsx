@@ -151,7 +151,7 @@ export default function Catalogo() {
                 <div>
                   <div className="flex items-center justify-between mb-2">
                     <h2 className="text-sm font-semibold text-foreground">Categorias</h2>
-                    <Button size="sm" variant="ghost" className="h-7 text-xs" onClick={() => setCatDialog({ open: true, edit: null })}>
+                    <Button size="sm" variant="outline" className="h-7 text-xs border-dashed" onClick={() => setCatDialog({ open: true, edit: null })}>
                       <Plus className="mr-1 h-3 w-3" /> Nova
                     </Button>
                   </div>
@@ -177,7 +177,7 @@ export default function Catalogo() {
                   <div>
                     <div className="flex items-center justify-between mb-2">
                       <h2 className="text-sm font-semibold text-foreground">Subcategorias</h2>
-                      <Button size="sm" variant="ghost" className="h-7 text-xs" onClick={() => setSubDialog({ open: true, edit: null })}>
+                      <Button size="sm" variant="outline" className="h-7 text-xs border-dashed" onClick={() => setSubDialog({ open: true, edit: null })}>
                         <Plus className="mr-1 h-3 w-3" /> Nova
                       </Button>
                     </div>
@@ -209,7 +209,7 @@ export default function Catalogo() {
                     {isSearching ? `Resultados (${filteredProds.length})` : "Produtos"}
                   </h2>
                   {!isSearching && (
-                    <Button size="sm" variant="ghost" className="h-7 text-xs" onClick={() => setProdDialog({ open: true, edit: null, editVars: [] })}>
+                    <Button size="sm" variant="outline" className="h-7 text-xs border-dashed" onClick={() => setProdDialog({ open: true, edit: null, editVars: [] })}>
                       <Plus className="mr-1 h-3 w-3" /> Novo
                     </Button>
                   )}

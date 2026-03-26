@@ -14,17 +14,17 @@ export function CategoriaCard({ categoria, selected, onSelect, onEdit, onDelete 
   return (
     <button
       onClick={() => onSelect(categoria.id)}
-      className={`group relative flex w-24 flex-shrink-0 flex-col items-center gap-1 rounded-lg p-1.5 transition-all ${
+      className={`group relative flex w-[140px] flex-shrink-0 flex-col items-center gap-1 rounded-lg p-2 transition-all ${
         selected ? "bg-primary/15 ring-1 ring-primary" : "hover:bg-secondary"
       }`}
     >
-      <div className="relative h-16 w-16 overflow-hidden rounded-lg bg-muted">
+      <div className="relative aspect-square w-full overflow-hidden rounded-lg bg-muted">
         <img src={categoria.imagem} alt={categoria.nome} className="h-full w-full object-cover" />
         {!categoria.ativo && (
           <div className="absolute inset-0 bg-background/60" />
         )}
       </div>
-      <span className={`w-full truncate text-center text-[11px] font-medium ${
+      <span className={`w-full truncate text-center text-xs font-medium ${
         selected ? "text-primary" : "text-muted-foreground"
       }`}>
         {categoria.nome}
