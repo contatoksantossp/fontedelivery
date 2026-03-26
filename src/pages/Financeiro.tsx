@@ -110,6 +110,7 @@ export default function Financeiro() {
           <TabsTrigger value="caixa">Caixa</TabsTrigger>
           <TabsTrigger value="resumo">Resumo</TabsTrigger>
           <TabsTrigger value="extrato">Extrato</TabsTrigger>
+          <TabsTrigger value="contas">Minhas Contas</TabsTrigger>
         </TabsList>
         <TabsContent value="caixa">
           <AbaCaixa
