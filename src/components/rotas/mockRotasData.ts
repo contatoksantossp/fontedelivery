@@ -20,6 +20,7 @@ export interface Parada {
   observacoes?: string;
   paradaStatus: ParadaStatus;
   origem: string;
+  criadoEm: string;
   baixaRealizada?: boolean;
 }
 
@@ -76,6 +77,7 @@ export const rotasMock: Rota[] = [
         ],
         formaPagamento: "PIX",
         origem: "WhatsApp",
+        criadoEm: new Date(Date.now() - 45 * 60 * 1000).toISOString(),
         observacoes: "Ligar ao chegar",
         paradaStatus: "pendente",
       },
@@ -98,6 +100,7 @@ export const rotasMock: Rota[] = [
         ],
         formaPagamento: "Cartão Crédito",
         origem: "iFood",
+        criadoEm: new Date(Date.now() - 40 * 60 * 1000).toISOString(),
         paradaStatus: "pendente",
       },
       {
@@ -119,6 +122,7 @@ export const rotasMock: Rota[] = [
         ],
         formaPagamento: "Cartão Débito",
         origem: "Balcão",
+        criadoEm: new Date(Date.now() - 38 * 60 * 1000).toISOString(),
         paradaStatus: "entregue",
       },
     ],
@@ -157,6 +161,7 @@ export const rotasMock: Rota[] = [
         ],
         formaPagamento: "Cartão Crédito",
         origem: "iFood",
+        criadoEm: new Date(Date.now() - 30 * 60 * 1000).toISOString(),
         observacoes: "Deixar na portaria",
         paradaStatus: "pendente",
       },
@@ -179,6 +184,7 @@ export const rotasMock: Rota[] = [
         ],
         formaPagamento: "PIX",
         origem: "WhatsApp",
+        criadoEm: new Date(Date.now() - 25 * 60 * 1000).toISOString(),
         paradaStatus: "pendente",
       },
     ],
@@ -217,6 +223,7 @@ export const rotasMock: Rota[] = [
         ],
         formaPagamento: "Dinheiro",
         origem: "Telefone",
+        criadoEm: new Date(Date.now() - 90 * 60 * 1000).toISOString(),
         paradaStatus: "entregue",
       },
       {
@@ -237,6 +244,7 @@ export const rotasMock: Rota[] = [
         ],
         formaPagamento: "PIX",
         origem: "Balcão",
+        criadoEm: new Date(Date.now() - 85 * 60 * 1000).toISOString(),
         paradaStatus: "entregue",
       },
       {
@@ -258,6 +266,7 @@ export const rotasMock: Rota[] = [
         ],
         formaPagamento: "Cartão Crédito",
         origem: "WhatsApp",
+        criadoEm: new Date(Date.now() - 80 * 60 * 1000).toISOString(),
         observacoes: "Entregar no portão lateral",
         paradaStatus: "entregue",
       },
@@ -298,6 +307,7 @@ export const rotasMock: Rota[] = [
         ],
         formaPagamento: "PIX",
         origem: "iFood",
+        criadoEm: new Date(Date.now() - 150 * 60 * 1000).toISOString(),
         paradaStatus: "entregue",
         baixaRealizada: true,
       },
@@ -320,6 +330,7 @@ export const rotasMock: Rota[] = [
         ],
         formaPagamento: "Dinheiro",
         origem: "Telefone",
+        criadoEm: new Date(Date.now() - 140 * 60 * 1000).toISOString(),
         paradaStatus: "entregue",
         baixaRealizada: true,
       },

@@ -1,7 +1,27 @@
+import { useState, useEffect } from "react";
 import { Rota, RotaStatus } from "./mockRotasData";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
-import { Bike, Car, Truck as TruckIcon, Check, Clock } from "lucide-react";
+import { Bike, Car, Truck as TruckIcon, Check, Clock, Timer } from "lucide-react";
+
+function useElapsedTick(paradas: { criadoEm: string; paradaStatus: string }[]) {
+  const [tick, setTick] = useState(0);
+  const hasActive = paradas.some(p => p.paradaStatus !== "entregue");
+  useEffect(() => {
+    if (!hasActive) return;
+    const id = setInterval(() => setTick(t => t + 1), 60000);
+    return () => clearInterval(id);
+  }, [hasActive]);
+
+  return (criadoEm: string, entregue: boolean) => {
+    const start = new Date(criadoEm).getTime();
+    const diffMin = Math.floor((Date.now() - start) / 60000);
+    if (diffMin < 60) return `${diffMin}m`;
+    const h = Math.floor(diffMin / 60);
+    const m = diffMin % 60;
+    return `${h}h${m > 0 ? String(m).padStart(2, "0") + "m" : ""}`;
+  };
+}
 
 const statusConfig: Record<RotaStatus, { label: string; className: string }> = {
   pendente: { label: "Pendente", className: "bg-yellow-500/15 text-yellow-400 border-yellow-500/30" },
@@ -27,6 +47,7 @@ export function RotaCard({ rota, cor, selected, onSelect }: RotaCardProps) {
   const cfg = statusConfig[rota.status];
   const isConcluida = rota.status === "concluida";
   const VeiculoIcon = veiculoIcon[rota.entregadorVeiculo] || TruckIcon;
+  const formatElapsed = useElapsedTick(rota.paradas);
 
   return (
     <div
@@ -94,7 +115,16 @@ export function RotaCard({ rota, cor, selected, onSelect }: RotaCardProps) {
                 )}
                 <span className="font-semibold">{p.pedidoCodigo}</span>
               </div>
-              <p className="truncate text-muted-foreground">{p.cliente}</p>
+              <div className="flex items-center justify-between">
+                <p className="truncate text-muted-foreground flex-1">{p.cliente}</p>
+                <span className={cn(
+                  "flex items-center gap-0.5 shrink-0 ml-1",
+                  entregue ? "text-muted-foreground" : "text-primary"
+                )}>
+                  <Timer className="h-2.5 w-2.5" />
+                  {formatElapsed(p.criadoEm, entregue)}
+                </span>
+              </div>
             </div>
           );
         })}
