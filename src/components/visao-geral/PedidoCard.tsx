@@ -12,6 +12,7 @@ interface PedidoCardProps {
   selectionMode?: boolean;
   inRota?: boolean;
   rotaColor?: string;
+  rotaOrder?: number;
   onSelect: (pedido: Pedido) => void;
   onAction: (pedidoId: string, action: "cancelar" | "pronto" | "despachar" | "finalizar") => void;
 }
@@ -32,7 +33,7 @@ function useTimer(criadoEm: Date) {
   return elapsed;
 }
 
-export function PedidoCard({ pedido, selected, selectionMode, inRota, rotaColor, onSelect, onAction }: PedidoCardProps) {
+export function PedidoCard({ pedido, selected, selectionMode, inRota, rotaColor, rotaOrder, onSelect, onAction }: PedidoCardProps) {
   const elapsed = useTimer(pedido.criadoEm);
   const isPendente = pedido.status === "pendente";
   const isEligible = selectionMode && pedido.status === "pronto" && pedido.tipo === "entrega" && !inRota;
@@ -62,6 +63,14 @@ export function PedidoCard({ pedido, selected, selectionMode, inRota, rotaColor,
     >
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
+          {inRota && rotaOrder != null && (
+            <span
+              className="text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center text-white shrink-0"
+              style={{ backgroundColor: rotaColor || "#9ca3af" }}
+            >
+              {rotaOrder}
+            </span>
+          )}
           <span className="font-display font-bold text-sm text-foreground">{pedido.codigo}</span>
           <span className={cn(
             "text-[10px] font-medium px-1.5 py-0.5 rounded-full uppercase",
