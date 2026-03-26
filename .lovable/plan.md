@@ -1,26 +1,21 @@
 
 
-## Ajustes visuais no Catálogo
+## Tornar cards clicáveis para adicionar ao carrinho (remover botão +)
 
-### 1. Cards de Categoria maiores — `src/components/catalogo/CategoriaCard.tsx`
-- Container: `w-24` → `w-[140px]`, `p-1.5` → `p-2`
-- Imagem: `h-16 w-16` → `aspect-square w-full rounded-lg`
-- Texto: `text-[11px]` → `text-xs`
+Atualmente os cards de variante no `VarianteDrawer` e no `KitSlotDrawer` usam um botão `+` pequeno para adicionar. Vamos mover o gatilho para o card inteiro.
 
-### 2. Subcategorias em pílula maior — `src/components/catalogo/SubcategoriaCard.tsx`
-- Manter formato pill horizontal (`rounded-full`)
-- Imagem: `h-6 w-6` → `h-8 w-8`
-- Texto: `text-[11px]` → `text-xs`
-- Padding: `px-2 py-1` → `px-3 py-1.5`
-- Gap: `gap-1.5` → `gap-2`
-- Botões hover: `h-5 w-5` → `h-6 w-6`, ícones `h-2.5` → `h-3`
+### 1. `src/components/pdv/VarianteDrawer.tsx`
+- Transformar o `<div>` de cada variante em `<button>` clicável com `onClick={() => onAddVariante(produto, v, quantidade)}`
+- Adicionar `hover:bg-secondary cursor-pointer transition-colors`
+- Remover o `<Button>` com ícone `<Plus>` (linhas 40-50)
+- Manter preço e nome, layout fica mais limpo
 
-### 3. Botões "+ Nova/Novo" com mais destaque — `src/pages/Catalogo.tsx`
-- Trocar `variant="ghost"` por `variant="outline"` nos 3 botões de adicionar (categorias, subcategorias, produtos)
-- Adicionar classe `border-dashed`
+### 2. `src/components/pdv/KitSlotDrawer.tsx`
+- Mesmo padrão no sub-drawer de variantes (linhas 134-152): transformar `<div>` em `<button>` clicável
+- Remover o `<Button>` com `<Plus>` (linhas 144-149)
+- Adicionar `hover:bg-secondary cursor-pointer transition-colors`
 
 ### Arquivos editados
-- `src/components/catalogo/CategoriaCard.tsx`
-- `src/components/catalogo/SubcategoriaCard.tsx`
-- `src/pages/Catalogo.tsx`
+- `src/components/pdv/VarianteDrawer.tsx`
+- `src/components/pdv/KitSlotDrawer.tsx`
 
