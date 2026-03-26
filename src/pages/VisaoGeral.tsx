@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Truck, MapPin, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { DndContext, DragEndEvent } from "@dnd-kit/core";
+import { toast } from "sonner";
 
 export default function VisaoGeral() {
   const [pedidos, setPedidos] = useState<Pedido[]>(pedidosMock);
@@ -266,6 +267,7 @@ export default function VisaoGeral() {
           entregadorCorPorRota={entregadorCorPorRota}
           selectedEntregador={entregadorPorRota}
           onSelectEntregador={handleSelectEntregador}
+          onDespachar={handleDespachar}
         />
       </div>
     </div>
