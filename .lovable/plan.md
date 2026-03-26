@@ -1,22 +1,26 @@
 
 
-## Acerto de Entregadores: novo fluxo
+## Detalhamento por forma de pagamento no Caixa
 
-### Conceito
-Taxas já são acumuladas automaticamente conforme pedidos são finalizados. No acerto de fim de turno, o gestor só precisa definir a diária e adicionais (chuva, bonificação, etc.).
+### O que muda
+Abaixo do grid de 4 cards (Fundo Inicial / Entradas / Saídas / Saldo Esperado), adicionar um botão colapsável "Detalhamento por forma de pagamento" que, ao expandir, mostra 4 mini-cards com os valores acumulados em Dinheiro, PIX, Cartão e QR Code.
 
-### Mudanças no card colapsado (header)
-- Mostrar resumo: taxas acumuladas + bonificações de rota + qtd entregas
-- Exemplo: `R$ 85,00 em taxas · R$ 12,00 bonificações · 8 entregas`
-- Total à direita continua sendo taxas + bonificações + diária + extras
+### Dados
+O `recebimentosPorMetodo` já existe no mock (`mockFinanceiroData.ts`) com `dinheiro`, `pix`, `cartao`, `qrcode`. Basta passá-lo como nova prop para `AbaCaixa`.
 
-### Mudanças no card expandido
-- Remover o grid de 3 colunas (Taxas/Bonificações/Entregas) — essa info já está no header
-- Manter apenas:
-  1. Input de **Diária** com label
-  2. Seção **Adicionais** (renomear de "Extras") com botão Adicionar — cada linha tem descrição (ex: "Adicional chuva") + valor
-  3. Separador + linha de **Total** + botão Registrar Acerto
+### Implementação
+
+**`src/components/financeiro/AbaCaixa.tsx`**
+- Adicionar prop `recebimentosPorMetodo: { dinheiro: number; pix: number; cartao: number; qrcode: number }`
+- Adicionar estado `detalhesAberto` (boolean)
+- Entre o grid de cards e os botões Sangria/Reforço, inserir um `Collapsible`:
+  - Trigger: botão ghost com ChevronDown que rotaciona — texto "Detalhamento por forma de pagamento"
+  - Content: grid 2x2 ou 4 colunas com cards para cada método (Dinheiro, PIX, Cartão, QR Code) usando `ValorOculto`
+
+**`src/pages/Financeiro.tsx`**
+- Passar `recebimentosPorMetodo` como prop para `AbaCaixa`
 
 ### Arquivos editados
-- `src/components/financeiro/EntregadorAcerto.tsx` — reestruturar header e conteúdo expandido
+- `src/components/financeiro/AbaCaixa.tsx`
+- `src/pages/Financeiro.tsx`
 
