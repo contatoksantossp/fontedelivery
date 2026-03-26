@@ -71,9 +71,11 @@ export function RotaMapaLeaflet({ rota, cor, allRotas, corMap }: RotaMapaLeaflet
     const coords: [number, number][] = [];
 
     if (rota) {
-      // Selected route: show stops + driver
+      const rotaFinished = rota.status === "finalizada" || rota.status === "concluida";
+
+      // Selected route: show stops
       rota.paradas.forEach((p, index) => {
-        const pinColor = p.paradaStatus === "entregue" ? "#6b7280" : cor;
+        const pinColor = (rotaFinished || p.paradaStatus === "entregue") ? "#6b7280" : cor;
         const marker = L.marker([p.lat, p.lng], { icon: createPinIcon(pinColor, index + 1, p.cliente) });
         marker.bindTooltip(
           `<div style="font-size:11px;font-weight:600;">${p.pedidoCodigo}</div><div style="font-size:10px;">${p.cliente}</div><div style="font-size:10px;opacity:0.7;">${p.endereco}</div>`,
@@ -83,16 +85,18 @@ export function RotaMapaLeaflet({ rota, cor, allRotas, corMap }: RotaMapaLeaflet
         coords.push([p.lat, p.lng]);
       });
 
-      // Driver position
-      const driverMarker = L.marker([rota.entregadorLat, rota.entregadorLng], {
-        icon: createDriverIcon(cor),
-      });
-      driverMarker.bindTooltip(
-        `<div style="font-size:11px;font-weight:600;">${rota.entregadorNome}</div>`,
-        { direction: "top", offset: [0, -14] }
-      );
-      layer.addLayer(driverMarker);
-      coords.push([rota.entregadorLat, rota.entregadorLng]);
+      // Driver position — only show if route is active
+      if (!rotaFinished) {
+        const driverMarker = L.marker([rota.entregadorLat, rota.entregadorLng], {
+          icon: createDriverIcon(cor),
+        });
+        driverMarker.bindTooltip(
+          `<div style="font-size:11px;font-weight:600;">${rota.entregadorNome}</div>`,
+          { direction: "top", offset: [0, -14] }
+        );
+        layer.addLayer(driverMarker);
+        coords.push([rota.entregadorLat, rota.entregadorLng]);
+      }
     } else {
       // No selection: show all drivers
       allRotas.forEach((r) => {
