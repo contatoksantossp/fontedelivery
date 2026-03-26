@@ -175,6 +175,7 @@ export default function VisaoGeral() {
                 selectionMode={selectionMode}
                 inRota={pedidosNaRota.has(p.id)}
                 rotaColor={pedidoCorMap.get(p.id)}
+                rotaOrder={pedidoOrderMap.get(p.id)}
                 onSelect={handleCardClick}
                 onAction={handleAction}
               />
@@ -205,13 +206,13 @@ export default function VisaoGeral() {
                     selectionMode={selectionMode}
                     inRota={pedidosNaRota.has(p.id)}
                     rotaColor={pedidoCorMap.get(p.id)}
+                    rotaOrder={pedidoOrderMap.get(p.id)}
                     onSelect={handleCardClick}
                     onAction={handleAction}
                   />
                 ))}
               </TabsContent>
               <TabsContent value="retiradas" className="space-y-2 mt-0">
-                {prontosRetirada.map((p) => (
                   <PedidoCard
                     key={p.id}
                     pedido={p}
@@ -219,6 +220,7 @@ export default function VisaoGeral() {
                     selectionMode={selectionMode}
                     inRota={pedidosNaRota.has(p.id)}
                     rotaColor={pedidoCorMap.get(p.id)}
+                    rotaOrder={pedidoOrderMap.get(p.id)}
                     onSelect={handleCardClick}
                     onAction={handleAction}
                   />
