@@ -1,9 +1,10 @@
+import { useState, useEffect } from "react";
 import { Rota } from "./mockRotasData";
 import { RotaTimeline } from "./RotaTimeline";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Input } from "@/components/ui/input";
-import { MapPin, Clock, Navigation, DollarSign, Bike, Car, Truck, Gift } from "lucide-react";
+import { MapPin, Clock, Navigation, DollarSign, Bike, Car, Truck, Gift, Timer } from "lucide-react";
 
 const veiculoIcon: Record<string, React.ElementType> = {
   Moto: Truck,
