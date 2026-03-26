@@ -122,77 +122,91 @@ export default function VisaoGeral() {
     }
   }, [selectionMode, pedidosNaRota, expandedSlot, addToRota]);
 
+  const handleDragEnd = useCallback((event: DragEndEvent) => {
+    const { active, over } = event;
+    if (over?.id === "prontos" && active.id) {
+      const pedido = pedidos.find((p) => p.id === active.id);
+      if (pedido && pedido.status === "pendente") {
+        handleAction(active.id as string, "pronto");
+      }
+    }
+  }, [pedidos]);
+
   return (
     <div className="flex-1 flex overflow-hidden">
       {/* Coluna Esquerda — Kanbans */}
-      <div className="w-[35%] flex flex-row gap-2 p-3 border-r border-border overflow-hidden">
-        <KanbanColumn
-          title="Pedidos Pendentes"
-          count={pendentes.length}
-          className="w-1/2 h-full"
-        >
-          {pendentes.length === 0 && (
-            <p className="text-xs text-muted-foreground text-center py-4">Nenhum pedido pendente</p>
-          )}
-          {pendentes.map((p) => (
-            <PedidoCard
-              key={p.id}
-              pedido={p}
-              selected={!selectionMode && selectedId === p.id}
-              selectionMode={selectionMode}
-              inRota={pedidosNaRota.has(p.id)}
-              rotaColor={pedidoCorMap.get(p.id)}
-              onSelect={handleCardClick}
-              onAction={handleAction}
-            />
-          ))}
-        </KanbanColumn>
+      <DndContext onDragEnd={handleDragEnd}>
+        <div className="w-[35%] flex flex-row gap-2 p-3 border-r border-border overflow-hidden">
+          <KanbanColumn
+            id="pendentes"
+            title="Pedidos Pendentes"
+            count={pendentes.length}
+            className="w-1/2 h-full"
+          >
+            {pendentes.length === 0 && (
+              <p className="text-xs text-muted-foreground text-center py-4">Nenhum pedido pendente</p>
+            )}
+            {pendentes.map((p) => (
+              <PedidoCard
+                key={p.id}
+                pedido={p}
+                selected={!selectionMode && selectedId === p.id}
+                selectionMode={selectionMode}
+                inRota={pedidosNaRota.has(p.id)}
+                rotaColor={pedidoCorMap.get(p.id)}
+                onSelect={handleCardClick}
+                onAction={handleAction}
+              />
+            ))}
+          </KanbanColumn>
 
-        <KanbanColumn
-          title="Pedidos Prontos"
-          count={prontos.length}
-          className="w-1/2 h-full"
-        >
-          <Tabs defaultValue="entregas" className="w-full">
-            <TabsList className="w-full h-8 mb-2">
-              <TabsTrigger value="entregas" className="flex-1 text-xs gap-1">
-                <Truck className="h-3 w-3" /> Entregas ({prontosEntrega.length})
-              </TabsTrigger>
-              <TabsTrigger value="retiradas" className="flex-1 text-xs gap-1">
-                <MapPin className="h-3 w-3" /> Retiradas ({prontosRetirada.length})
-              </TabsTrigger>
-            </TabsList>
-            <TabsContent value="entregas" className="space-y-2 mt-0">
-              {prontosEntrega.map((p) => (
-                <PedidoCard
-                  key={p.id}
-                  pedido={p}
-                  selected={!selectionMode && selectedId === p.id}
-                  selectionMode={selectionMode}
-                  inRota={pedidosNaRota.has(p.id)}
-                  rotaColor={pedidoCorMap.get(p.id)}
-                  onSelect={handleCardClick}
-                  onAction={handleAction}
-                />
-              ))}
-            </TabsContent>
-            <TabsContent value="retiradas" className="space-y-2 mt-0">
-              {prontosRetirada.map((p) => (
-                <PedidoCard
-                  key={p.id}
-                  pedido={p}
-                  selected={!selectionMode && selectedId === p.id}
-                  selectionMode={selectionMode}
-                  inRota={pedidosNaRota.has(p.id)}
-                  rotaColor={pedidoCorMap.get(p.id)}
-                  onSelect={handleCardClick}
-                  onAction={handleAction}
-                />
-              ))}
-            </TabsContent>
-          </Tabs>
-        </KanbanColumn>
-      </div>
+          <KanbanColumn
+            id="prontos"
+            title="Pedidos Prontos"
+            count={prontos.length}
+            className="w-1/2 h-full"
+          >
+            <Tabs defaultValue="entregas" className="w-full">
+              <TabsList className="w-full h-8 mb-2">
+                <TabsTrigger value="entregas" className="flex-1 text-xs gap-1">
+                  <Truck className="h-3 w-3" /> Entregas ({prontosEntrega.length})
+                </TabsTrigger>
+                <TabsTrigger value="retiradas" className="flex-1 text-xs gap-1">
+                  <MapPin className="h-3 w-3" /> Retiradas ({prontosRetirada.length})
+                </TabsTrigger>
+              </TabsList>
+              <TabsContent value="entregas" className="space-y-2 mt-0">
+                {prontosEntrega.map((p) => (
+                  <PedidoCard
+                    key={p.id}
+                    pedido={p}
+                    selected={!selectionMode && selectedId === p.id}
+                    selectionMode={selectionMode}
+                    inRota={pedidosNaRota.has(p.id)}
+                    rotaColor={pedidoCorMap.get(p.id)}
+                    onSelect={handleCardClick}
+                    onAction={handleAction}
+                  />
+                ))}
+              </TabsContent>
+              <TabsContent value="retiradas" className="space-y-2 mt-0">
+                {prontosRetirada.map((p) => (
+                  <PedidoCard
+                    key={p.id}
+                    pedido={p}
+                    selected={!selectionMode && selectedId === p.id}
+                    selectionMode={selectionMode}
+                    inRota={pedidosNaRota.has(p.id)}
+                    rotaColor={pedidoCorMap.get(p.id)}
+                    onSelect={handleCardClick}
+                    onAction={handleAction}
+                  />
+                ))}
+              </TabsContent>
+            </Tabs>
+          </KanbanColumn>
+        </div>
+      </DndContext>
 
       {/* Coluna Central — Detalhes ou Rota Expandida */}
       <div className="w-[25%] border-r border-border flex flex-col overflow-hidden">
