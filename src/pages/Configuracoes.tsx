@@ -3,6 +3,7 @@ import { PageContainer } from "@/components/PageContainer";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AbaPerfilLoja } from "@/components/configuracoes/AbaPerfilLoja";
 import { AbaConfiguracaoEntrega } from "@/components/configuracoes/AbaConfiguracaoEntrega";
+import { AbaEnderecosCache } from "@/components/configuracoes/AbaEnderecosCache";
 import {
   mockPerfilLoja,
   mockHorarios,
@@ -12,6 +13,7 @@ import {
   HorarioFuncionamento,
   FaixaKm,
 } from "@/components/configuracoes/mockConfigData";
+import { enderecoCacheMock, type EnderecoCache } from "@/components/pdv/mockPdvData";
 
 export default function Configuracoes() {
   const [perfil, setPerfil] = useState<PerfilLoja>({ ...mockPerfilLoja });
