@@ -1,7 +1,27 @@
+import { useState, useEffect } from "react";
 import { Rota, RotaStatus } from "./mockRotasData";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
-import { Bike, Car, Truck as TruckIcon, Check, Clock } from "lucide-react";
+import { Bike, Car, Truck as TruckIcon, Check, Clock, Timer } from "lucide-react";
+
+function useElapsedTick(paradas: { criadoEm: string; paradaStatus: string }[]) {
+  const [tick, setTick] = useState(0);
+  const hasActive = paradas.some(p => p.paradaStatus !== "entregue");
+  useEffect(() => {
+    if (!hasActive) return;
+    const id = setInterval(() => setTick(t => t + 1), 60000);
+    return () => clearInterval(id);
+  }, [hasActive]);
+
+  return (criadoEm: string, entregue: boolean) => {
+    const start = new Date(criadoEm).getTime();
+    const diffMin = Math.floor((Date.now() - start) / 60000);
+    if (diffMin < 60) return `${diffMin}m`;
+    const h = Math.floor(diffMin / 60);
+    const m = diffMin % 60;
+    return `${h}h${m > 0 ? String(m).padStart(2, "0") + "m" : ""}`;
+  };
+}
 
 const statusConfig: Record<RotaStatus, { label: string; className: string }> = {
   pendente: { label: "Pendente", className: "bg-yellow-500/15 text-yellow-400 border-yellow-500/30" },
