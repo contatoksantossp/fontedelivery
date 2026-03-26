@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Trash2, Plus } from "lucide-react";
+import { Trash2, Plus, ImageIcon, Upload } from "lucide-react";
 import type { KitCombo, KitComboSlot, CatalogSubcategoria } from "./mockCatalogoData";
 
 interface Props {
@@ -60,7 +60,10 @@ export function KitComboDialog({ open, onClose, onSave, editItem, subcategorias 
         </DialogHeader>
         <div className="space-y-4">
           <div><Label>Nome</Label><Input value={nome} onChange={(e) => setNome(e.target.value)} /></div>
-          <div><Label>URL da Imagem</Label><Input value={imagem} onChange={(e) => setImagem(e.target.value)} /></div>
+          <div>
+            <Label>Banner</Label>
+            <BannerUpload src={imagem} onFileSelect={setImagem} />
+          </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
               <Label>Tipo</Label>
