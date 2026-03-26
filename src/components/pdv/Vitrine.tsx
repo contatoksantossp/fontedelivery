@@ -13,9 +13,10 @@ import { toast } from "sonner";
 
 interface VitrineProps {
   onAddItem: (produto: Produto, variante: Variante, qty: number) => void;
+  onUpdateItemPrice: (produtoId: string, varianteId: string, novoPreco: number) => void;
 }
 
-export function Vitrine({ onAddItem }: VitrineProps) {
+export function Vitrine({ onAddItem, onUpdateItemPrice }: VitrineProps) {
   const [busca, setBusca] = useState("");
   const [quantidade, setQuantidade] = useState(1);
   const [categoriaId, setCategoriaId] = useState<string | null>(null);
@@ -63,8 +64,11 @@ export function Vitrine({ onAddItem }: VitrineProps) {
   const handleAddVariante = useCallback((produto: Produto, variante: Variante, qty: number) => {
     setExpandedProductId(null);
 
+    // Always add to cart at full price
+    onAddItem(produto, variante, qty);
+
+    // If kit is active, also track in slot 1
     if (kitAtivo) {
-      // Add to slot 1 (first slot)
       const slot1Id = kitAtivo.slots[0].id;
       setSlotSelections((prev) => {
         const current = prev[slot1Id] || [];
@@ -79,8 +83,6 @@ export function Vitrine({ onAddItem }: VitrineProps) {
         }
         return { ...prev, [slot1Id]: [...current, { produto, variante, quantidade: qty }] };
       });
-    } else {
-      onAddItem(produto, variante, qty);
     }
   }, [kitAtivo, onAddItem]);
 
@@ -118,6 +120,7 @@ export function Vitrine({ onAddItem }: VitrineProps) {
   const handleFinalizarKit = useCallback(() => {
     if (!kitAtivo) return;
 
+    // Gather all items from all slots
     const allItems: Array<{ produto: Produto; variante: Variante; qty: number; preco: number }> = [];
     kitAtivo.slots.forEach((slot) => {
       (slotSelections[slot.id] || []).forEach((sel) => {
@@ -125,27 +128,50 @@ export function Vitrine({ onAddItem }: VitrineProps) {
       });
     });
 
+    const slot1Selections = slotSelections[kitAtivo.slots[0].id] || [];
+    const slot2PlusSelections = kitAtivo.slots.slice(1).flatMap((slot) =>
+      (slotSelections[slot.id] || []).map((sel) => ({ ...sel, slotId: slot.id }))
+    );
+
     if (kitAtivo.tipoDesconto === "%") {
       const factor = 1 - kitAtivo.valorDesconto / 100;
-      allItems.forEach((item) => {
-        const discountedVariante = { ...item.variante, preco: +(item.preco * factor).toFixed(2) };
-        onAddItem(item.produto, discountedVariante, item.qty);
+
+      // Update slot 1 items already in cart with discounted price
+      slot1Selections.forEach((sel) => {
+        const newPrice = +(sel.variante.preco * factor).toFixed(2);
+        onUpdateItemPrice(sel.produto.id, sel.variante.id, newPrice);
+      });
+
+      // Add slot 2+ items to cart with discounted price
+      slot2PlusSelections.forEach((sel) => {
+        const discountedVariante = { ...sel.variante, preco: +(sel.variante.preco * factor).toFixed(2) };
+        onAddItem(sel.produto, discountedVariante, sel.quantidade);
       });
     } else {
       // R$ discount distributed proportionally
       const total = allItems.reduce((a, i) => a + i.preco * i.qty, 0);
-      allItems.forEach((item) => {
-        const proportion = (item.preco * item.qty) / total;
-        const itemDiscount = kitAtivo.valorDesconto * proportion / item.qty;
-        const discountedVariante = { ...item.variante, preco: +(item.preco - itemDiscount).toFixed(2) };
-        onAddItem(item.produto, discountedVariante, item.qty);
+
+      // Update slot 1 items already in cart
+      slot1Selections.forEach((sel) => {
+        const proportion = (sel.variante.preco * sel.quantidade) / total;
+        const itemDiscount = kitAtivo.valorDesconto * proportion / sel.quantidade;
+        const newPrice = +(sel.variante.preco - itemDiscount).toFixed(2);
+        onUpdateItemPrice(sel.produto.id, sel.variante.id, newPrice);
+      });
+
+      // Add slot 2+ items to cart with discount
+      slot2PlusSelections.forEach((sel) => {
+        const proportion = (sel.variante.preco * sel.quantidade) / total;
+        const itemDiscount = kitAtivo.valorDesconto * proportion / sel.quantidade;
+        const discountedVariante = { ...sel.variante, preco: +(sel.variante.preco - itemDiscount).toFixed(2) };
+        onAddItem(sel.produto, discountedVariante, sel.quantidade);
       });
     }
 
     setSlotSelections({});
     setExpandedSlotId(null);
-    toast.success(`${kitAtivo.nome} adicionado ao carrinho com desconto!`);
-  }, [kitAtivo, slotSelections, onAddItem]);
+    toast.success(`${kitAtivo.nome} finalizado! Desconto aplicado ao carrinho.`);
+  }, [kitAtivo, slotSelections, onAddItem, onUpdateItemPrice]);
 
   return (
     <div className="flex flex-col h-full">
