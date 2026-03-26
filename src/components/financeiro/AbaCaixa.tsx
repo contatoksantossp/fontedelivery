@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { DollarSign, ArrowUpCircle, ArrowDownCircle, Wallet, AlertTriangle, Lock, Unlock } from "lucide-react";
+import { DollarSign, ArrowUpCircle, ArrowDownCircle, Wallet, AlertTriangle, Lock, Unlock, ChevronDown, Banknote, CreditCard, QrCode, Smartphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { MetricCard } from "@/components/MetricCard";
 import { ValorOculto } from "./ValorOculto";
@@ -12,13 +13,14 @@ import type { CaixaState, EntregadorTurno, Transacao } from "./mockFinanceiroDat
 interface AbaCaixaProps {
   caixa: CaixaState;
   entregadores: EntregadorTurno[];
+  recebimentosPorMetodo: { dinheiro: number; pix: number; cartao: number; qrcode: number };
   onAbrirCaixa: (fundo: number) => void;
   onFecharCaixa: (contagem: number) => void;
   onSangriaReforco: (tipo: "sangria" | "reforco", valor: number, descricao: string) => void;
   onRegistrarAcerto: (id: string, diaria: number, extras: { valor: number; descricao: string }[]) => void;
 }
 
-export function AbaCaixa({ caixa, entregadores, onAbrirCaixa, onFecharCaixa, onSangriaReforco, onRegistrarAcerto }: AbaCaixaProps) {
+export function AbaCaixa({ caixa, entregadores, recebimentosPorMetodo, onAbrirCaixa, onFecharCaixa, onSangriaReforco, onRegistrarAcerto }: AbaCaixaProps) {
   const [fundoInput, setFundoInput] = useState("500");
   const [dialogSR, setDialogSR] = useState(false);
   const [srTipo, setSrTipo] = useState<"sangria" | "reforco">("sangria");
@@ -26,6 +28,7 @@ export function AbaCaixa({ caixa, entregadores, onAbrirCaixa, onFecharCaixa, onS
   const [srDescricao, setSrDescricao] = useState("");
   const [dialogFechar, setDialogFechar] = useState(false);
   const [contagem, setContagem] = useState("");
+  const [detalhesAberto, setDetalhesAberto] = useState(false);
 
   return (
     <div className="space-y-6">
@@ -75,6 +78,47 @@ export function AbaCaixa({ caixa, entregadores, onAbrirCaixa, onFecharCaixa, onS
                 <ValorOculto valor={`R$ ${caixa.saldoEsperado.toFixed(2)}`} className="text-lg" />
               </div>
             </div>
+
+            <Collapsible open={detalhesAberto} onOpenChange={setDetalhesAberto}>
+              <CollapsibleTrigger asChild>
+                <Button variant="ghost" className="w-full justify-between text-muted-foreground hover:text-foreground">
+                  Detalhamento por forma de pagamento
+                  <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${detalhesAberto ? "rotate-180" : ""}`} />
+                </Button>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="mt-2">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="rounded-lg border bg-card p-4 flex items-start gap-3">
+                    <Banknote className="h-5 w-5 text-success mt-0.5" />
+                    <div>
+                      <p className="text-xs text-muted-foreground">Dinheiro</p>
+                      <ValorOculto valor={`R$ ${recebimentosPorMetodo.dinheiro.toFixed(2)}`} className="text-sm" />
+                    </div>
+                  </div>
+                  <div className="rounded-lg border bg-card p-4 flex items-start gap-3">
+                    <Smartphone className="h-5 w-5 text-primary mt-0.5" />
+                    <div>
+                      <p className="text-xs text-muted-foreground">PIX</p>
+                      <ValorOculto valor={`R$ ${recebimentosPorMetodo.pix.toFixed(2)}`} className="text-sm" />
+                    </div>
+                  </div>
+                  <div className="rounded-lg border bg-card p-4 flex items-start gap-3">
+                    <CreditCard className="h-5 w-5 text-accent-foreground mt-0.5" />
+                    <div>
+                      <p className="text-xs text-muted-foreground">Cartão</p>
+                      <ValorOculto valor={`R$ ${recebimentosPorMetodo.cartao.toFixed(2)}`} className="text-sm" />
+                    </div>
+                  </div>
+                  <div className="rounded-lg border bg-card p-4 flex items-start gap-3">
+                    <QrCode className="h-5 w-5 text-muted-foreground mt-0.5" />
+                    <div>
+                      <p className="text-xs text-muted-foreground">QR Code</p>
+                      <ValorOculto valor={`R$ ${recebimentosPorMetodo.qrcode.toFixed(2)}`} className="text-sm" />
+                    </div>
+                  </div>
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
 
             <div className="flex gap-3">
               <Button variant="outline" onClick={() => { setSrTipo("sangria"); setDialogSR(true); }}>
