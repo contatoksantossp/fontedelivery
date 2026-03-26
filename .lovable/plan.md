@@ -1,41 +1,35 @@
 
 
-## Rastreio padrao para cards de pedido (PDV + Visao Geral)
+## Drag-and-drop de Pendentes → Prontos
 
-Criar um componente reutilizavel `PedidoRastreio` que exibe uma mini-timeline horizontal com 3 etapas: **Rascunho → Pendente → Pronto**. O status atual determina qual bolinha fica em foco (primary) e quais ficam cinza ou mostram horario.
+Substituir o botao "Pronto" nos cards pendentes por arrastar o card da coluna Pendentes para a coluna Prontos, usando `@dnd-kit` (ja instalado no projeto).
 
-### Logica visual
+### Arquitetura
 
 ```text
-PDV (rascunho):
-  ● Rascunho ─── ○ Pendente ─── ○ Pronto
-  (foco)         (cinza)        (cinza)
-
-Visao Geral (pendente):
-  10:32 ─── ● Pendente ─── ○ Pronto
-  (hora)    (foco)         (cinza)
-
-Visao Geral (pronto):
-  10:32 ─── 10:45 ─── ● Pronto
-  (hora)    (hora)     (foco)
+DndContext (VisaoGeral)
+├── Droppable "pendentes" (KanbanColumn)
+│   └── Draggable PedidoCard (cada pedido pendente)
+└── Droppable "prontos" (KanbanColumn)
+    └── PedidoCard (cards prontos, nao arrastáveis)
 ```
 
-### Arquivos
+Quando um card pendente é solto na coluna "prontos", dispara `handleAction(pedidoId, "pronto")`.
 
-**1. Criar `src/components/PedidoRastreio.tsx`**
-- Props: `status: "rascunho" | "pendente" | "pronto"`, `criadoEm: Date`, `prontoEm?: Date`
-- 3 bolinhas conectadas por linhas, em uma unica linha compacta (text-[10px])
-- Etapa atual: bolinha primary com leve pulse/ring
-- Etapas passadas: mostram `format(date, "HH:mm")` com bolinha primary solida
-- Etapas futuras: bolinha cinza (muted-foreground/30)
-- Linhas entre bolinhas: primary se ja passou, cinza se futuro
+### Arquivos editados
 
-**2. Editar `src/components/pdv/FilaPedidoCard.tsx`**
-- Importar e adicionar `<PedidoRastreio status="rascunho" criadoEm={pedido.criadoEm} />` abaixo do L4 (valor)
-- Separado por `border-t border-border/50 mt-1.5 pt-1.5`
+**1. `src/pages/VisaoGeral.tsx`**
+- Envolver as duas KanbanColumns com `DndContext` do @dnd-kit
+- No `onDragEnd`: se `over.id === "prontos"` e o pedido arrastado é pendente, chamar `handleAction(active.id, "pronto")`
+- Passar estado de drag ativo para highlight visual na coluna destino
 
-**3. Editar `src/components/visao-geral/PedidoCard.tsx`**
-- Substituir o bloco de rastreio existente (linhas 148-176) pelo novo `<PedidoRastreio>`
-- Passar `status={pedido.status}`, `criadoEm={pedido.criadoEm}`, `prontoEm={pedido.prontoEm}`
-- Manter o timer `elapsed` separado ao lado
+**2. `src/components/visao-geral/KanbanColumn.tsx`**
+- Tornar droppable usando `useDroppable` com um `id` prop
+- Adicionar highlight visual (borda primary, fundo sutil) quando `isOver` e há item sendo arrastado
+
+**3. `src/components/visao-geral/PedidoCard.tsx`**
+- Cards pendentes: envolver com `useDraggable` (id = pedido.id)
+- Remover o botao "Pronto" dos cards pendentes (manter Cancelar)
+- Aplicar `transform` e `opacity` durante drag
+- Cards prontos e em selectionMode: sem drag
 
