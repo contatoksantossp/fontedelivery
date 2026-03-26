@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useSidebar } from "@/components/ui/sidebar";
-import { Plus, Search } from "lucide-react";
+import { Plus, Search, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -136,8 +136,13 @@ export default function Catalogo() {
                 placeholder="Buscar por nome, descrição ou tag..."
                 value={busca}
                 onChange={(e) => setBusca(e.target.value)}
-                className="pl-9"
+                className="pl-9 pr-9"
               />
+              {busca && (
+                <button onClick={() => setBusca("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                  <X className="h-4 w-4" />
+                </button>
+              )}
             </div>
 
             {/* Categories */}
