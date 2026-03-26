@@ -58,8 +58,8 @@ export interface TopProduto {
 export const caixaStateMock: CaixaState = {
   status: "aberto",
   fundoInicial: 500,
-  entradas: 3842.5,
-  saidas: 1256.0,
+  entradas: 1245.6,
+  saidas: 0,
   saldoEsperado: 1745.6,
   ultimoFechamento: {
     data: "2026-03-24T23:45:00",
