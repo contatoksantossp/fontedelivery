@@ -42,6 +42,7 @@ export function ProdutoCard({ produto, quantidade, expanded, onAddVariante, onEx
             {hasMultipleVariants ? `a partir de R$ ${minPrice.toFixed(2)}` : `R$ ${minPrice.toFixed(2)}`}
           </span>
         </div>
+      </div>
     </button>
   );
 }
