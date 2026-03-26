@@ -1,3 +1,5 @@
+import { productImages, variantImages } from "@/assets/products";
+
 export interface CatalogCategoria {
   id: string;
   nome: string;
@@ -92,80 +94,80 @@ export const subcategoriasMock: CatalogSubcategoria[] = [
 // ── Produtos ────────────────────────────────────────────────
 export const produtosMock: CatalogProduto[] = [
   // Bebidas
-  { id: "p1", nome: "Coca-Cola", descricao: "Refrigerante Coca-Cola original", foto: "/placeholder.svg", destaque: true, subcategoriaId: "sub1a", categoriaId: "cat1" },
-  { id: "p2", nome: "Guaraná Antarctica", descricao: "Guaraná Antarctica original", foto: "/placeholder.svg", destaque: false, subcategoriaId: "sub1a", categoriaId: "cat1" },
-  { id: "p3", nome: "Red Bull", descricao: "Bebida energética Red Bull", foto: "/placeholder.svg", destaque: true, subcategoriaId: "sub1c", categoriaId: "cat1" },
-  { id: "p4", nome: "Água Mineral Crystal", descricao: "Água mineral sem gás", foto: "/placeholder.svg", destaque: false, subcategoriaId: "sub1d", categoriaId: "cat1" },
+  { id: "p1", nome: "Coca-Cola", descricao: "Refrigerante Coca-Cola original", foto: productImages.p1, destaque: true, subcategoriaId: "sub1a", categoriaId: "cat1" },
+  { id: "p2", nome: "Guaraná Antarctica", descricao: "Guaraná Antarctica original", foto: productImages.p2, destaque: false, subcategoriaId: "sub1a", categoriaId: "cat1" },
+  { id: "p3", nome: "Red Bull", descricao: "Bebida energética Red Bull", foto: productImages.p3, destaque: true, subcategoriaId: "sub1c", categoriaId: "cat1" },
+  { id: "p4", nome: "Água Mineral Crystal", descricao: "Água mineral sem gás", foto: productImages.p4, destaque: false, subcategoriaId: "sub1d", categoriaId: "cat1" },
   // Adega
-  { id: "p5", nome: "Skol Lata", descricao: "Cerveja Skol lata 350ml", foto: "/placeholder.svg", destaque: true, subcategoriaId: "sub2a", categoriaId: "cat2" },
-  { id: "p6", nome: "Heineken", descricao: "Cerveja Heineken premium", foto: "/placeholder.svg", destaque: true, subcategoriaId: "sub2a", categoriaId: "cat2" },
-  { id: "p7", nome: "Brahma Litrão", descricao: "Cerveja Brahma garrafa 1L", foto: "/placeholder.svg", destaque: false, subcategoriaId: "sub2a", categoriaId: "cat2" },
-  { id: "p8", nome: "Vinho Casillero del Diablo", descricao: "Vinho tinto chileno reservado", foto: "/placeholder.svg", destaque: true, subcategoriaId: "sub2b", categoriaId: "cat2" },
-  { id: "p9", nome: "Absolut Vodka", descricao: "Vodka sueca premium", foto: "/placeholder.svg", destaque: false, subcategoriaId: "sub2c", categoriaId: "cat2" },
+  { id: "p5", nome: "Skol Lata", descricao: "Cerveja Skol lata 350ml", foto: productImages.p5, destaque: true, subcategoriaId: "sub2a", categoriaId: "cat2" },
+  { id: "p6", nome: "Heineken", descricao: "Cerveja Heineken premium", foto: productImages.p6, destaque: true, subcategoriaId: "sub2a", categoriaId: "cat2" },
+  { id: "p7", nome: "Brahma Litrão", descricao: "Cerveja Brahma garrafa 1L", foto: productImages.p7, destaque: false, subcategoriaId: "sub2a", categoriaId: "cat2" },
+  { id: "p8", nome: "Vinho Casillero del Diablo", descricao: "Vinho tinto chileno reservado", foto: productImages.p8, destaque: true, subcategoriaId: "sub2b", categoriaId: "cat2" },
+  { id: "p9", nome: "Absolut Vodka", descricao: "Vodka sueca premium", foto: productImages.p9, destaque: false, subcategoriaId: "sub2c", categoriaId: "cat2" },
   // Tabacaria
-  { id: "p10", nome: "Marlboro Box", descricao: "Cigarro Marlboro Box vermelho", foto: "/placeholder.svg", destaque: true, subcategoriaId: "sub3a", categoriaId: "cat3" },
-  { id: "p11", nome: "Seda Smoking", descricao: "Seda Smoking tamanho king size", foto: "/placeholder.svg", destaque: false, subcategoriaId: "sub3b", categoriaId: "cat3" },
-  { id: "p12", nome: "Essência Narguile", descricao: "Essência para narguile sabores variados", foto: "/placeholder.svg", destaque: false, subcategoriaId: "sub3c", categoriaId: "cat3" },
-  { id: "p13", nome: "Isqueiro BIC", descricao: "Isqueiro BIC clássico", foto: "/placeholder.svg", destaque: false, subcategoriaId: "sub3d", categoriaId: "cat3" },
+  { id: "p10", nome: "Marlboro Box", descricao: "Cigarro Marlboro Box vermelho", foto: productImages.p10, destaque: true, subcategoriaId: "sub3a", categoriaId: "cat3" },
+  { id: "p11", nome: "Seda Smoking", descricao: "Seda Smoking tamanho king size", foto: productImages.p11, destaque: false, subcategoriaId: "sub3b", categoriaId: "cat3" },
+  { id: "p12", nome: "Essência Narguile", descricao: "Essência para narguile sabores variados", foto: productImages.p12, destaque: false, subcategoriaId: "sub3c", categoriaId: "cat3" },
+  { id: "p13", nome: "Isqueiro BIC", descricao: "Isqueiro BIC clássico", foto: productImages.p13, destaque: false, subcategoriaId: "sub3d", categoriaId: "cat3" },
   // Conveniência
-  { id: "p14", nome: "Doritos", descricao: "Salgadinho Doritos sabor queijo nacho", foto: "/placeholder.svg", destaque: true, subcategoriaId: "sub4a", categoriaId: "cat4" },
-  { id: "p15", nome: "Trident", descricao: "Chiclete Trident sabores", foto: "/placeholder.svg", destaque: false, subcategoriaId: "sub4c", categoriaId: "cat4" },
-  { id: "p16", nome: "Picolé Kibon", descricao: "Picolé Kibon sabores variados", foto: "/placeholder.svg", destaque: false, subcategoriaId: "sub4b", categoriaId: "cat4" },
+  { id: "p14", nome: "Doritos", descricao: "Salgadinho Doritos sabor queijo nacho", foto: productImages.p14, destaque: true, subcategoriaId: "sub4a", categoriaId: "cat4" },
+  { id: "p15", nome: "Trident", descricao: "Chiclete Trident sabores", foto: productImages.p15, destaque: false, subcategoriaId: "sub4c", categoriaId: "cat4" },
+  { id: "p16", nome: "Picolé Kibon", descricao: "Picolé Kibon sabores variados", foto: productImages.p16, destaque: false, subcategoriaId: "sub4b", categoriaId: "cat4" },
   // Mercearia
-  { id: "p17", nome: "Carvão Vegetal", descricao: "Carvão vegetal para churrasco", foto: "/placeholder.svg", destaque: true, subcategoriaId: "sub5a", categoriaId: "cat5" },
-  { id: "p18", nome: "Gelo", descricao: "Saco de gelo em cubo", foto: "/placeholder.svg", destaque: true, subcategoriaId: "sub5a", categoriaId: "cat5" },
+  { id: "p17", nome: "Carvão Vegetal", descricao: "Carvão vegetal para churrasco", foto: productImages.p17, destaque: true, subcategoriaId: "sub5a", categoriaId: "cat5" },
+  { id: "p18", nome: "Gelo", descricao: "Saco de gelo em cubo", foto: productImages.p18, destaque: true, subcategoriaId: "sub5a", categoriaId: "cat5" },
 ];
 
 // ── Variantes ───────────────────────────────────────────────
 export const variantesMock: CatalogVariante[] = [
   // Coca-Cola
-  { id: "v1a", nome: "Lata 350ml", descricao: "Lata", foto: "/placeholder.svg", tags: ["gelada"], sku: "CC-350", custo: 2.50, valorVenda: 5.00, estoqueMinimo: 48, produtoId: "p1" },
-  { id: "v1b", nome: "600ml", descricao: "Garrafa", foto: "/placeholder.svg", tags: [], sku: "CC-600", custo: 3.50, valorVenda: 7.00, estoqueMinimo: 24, produtoId: "p1" },
-  { id: "v1c", nome: "2L", descricao: "Garrafa família", foto: "/placeholder.svg", tags: ["família"], sku: "CC-2L", custo: 5.50, valorVenda: 11.00, estoqueMinimo: 12, produtoId: "p1" },
+  { id: "v1a", nome: "Lata 350ml", descricao: "Lata", foto: variantImages.v1a, tags: ["gelada"], sku: "CC-350", custo: 2.50, valorVenda: 5.00, estoqueMinimo: 48, produtoId: "p1" },
+  { id: "v1b", nome: "600ml", descricao: "Garrafa", foto: variantImages.v1b, tags: [], sku: "CC-600", custo: 3.50, valorVenda: 7.00, estoqueMinimo: 24, produtoId: "p1" },
+  { id: "v1c", nome: "2L", descricao: "Garrafa família", foto: variantImages.v1c, tags: ["família"], sku: "CC-2L", custo: 5.50, valorVenda: 11.00, estoqueMinimo: 12, produtoId: "p1" },
   // Guaraná
-  { id: "v2a", nome: "Lata 350ml", descricao: "Lata", foto: "/placeholder.svg", tags: [], sku: "GA-350", custo: 2.20, valorVenda: 4.50, estoqueMinimo: 48, produtoId: "p2" },
-  { id: "v2b", nome: "2L", descricao: "Garrafa", foto: "/placeholder.svg", tags: ["família"], sku: "GA-2L", custo: 4.80, valorVenda: 9.00, estoqueMinimo: 12, produtoId: "p2" },
+  { id: "v2a", nome: "Lata 350ml", descricao: "Lata", foto: variantImages.v2a, tags: [], sku: "GA-350", custo: 2.20, valorVenda: 4.50, estoqueMinimo: 48, produtoId: "p2" },
+  { id: "v2b", nome: "2L", descricao: "Garrafa", foto: variantImages.v2b, tags: ["família"], sku: "GA-2L", custo: 4.80, valorVenda: 9.00, estoqueMinimo: 12, produtoId: "p2" },
   // Red Bull
-  { id: "v3a", nome: "250ml", descricao: "Lata regular", foto: "/placeholder.svg", tags: ["energia"], sku: "RB-250", custo: 5.50, valorVenda: 12.00, estoqueMinimo: 24, produtoId: "p3" },
-  { id: "v3b", nome: "473ml", descricao: "Latão", foto: "/placeholder.svg", tags: ["energia"], sku: "RB-473", custo: 8.00, valorVenda: 17.00, estoqueMinimo: 12, produtoId: "p3" },
+  { id: "v3a", nome: "250ml", descricao: "Lata regular", foto: variantImages.v3a, tags: ["energia"], sku: "RB-250", custo: 5.50, valorVenda: 12.00, estoqueMinimo: 24, produtoId: "p3" },
+  { id: "v3b", nome: "473ml", descricao: "Latão", foto: variantImages.v3b, tags: ["energia"], sku: "RB-473", custo: 8.00, valorVenda: 17.00, estoqueMinimo: 12, produtoId: "p3" },
   // Água
-  { id: "v4a", nome: "500ml", descricao: "Garrafa pequena", foto: "/placeholder.svg", tags: [], sku: "AM-500", custo: 0.80, valorVenda: 2.50, estoqueMinimo: 48, produtoId: "p4" },
-  { id: "v4b", nome: "1.5L", descricao: "Garrafa grande", foto: "/placeholder.svg", tags: [], sku: "AM-1.5", custo: 1.50, valorVenda: 4.00, estoqueMinimo: 24, produtoId: "p4" },
+  { id: "v4a", nome: "500ml", descricao: "Garrafa pequena", foto: variantImages.v4a, tags: [], sku: "AM-500", custo: 0.80, valorVenda: 2.50, estoqueMinimo: 48, produtoId: "p4" },
+  { id: "v4b", nome: "1.5L", descricao: "Garrafa grande", foto: variantImages.v4b, tags: [], sku: "AM-1.5", custo: 1.50, valorVenda: 4.00, estoqueMinimo: 24, produtoId: "p4" },
   // Skol
-  { id: "v5", nome: "Lata 350ml", descricao: "Lata", foto: "/placeholder.svg", tags: ["popular"], sku: "SKL-350", custo: 2.00, valorVenda: 4.50, estoqueMinimo: 96, produtoId: "p5" },
+  { id: "v5", nome: "Lata 350ml", descricao: "Lata", foto: variantImages.v5, tags: ["popular"], sku: "SKL-350", custo: 2.00, valorVenda: 4.50, estoqueMinimo: 96, produtoId: "p5" },
   // Heineken
-  { id: "v6a", nome: "Long Neck 330ml", descricao: "Long Neck", foto: "/placeholder.svg", tags: ["premium"], sku: "HNK-LN", custo: 4.00, valorVenda: 8.50, estoqueMinimo: 48, produtoId: "p6" },
-  { id: "v6b", nome: "Lata 350ml", descricao: "Lata", foto: "/placeholder.svg", tags: ["premium"], sku: "HNK-350", custo: 3.80, valorVenda: 7.50, estoqueMinimo: 48, produtoId: "p6" },
+  { id: "v6a", nome: "Long Neck 330ml", descricao: "Long Neck", foto: variantImages.v6a, tags: ["premium"], sku: "HNK-LN", custo: 4.00, valorVenda: 8.50, estoqueMinimo: 48, produtoId: "p6" },
+  { id: "v6b", nome: "Lata 350ml", descricao: "Lata", foto: variantImages.v6b, tags: ["premium"], sku: "HNK-350", custo: 3.80, valorVenda: 7.50, estoqueMinimo: 48, produtoId: "p6" },
   // Brahma Litrão
-  { id: "v7", nome: "1L", descricao: "Garrafa retornável", foto: "/placeholder.svg", tags: ["retornável"], sku: "BRM-1L", custo: 4.50, valorVenda: 9.00, estoqueMinimo: 24, produtoId: "p7" },
+  { id: "v7", nome: "1L", descricao: "Garrafa retornável", foto: variantImages.v7, tags: ["retornável"], sku: "BRM-1L", custo: 4.50, valorVenda: 9.00, estoqueMinimo: 24, produtoId: "p7" },
   // Vinho
-  { id: "v8", nome: "750ml", descricao: "Garrafa padrão", foto: "/placeholder.svg", tags: ["reservado"], sku: "VCD-750", custo: 25.00, valorVenda: 49.90, estoqueMinimo: 6, produtoId: "p8" },
+  { id: "v8", nome: "750ml", descricao: "Garrafa padrão", foto: variantImages.v8, tags: ["reservado"], sku: "VCD-750", custo: 25.00, valorVenda: 49.90, estoqueMinimo: 6, produtoId: "p8" },
   // Absolut
-  { id: "v9a", nome: "750ml", descricao: "Garrafa padrão", foto: "/placeholder.svg", tags: ["premium"], sku: "ABS-750", custo: 45.00, valorVenda: 89.90, estoqueMinimo: 4, produtoId: "p9" },
-  { id: "v9b", nome: "1L", descricao: "Garrafa grande", foto: "/placeholder.svg", tags: ["premium"], sku: "ABS-1L", custo: 55.00, valorVenda: 109.90, estoqueMinimo: 3, produtoId: "p9" },
+  { id: "v9a", nome: "750ml", descricao: "Garrafa padrão", foto: variantImages.v9a, tags: ["premium"], sku: "ABS-750", custo: 45.00, valorVenda: 89.90, estoqueMinimo: 4, produtoId: "p9" },
+  { id: "v9b", nome: "1L", descricao: "Garrafa grande", foto: variantImages.v9b, tags: ["premium"], sku: "ABS-1L", custo: 55.00, valorVenda: 109.90, estoqueMinimo: 3, produtoId: "p9" },
   // Marlboro
-  { id: "v10", nome: "Maço", descricao: "Maço com 20 unidades", foto: "/placeholder.svg", tags: [], sku: "MRL-BOX", custo: 6.00, valorVenda: 12.00, estoqueMinimo: 20, produtoId: "p10" },
+  { id: "v10", nome: "Maço", descricao: "Maço com 20 unidades", foto: variantImages.v10, tags: [], sku: "MRL-BOX", custo: 6.00, valorVenda: 12.00, estoqueMinimo: 20, produtoId: "p10" },
   // Seda
-  { id: "v11", nome: "King Size", descricao: "Pacote com 33 folhas", foto: "/placeholder.svg", tags: [], sku: "SED-KS", custo: 1.50, valorVenda: 4.00, estoqueMinimo: 30, produtoId: "p11" },
+  { id: "v11", nome: "King Size", descricao: "Pacote com 33 folhas", foto: variantImages.v11, tags: [], sku: "SED-KS", custo: 1.50, valorVenda: 4.00, estoqueMinimo: 30, produtoId: "p11" },
   // Essência
-  { id: "v12a", nome: "50g Menta", descricao: "Sabor menta", foto: "/placeholder.svg", tags: ["menta"], sku: "ESS-MNT", custo: 8.00, valorVenda: 18.00, estoqueMinimo: 10, produtoId: "p12" },
-  { id: "v12b", nome: "50g Uva", descricao: "Sabor uva", foto: "/placeholder.svg", tags: ["uva"], sku: "ESS-UVA", custo: 8.00, valorVenda: 18.00, estoqueMinimo: 10, produtoId: "p12" },
+  { id: "v12a", nome: "50g Menta", descricao: "Sabor menta", foto: variantImages.v12a, tags: ["menta"], sku: "ESS-MNT", custo: 8.00, valorVenda: 18.00, estoqueMinimo: 10, produtoId: "p12" },
+  { id: "v12b", nome: "50g Uva", descricao: "Sabor uva", foto: variantImages.v12b, tags: ["uva"], sku: "ESS-UVA", custo: 8.00, valorVenda: 18.00, estoqueMinimo: 10, produtoId: "p12" },
   // Isqueiro
-  { id: "v13", nome: "Único", descricao: "Isqueiro clássico", foto: "/placeholder.svg", tags: [], sku: "BIC-ISQ", custo: 2.00, valorVenda: 5.00, estoqueMinimo: 30, produtoId: "p13" },
+  { id: "v13", nome: "Único", descricao: "Isqueiro clássico", foto: variantImages.v13, tags: [], sku: "BIC-ISQ", custo: 2.00, valorVenda: 5.00, estoqueMinimo: 30, produtoId: "p13" },
   // Doritos
-  { id: "v14a", nome: "96g", descricao: "Pacote pequeno", foto: "/placeholder.svg", tags: ["popular"], sku: "DRT-96", custo: 3.50, valorVenda: 7.50, estoqueMinimo: 20, produtoId: "p14" },
-  { id: "v14b", nome: "167g", descricao: "Pacote grande", foto: "/placeholder.svg", tags: [], sku: "DRT-167", custo: 5.50, valorVenda: 12.00, estoqueMinimo: 12, produtoId: "p14" },
+  { id: "v14a", nome: "96g", descricao: "Pacote pequeno", foto: variantImages.v14a, tags: ["popular"], sku: "DRT-96", custo: 3.50, valorVenda: 7.50, estoqueMinimo: 20, produtoId: "p14" },
+  { id: "v14b", nome: "167g", descricao: "Pacote grande", foto: variantImages.v14b, tags: [], sku: "DRT-167", custo: 5.50, valorVenda: 12.00, estoqueMinimo: 12, produtoId: "p14" },
   // Trident
-  { id: "v15", nome: "8 unidades", descricao: "Envelope", foto: "/placeholder.svg", tags: [], sku: "TRD-8", custo: 1.80, valorVenda: 3.50, estoqueMinimo: 40, produtoId: "p15" },
+  { id: "v15", nome: "8 unidades", descricao: "Envelope", foto: variantImages.v15, tags: [], sku: "TRD-8", custo: 1.80, valorVenda: 3.50, estoqueMinimo: 40, produtoId: "p15" },
   // Picolé
-  { id: "v16a", nome: "Morango", descricao: "Picolé de morango", foto: "/placeholder.svg", tags: [], sku: "PKB-MOR", custo: 2.00, valorVenda: 5.00, estoqueMinimo: 20, produtoId: "p16" },
-  { id: "v16b", nome: "Chocolate", descricao: "Picolé de chocolate", foto: "/placeholder.svg", tags: ["popular"], sku: "PKB-CHO", custo: 2.50, valorVenda: 6.00, estoqueMinimo: 20, produtoId: "p16" },
+  { id: "v16a", nome: "Morango", descricao: "Picolé de morango", foto: variantImages.v16a, tags: [], sku: "PKB-MOR", custo: 2.00, valorVenda: 5.00, estoqueMinimo: 20, produtoId: "p16" },
+  { id: "v16b", nome: "Chocolate", descricao: "Picolé de chocolate", foto: variantImages.v16b, tags: ["popular"], sku: "PKB-CHO", custo: 2.50, valorVenda: 6.00, estoqueMinimo: 20, produtoId: "p16" },
   // Carvão
-  { id: "v17a", nome: "4kg", descricao: "Saco 4kg", foto: "/placeholder.svg", tags: ["churrasco"], sku: "CRV-4", custo: 10.00, valorVenda: 19.90, estoqueMinimo: 15, produtoId: "p17" },
-  { id: "v17b", nome: "8kg", descricao: "Saco 8kg", foto: "/placeholder.svg", tags: ["churrasco"], sku: "CRV-8", custo: 18.00, valorVenda: 34.90, estoqueMinimo: 8, produtoId: "p17" },
+  { id: "v17a", nome: "4kg", descricao: "Saco 4kg", foto: variantImages.v17a, tags: ["churrasco"], sku: "CRV-4", custo: 10.00, valorVenda: 19.90, estoqueMinimo: 15, produtoId: "p17" },
+  { id: "v17b", nome: "8kg", descricao: "Saco 8kg", foto: variantImages.v17b, tags: ["churrasco"], sku: "CRV-8", custo: 18.00, valorVenda: 34.90, estoqueMinimo: 8, produtoId: "p17" },
   // Gelo
-  { id: "v18a", nome: "5kg", descricao: "Saco 5kg", foto: "/placeholder.svg", tags: ["festa"], sku: "GLO-5", custo: 4.00, valorVenda: 8.90, estoqueMinimo: 30, produtoId: "p18" },
-  { id: "v18b", nome: "10kg", descricao: "Saco 10kg", foto: "/placeholder.svg", tags: ["festa"], sku: "GLO-10", custo: 7.00, valorVenda: 15.90, estoqueMinimo: 15, produtoId: "p18" },
+  { id: "v18a", nome: "5kg", descricao: "Saco 5kg", foto: variantImages.v18a, tags: ["festa"], sku: "GLO-5", custo: 4.00, valorVenda: 8.90, estoqueMinimo: 30, produtoId: "p18" },
+  { id: "v18b", nome: "10kg", descricao: "Saco 10kg", foto: variantImages.v18b, tags: ["festa"], sku: "GLO-10", custo: 7.00, valorVenda: 15.90, estoqueMinimo: 15, produtoId: "p18" },
 ];
 
 // ── Kits / Combos ───────────────────────────────────────────
