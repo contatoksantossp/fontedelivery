@@ -1,32 +1,32 @@
 
 
-## Reestruturar AbaResumo: Diário = Caixa, Semanal/Mensal = Gráfico + Top10 + Recebimentos
+## Nova aba "Minhas Contas" no Financeiro
 
-### Mudanças
+### O que faz
+Aba para cadastrar contas a pagar com nome, valor, data de vencimento e status (pendente/paga). Permite acompanhar vencimentos e dar baixa quando paga.
 
-**1. Aba Diário — dados do caixa atual (ou último)**
-- Remover os 4 cards duplicados de Vendas Bruto / Receita Real / Despesas / Resultado (linhas 70-87)
-- Receber `caixa: CaixaState` como nova prop
-- Se caixa aberto: mostrar os MetricCards operacionais (Pedidos, Ticket Médio, Receita, Despesas) referentes ao caixa atual
-- Se caixa fechado: mostrar os mesmos dados mas do último fechamento, com indicação "Último caixa — {data}"
-- Manter Top 10 e Recebimentos por Método abaixo
+### Arquivos
 
-**2. Aba Semanal — gráfico por caixa/dia + cards + Top10 + Recebimentos**
-- Manter os 4 cards de totais (Vendas Bruto, Receita Real, Despesas, Resultado)
-- Manter o gráfico de barras (últimos 7 dias)
-- Adicionar abaixo do gráfico: Top 10 Produtos + Recebimentos por Método (mesmo layout do diário, grid 2 colunas)
+**1. `src/components/financeiro/AbaContas.tsx`** (novo)
+- Interface `ContaPagar`: id, descricao, valor, dataVencimento, categoria (ex: aluguel, luz, fornecedor, outro), paga, dataPagamento?
+- Estado local com contas mockadas (aluguel, conta de luz, fornecedor, internet)
+- Botão "Nova Conta" abre dialog de cadastro
+- Tabela com colunas: Descrição, Categoria, Vencimento, Valor, Status, Ações
+- Status: Badge verde "Paga" / Badge amarela "Pendente" / Badge vermelha "Vencida" (se passou da data e não paga)
+- Ação: botão "Dar baixa" que marca como paga com data atual
+- Filtros: status (todas/pendentes/pagas/vencidas)
 
-**3. Aba Mensal — mesma estrutura do semanal**
-- Cards de totais + gráfico 30 dias + Top 10 + Recebimentos abaixo
+**2. `src/components/financeiro/ContaDialog.tsx`** (novo)
+- Dialog para cadastrar nova conta: descrição, valor, data vencimento (datepicker), categoria (select)
+- Campos obrigatórios com validação básica
 
-**4. Refatorar o loop semanal/mensal**
-- O loop `["semanal", "mensal"].map(...)` já renderiza cards + gráfico; adicionar o bloco de Top 10 + Recebimentos dentro dele (extrair como componente interno ou duplicar o JSX)
+**3. `src/pages/Financeiro.tsx`**
+- Adicionar TabsTrigger "Minhas Contas" e TabsContent com `AbaContas`
+- Estado `contas` gerenciado no Financeiro, passado como props
 
-### Props
-- Adicionar `caixa: CaixaState` na interface `AbaResumoProps`
-- Atualizar `Financeiro.tsx` para passar `caixa` ao `AbaResumo`
-
-### Arquivos editados
-- `src/components/financeiro/AbaResumo.tsx`
-- `src/pages/Financeiro.tsx`
+### Dados mock iniciais
+- Aluguel — R$ 2.500 — dia 10
+- Conta de Luz — R$ 380 — dia 15
+- Fornecedor Bebidas — R$ 4.200 — dia 20
+- Internet — R$ 150 — dia 5 (já paga)
 
