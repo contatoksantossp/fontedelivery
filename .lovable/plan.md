@@ -1,12 +1,26 @@
 
 
-## Adicionar color picker personalizado ao EntregadorEditDialog
+## Filtros com botao "Filtrar" e logica de mes atual
 
 ### O que muda
-Alem das 6 bolinhas pre-definidas, adicionar um input `type="color"` nativo ao lado delas, permitindo escolher qualquer cor personalizada.
+- Filtros deixam de ser aplicados automaticamente. O usuario seleciona os criterios e clica em **"Filtrar"** para aplicar.
+- Botao **"Limpar filtros"** reseta todos os filtros e volta ao padrao (mes atual).
+- Cards de saldo (Saldo Total, Dinheiro, Contas) refletem os dados filtrados.
+- Sem filtro ativo, exibe apenas transacoes do mes atual.
+- Lista exibe 20 itens com botao **"Carregar mais 20"** no final.
 
-### Arquivo: `src/components/parceiros/EntregadorEditDialog.tsx`
-- Adicionar um `<input type="color">` estilizado como uma bolinha (mesmo tamanho das outras) ao final da lista de cores
-- Quando o usuario escolher uma cor personalizada, ela se torna a cor selecionada
-- Se a cor atual nao estiver na lista CORES, o color picker mostra a cor atual e fica com borda de selecionado
+### Arquivo: `src/components/financeiro/AbaExtrato.tsx`
+
+**Estado**: Separar filtros "pendentes" (o que o usuario esta selecionando) dos filtros "aplicados" (o que esta sendo exibido).
+- States `pendente*` para cada filtro (dataInicio, dataFim, metodo, tipo, caixa)
+- States `aplicado*` para os filtros efetivamente em uso
+- Por padrao, `aplicadoDataInicio` e `aplicadoDataFim` sao o 1o e ultimo dia do mes atual
+
+**Botao "Filtrar"**: Ao lado dos selects, copia os valores pendentes para os aplicados e reseta o limite para 20.
+
+**Botao "Limpar filtros"**: Reseta todos os pendentes e aplicados para os valores padrao (mes atual), visivel apenas quando algum filtro difere do padrao.
+
+**Cards de saldo**: Calcular `saldoTotal`, `saldoDinheiro`, `saldoContas` a partir da lista `filtered` (ja filtrada) em vez de `transacoes` completas.
+
+**Carregar mais**: Botao exibe "Carregar mais 20" com contagem de restantes.
 
