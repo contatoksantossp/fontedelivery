@@ -17,7 +17,7 @@ const menuItems = [
   { title: "Catálogo", url: "/catalogo", icon: BookOpen },
   { title: "Estoque", url: "/estoque", icon: Package },
   { title: "Financeiro", url: "/financeiro", icon: DollarSign },
-  { title: "Cupons", url: "/cupons", icon: Tag },
+  { title: "Cupons & Promo", url: "/cupons", icon: Tag },
   { title: "Parceiros", url: "/parceiros", icon: Users },
   { title: "Configurações", url: "/configuracoes", icon: Settings },
 ];
