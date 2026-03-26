@@ -30,7 +30,7 @@ export function AppSidebar() {
   return (
     <Sidebar collapsible="icon" className="border-r border-sidebar-border">
       <div className="flex h-14 items-center gap-2 border-b border-sidebar-border px-4">
-        <span className="h-6 w-6 flex items-center justify-center text-primary font-extrabold text-xl leading-none shrink-0">F</span>
+        <span className="h-6 w-6 flex items-center justify-center text-primary shrink-0 font-sans text-3xl text-center font-extrabold leading-none">F</span>
         {!collapsed && (
           <span className="font-display font-bold text-foreground text-sm whitespace-nowrap">
             Fonte Delivery
