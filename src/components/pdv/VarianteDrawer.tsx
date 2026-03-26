@@ -26,11 +26,13 @@ export function VarianteDrawer({ produto, quantidade, onAddVariante, onClose }: 
             onClick={() => onAddVariante(produto, v, quantidade)}
             className="flex-shrink-0 w-28 rounded-lg border border-border bg-card overflow-hidden text-left cursor-pointer hover:bg-secondary transition-colors"
           >
-            <img
-              src={v.foto || "/placeholder.svg"}
-              alt={v.nome}
-              className="h-16 w-full object-cover"
-            />
+            <div className="aspect-square w-full overflow-hidden">
+              <img
+                src={v.foto || "/placeholder.svg"}
+                alt={v.nome}
+                className="h-full w-full object-cover"
+              />
+            </div>
             <div className="p-1.5">
               <p className="text-[10px] text-foreground truncate">{v.nome}</p>
               <span className="text-[10px] text-primary font-semibold">
