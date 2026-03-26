@@ -1,5 +1,5 @@
 import { Pedido } from "./mockData";
-import { Clock, X, Check, Truck, MapPin, Route, Timer } from "lucide-react";
+import { Clock, X, Check, Truck, MapPin, Route, Timer, GripHorizontal } from "lucide-react";
 import { PedidoRastreio, RastreioStatus } from "@/components/PedidoRastreio";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -52,7 +52,7 @@ export function PedidoCard({ pedido, selected, selectionMode, inRota, rotaColor,
   return (
     <div
       ref={setNodeRef}
-      {...(isDraggable ? { ...listeners, ...attributes } : {})}
+      
       onClick={() => {
         if (inRota || isDragging) return;
         onSelect(pedido);
@@ -62,7 +62,7 @@ export function PedidoCard({ pedido, selected, selectionMode, inRota, rotaColor,
         inRota && !rotaColor && "opacity-50 cursor-not-allowed",
         inRota && rotaColor && "cursor-not-allowed",
         !inRota && !isDraggable && "cursor-pointer hover:border-primary/50",
-        isDraggable && "cursor-grab active:cursor-grabbing hover:border-primary/50",
+        isDraggable && "hover:border-primary/50",
         selected && !inRota && "border-primary ring-1 ring-primary/30",
         isEligible && "border-dashed border-primary/60 animate-pulse",
         isDragging && "z-50 shadow-lg"
@@ -122,7 +122,17 @@ export function PedidoCard({ pedido, selected, selectionMode, inRota, rotaColor,
               <X className="h-3 w-3 mr-0.5" />
               Cancelar
             </Button>
-            {isPendente ? null : pedido.tipo === "retirada" ? (
+            {isPendente ? (
+              <div
+                {...listeners}
+                {...attributes}
+                className="flex items-center gap-1 cursor-grab active:cursor-grabbing bg-primary/10 hover:bg-primary/20 text-primary px-2.5 py-1 rounded-md transition-colors select-none"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <GripHorizontal className="h-3.5 w-3.5" />
+                <span className="text-[10px] font-bold whitespace-nowrap">Arraste →</span>
+              </div>
+            ) : pedido.tipo === "retirada" ? (
               <Button
                 size="sm"
                 className="h-7 px-2.5 text-xs"
