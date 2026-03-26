@@ -25,7 +25,7 @@ export function CategoriaCard({ categoria, selected, onSelect, onEdit, onDelete 
         )}
       </div>
       <span className={`w-full truncate text-center text-xs font-medium ${
-        selected ? "text-primary" : "text-muted-foreground"
+        selected ? "text-primary-foreground" : "text-muted-foreground"
       }`}>
         {categoria.nome}
       </span>
