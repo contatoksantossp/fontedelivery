@@ -134,6 +134,9 @@ export default function Financeiro() {
         <TabsContent value="extrato">
           <AbaExtrato transacoes={transacoes} onLancar={handleLancar} />
         </TabsContent>
+        <TabsContent value="contas">
+          <AbaContas contas={contas} onAdicionarConta={handleAdicionarConta} onDarBaixa={handleDarBaixa} />
+        </TabsContent>
       </Tabs>
     </PageContainer>
   );
