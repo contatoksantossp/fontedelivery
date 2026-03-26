@@ -1,32 +1,26 @@
 
 
-## Nova aba "Minhas Contas" no Financeiro
+## Gráfico por hora no Diário + Cards no Semanal/Mensal + Mocks diferenciados
 
-### O que faz
-Aba para cadastrar contas a pagar com nome, valor, data de vencimento e status (pendente/paga). Permite acompanhar vencimentos e dar baixa quando paga.
+### Mudanças
 
-### Arquivos
+**1. Mock data (`mockFinanceiroData.ts`)**
+- Adicionar novo tipo `VendaPorHora` com campos `hora: string` e `valor: number`
+- Criar mock `vendasPorHoraMock`: array com 24 entradas (00h–23h) simulando vendas por hora do caixa atual
+- Criar mocks separados para semanal e mensal:
+  - `topProdutosSemanalMock` e `topProdutosMensalMock` — mesmos produtos mas com quantidades/valores diferentes do diário
+  - `recebimentosSemanalMock` e `recebimentosMensalMock` — valores diferentes do `recebimentosPorMetodo` diário
 
-**1. `src/components/financeiro/AbaContas.tsx`** (novo)
-- Interface `ContaPagar`: id, descricao, valor, dataVencimento, categoria (ex: aluguel, luz, fornecedor, outro), paga, dataPagamento?
-- Estado local com contas mockadas (aluguel, conta de luz, fornecedor, internet)
-- Botão "Nova Conta" abre dialog de cadastro
-- Tabela com colunas: Descrição, Categoria, Vencimento, Valor, Status, Ações
-- Status: Badge verde "Paga" / Badge amarela "Pendente" / Badge vermelha "Vencida" (se passou da data e não paga)
-- Ação: botão "Dar baixa" que marca como paga com data atual
-- Filtros: status (todas/pendentes/pagas/vencidas)
+**2. AbaResumo (`AbaResumo.tsx`)**
+- **Diário**: Adicionar gráfico de barras por hora (BarChart com XAxis=hora, Bar=valor) **acima** dos MetricCards existentes
+- **Semanal/Mensal**: Mover os 4 cards de totais para **abaixo** do gráfico de barras (inverter a ordem atual: gráfico primeiro, cards depois)
+- Atualizar props para receber os novos mocks (vendasPorHora, topProdutos e recebimentos por período)
 
-**2. `src/components/financeiro/ContaDialog.tsx`** (novo)
-- Dialog para cadastrar nova conta: descrição, valor, data vencimento (datepicker), categoria (select)
-- Campos obrigatórios com validação básica
+**3. Financeiro.tsx**
+- Importar e passar os novos mocks para `AbaResumo`
 
-**3. `src/pages/Financeiro.tsx`**
-- Adicionar TabsTrigger "Minhas Contas" e TabsContent com `AbaContas`
-- Estado `contas` gerenciado no Financeiro, passado como props
-
-### Dados mock iniciais
-- Aluguel — R$ 2.500 — dia 10
-- Conta de Luz — R$ 380 — dia 15
-- Fornecedor Bebidas — R$ 4.200 — dia 20
-- Internet — R$ 150 — dia 5 (já paga)
+### Arquivos editados
+- `src/components/financeiro/mockFinanceiroData.ts`
+- `src/components/financeiro/AbaResumo.tsx`
+- `src/pages/Financeiro.tsx`
 
