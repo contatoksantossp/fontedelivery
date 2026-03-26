@@ -3,15 +3,15 @@ import { PedidoFila, CanalVenda } from "./mockPdvData";
 import { FilaPedidoCard } from "./FilaPedidoCard";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { ClipboardList, Plus, Store, MessageCircle, Smartphone } from "lucide-react";
 
-const filtrosCanal: { id: CanalVenda | "todos"; label: string; icon: React.ReactNode }[] = [
-  { id: "todos", label: "Todos", icon: <ClipboardList className="h-3 w-3" /> },
-  { id: "balcao", label: "Balcão", icon: <Store className="h-3 w-3" /> },
-  { id: "whatsapp", label: "WhatsApp", icon: <MessageCircle className="h-3 w-3" /> },
-  { id: "ifood", label: "iFood", icon: <Smartphone className="h-3 w-3" /> },
-  { id: "99food", label: "99Food", icon: <Smartphone className="h-3 w-3" /> },
-  { id: "app", label: "App", icon: <Smartphone className="h-3 w-3" /> },
+const canaisIndividuais: { id: CanalVenda; label: string; icon: React.ReactNode }[] = [
+  { id: "balcao", label: "Balcão", icon: <Store className="h-3.5 w-3.5" /> },
+  { id: "whatsapp", label: "WhatsApp", icon: <MessageCircle className="h-3.5 w-3.5" /> },
+  { id: "ifood", label: "iFood", icon: <Smartphone className="h-3.5 w-3.5" /> },
+  { id: "99food", label: "99Food", icon: <Smartphone className="h-3.5 w-3.5" /> },
+  { id: "app", label: "App", icon: <Smartphone className="h-3.5 w-3.5" /> },
 ];
 
 interface FilaPedidosProps {
