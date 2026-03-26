@@ -56,9 +56,11 @@ export function AbaPromocoes({ promocoes, setPromocoes }: AbaPromocoesProps) {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {promocoes.map(p => (
           <Card key={p.id} className={`overflow-hidden ${!p.ativo ? "opacity-60" : ""}`}>
-            {/* Banner gradient */}
-            <div className={`h-28 bg-gradient-to-r ${p.gradiente} flex items-end p-4`}>
-              <div>
+            {/* Banner image */}
+            <div className="h-28 bg-muted relative overflow-hidden">
+              <img src={p.imagem} alt={p.nome} className="w-full h-full object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+              <div className="absolute bottom-0 left-0 p-4">
                 <h3 className="text-white font-bold text-lg drop-shadow">{p.nome}</h3>
                 <p className="text-white/80 text-sm drop-shadow">{p.descricao}</p>
               </div>

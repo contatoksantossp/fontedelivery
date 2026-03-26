@@ -20,7 +20,7 @@ export interface PromocaoBanner {
   id: string;
   nome: string;
   descricao: string;
-  gradiente: string;
+  imagem: string;
   tipoDesconto: "percentual" | "fixo" | "nenhum";
   valorDesconto: number;
   ativo: boolean;
@@ -42,7 +42,7 @@ export const promocoesMock: PromocaoBanner[] = [
     id: "p1",
     nome: "Festival de Cervejas",
     descricao: "Descontos especiais em cervejas artesanais e importadas",
-    gradiente: "from-amber-500 to-orange-600",
+    imagem: "/placeholder.svg",
     tipoDesconto: "percentual",
     valorDesconto: 20,
     ativo: true,
@@ -57,7 +57,7 @@ export const promocoesMock: PromocaoBanner[] = [
     id: "p2",
     nome: "Noite do Whisky",
     descricao: "Seleção premium de whiskies com preços imperdíveis",
-    gradiente: "from-yellow-700 to-amber-900",
+    imagem: "/placeholder.svg",
     tipoDesconto: "fixo",
     valorDesconto: 15,
     ativo: true,
@@ -71,7 +71,7 @@ export const promocoesMock: PromocaoBanner[] = [
     id: "p3",
     nome: "Horário Especial",
     descricao: "Promoções válidas das 17h às 20h — Happy Hour!",
-    gradiente: "from-violet-500 to-purple-700",
+    imagem: "/placeholder.svg",
     tipoDesconto: "nenhum",
     valorDesconto: 0,
     ativo: true,
@@ -82,7 +82,7 @@ export const promocoesMock: PromocaoBanner[] = [
     id: "p4",
     nome: "Combo Churrasco",
     descricao: "Monte seu combo perfeito para o churrasco do fim de semana",
-    gradiente: "from-red-500 to-rose-700",
+    imagem: "/placeholder.svg",
     tipoDesconto: "percentual",
     valorDesconto: 10,
     ativo: false,

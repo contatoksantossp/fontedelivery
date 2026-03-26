@@ -1,22 +1,47 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { X, Plus } from "lucide-react";
+import { X, ImageIcon, Upload } from "lucide-react";
 import { variantesMock, produtosMock } from "@/components/catalogo/mockCatalogoData";
 import type { PromocaoBanner, PromocaoProduto } from "./mockCuponsData";
 
-const gradientes = [
-  { label: "Laranja → Vermelho", value: "from-amber-500 to-orange-600" },
-  { label: "Dourado → Marrom", value: "from-yellow-700 to-amber-900" },
-  { label: "Violeta → Roxo", value: "from-violet-500 to-purple-700" },
-  { label: "Vermelho → Rosa", value: "from-red-500 to-rose-700" },
-  { label: "Verde → Esmeralda", value: "from-green-500 to-emerald-700" },
-  { label: "Azul → Índigo", value: "from-blue-500 to-indigo-700" },
-];
+function BannerUpload({ src, onFileSelect }: { src: string; onFileSelect: (url: string) => void }) {
+  const [error, setError] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+  useEffect(() => { setError(false); }, [src]);
+
+  const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) onFileSelect(URL.createObjectURL(file));
+    e.target.value = "";
+  };
+
+  return (
+    <>
+      <input ref={inputRef} type="file" accept="image/*" className="hidden" onChange={handleFile} />
+      <button
+        type="button"
+        onClick={() => inputRef.current?.click()}
+        className="w-full h-32 rounded-lg border border-border bg-muted flex items-center justify-center relative group cursor-pointer overflow-hidden hover:ring-2 hover:ring-primary/40 transition-all"
+      >
+        {!src || src === "/placeholder.svg" || error ? (
+          <div className="flex flex-col items-center gap-1 text-muted-foreground">
+            <ImageIcon className="h-8 w-8" />
+            <span className="text-xs">Clique para enviar o banner</span>
+          </div>
+        ) : (
+          <img src={src} alt="Banner" className="w-full h-full object-cover" onError={() => setError(true)} />
+        )}
+        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+          <Upload className="h-6 w-6 text-white" />
+        </div>
+      </button>
+    </>
+  );
+}
 
 interface PromocaoDialogProps {
   open: boolean;
@@ -28,29 +53,29 @@ interface PromocaoDialogProps {
 export function PromocaoDialog({ open, onOpenChange, promocao, onSalvar }: PromocaoDialogProps) {
   const [nome, setNome] = useState("");
   const [descricao, setDescricao] = useState("");
-  const [gradiente, setGradiente] = useState(gradientes[0].value);
+  const [imagem, setImagem] = useState("/placeholder.svg");
   const [tipoDesconto, setTipoDesconto] = useState<"percentual" | "fixo" | "nenhum">("percentual");
   const [valorDesconto, setValorDesconto] = useState("");
   const [produtos, setProdutos] = useState<PromocaoProduto[]>([]);
-  const [produtoSelecionado, setProdutoSelecionado] = useState("");
+  const [buscaProduto, setBuscaProduto] = useState("");
 
   useEffect(() => {
     if (promocao) {
       setNome(promocao.nome);
       setDescricao(promocao.descricao);
-      setGradiente(promocao.gradiente);
+      setImagem(promocao.imagem);
       setTipoDesconto(promocao.tipoDesconto);
       setValorDesconto(String(promocao.valorDesconto));
       setProdutos([...promocao.produtos]);
     } else {
       setNome("");
       setDescricao("");
-      setGradiente(gradientes[0].value);
+      setImagem("/placeholder.svg");
       setTipoDesconto("percentual");
       setValorDesconto("");
       setProdutos([]);
     }
-    setProdutoSelecionado("");
+    setBuscaProduto("");
   }, [promocao, open]);
 
   const variantesDisponiveis = variantesMock.map(v => {
@@ -65,17 +90,18 @@ export function PromocaoDialog({ open, onOpenChange, promocao, onSalvar }: Promo
     return preco;
   };
 
-  const adicionarProduto = () => {
-    const v = variantesDisponiveis.find(x => x.key === produtoSelecionado);
-    if (!v) return;
+  const resultadosBusca = buscaProduto.trim().length > 0
+    ? variantesDisponiveis.filter(v => v.label.toLowerCase().includes(buscaProduto.toLowerCase())).slice(0, 3)
+    : [];
+
+  const adicionarProduto = (v: typeof variantesDisponiveis[0]) => {
     const [prodNome, varNome] = v.label.split(" — ");
     setProdutos(prev => [...prev, { produtoNome: prodNome, varianteNome: varNome, precoOriginal: v.preco, precoFinal: calcPrecoFinal(v.preco) }]);
-    setProdutoSelecionado("");
+    setBuscaProduto("");
   };
 
   const removerProduto = (idx: number) => setProdutos(prev => prev.filter((_, i) => i !== idx));
 
-  // Recalculate prices when discount changes
   useEffect(() => {
     if (tipoDesconto === "nenhum") return;
     setProdutos(prev => prev.map(p => ({ ...p, precoFinal: calcPrecoFinal(p.precoOriginal) })));
@@ -86,7 +112,7 @@ export function PromocaoDialog({ open, onOpenChange, promocao, onSalvar }: Promo
     onSalvar({
       nome,
       descricao,
-      gradiente,
+      imagem,
       tipoDesconto,
       valorDesconto: Number(valorDesconto) || 0,
       ativo: promocao?.ativo ?? true,
@@ -103,9 +129,10 @@ export function PromocaoDialog({ open, onOpenChange, promocao, onSalvar }: Promo
           <DialogTitle>{promocao ? "Editar Promoção" : "Nova Promoção / Banner"}</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
-          {/* Banner preview */}
-          <div className={`h-24 rounded-lg bg-gradient-to-r ${gradiente} flex items-center justify-center`}>
-            <span className="text-white font-bold text-lg drop-shadow">{nome || "Preview do Banner"}</span>
+          {/* Banner upload */}
+          <div className="space-y-2">
+            <Label>Banner</Label>
+            <BannerUpload src={imagem} onFileSelect={setImagem} />
           </div>
 
           <div className="space-y-2">
@@ -116,18 +143,6 @@ export function PromocaoDialog({ open, onOpenChange, promocao, onSalvar }: Promo
           <div className="space-y-2">
             <Label>Descrição</Label>
             <Input value={descricao} onChange={e => setDescricao(e.target.value)} placeholder="Descrição curta" />
-          </div>
-
-          <div className="space-y-2">
-            <Label>Cor do Banner</Label>
-            <Select value={gradiente} onValueChange={setGradiente}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
-              <SelectContent>
-                {gradientes.map(g => (
-                  <SelectItem key={g.value} value={g.value}>{g.label}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
           </div>
 
           <div className="space-y-2">
@@ -150,18 +165,27 @@ export function PromocaoDialog({ open, onOpenChange, promocao, onSalvar }: Promo
 
               <div className="space-y-2">
                 <Label>Vincular Produtos</Label>
-                <div className="flex gap-2">
-                  <Select value={produtoSelecionado} onValueChange={setProdutoSelecionado}>
-                    <SelectTrigger className="flex-1"><SelectValue placeholder="Selecione um produto" /></SelectTrigger>
-                    <SelectContent>
-                      {variantesDisponiveis.map(v => (
-                        <SelectItem key={v.key} value={v.key}>{v.label} — R$ {v.preco.toFixed(2)}</SelectItem>
+                <div className="relative">
+                  <Input
+                    value={buscaProduto}
+                    onChange={e => setBuscaProduto(e.target.value)}
+                    placeholder="Buscar produto..."
+                  />
+                  {resultadosBusca.length > 0 && (
+                    <div className="absolute z-10 left-0 right-0 mt-1 rounded-md border border-border bg-popover shadow-md overflow-hidden">
+                      {resultadosBusca.map(v => (
+                        <button
+                          key={v.key}
+                          type="button"
+                          className="w-full text-left px-3 py-2 text-sm hover:bg-accent transition-colors flex justify-between items-center"
+                          onClick={() => adicionarProduto(v)}
+                        >
+                          <span>{v.label}</span>
+                          <span className="text-muted-foreground ml-2 shrink-0">R$ {v.preco.toFixed(2)}</span>
+                        </button>
                       ))}
-                    </SelectContent>
-                  </Select>
-                  <Button size="icon" variant="outline" onClick={adicionarProduto} disabled={!produtoSelecionado}>
-                    <Plus className="h-4 w-4" />
-                  </Button>
+                    </div>
+                  )}
                 </div>
               </div>
 
