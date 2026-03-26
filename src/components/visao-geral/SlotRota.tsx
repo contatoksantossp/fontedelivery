@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { X, GripVertical, Truck, Bike, Car } from "lucide-react";
+import { X, GripVertical, Truck, Bike, Car, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Pedido, entregadoresMock } from "./mockData";
 import { Input } from "@/components/ui/input";
