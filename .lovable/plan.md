@@ -1,27 +1,36 @@
 
 
-## Redesign do VarianteCard para parecer com o ProdutoPaiCard
+## Adicionar botão de limpar busca no campo de pesquisa do Catálogo
 
 ### Mudança
-Redesenhar o `VarianteCard` para ter layout similar ao card pai: imagem quadrada (1:1) no topo, nome e preço abaixo, e botões edit/delete discretos embaixo.
+Adicionar um ícone de lixeira (ou X) no canto direito do input de busca, visível apenas quando há texto digitado. Ao clicar, limpa o campo.
 
-### Arquivo: `src/components/catalogo/VarianteCard.tsx`
+### Arquivo: `src/pages/Catalogo.tsx`
 
-- Imagem: trocar `h-16 w-full` por `aspect-square w-full` para ficar 1:1
-- Remover EAN e tags da visualização do card (manter compacto)
-- Layout vertical: imagem → nome → preço → botões
-- Botões menores como ícones (`h-6 w-6`) centralizados, sem texto "Editar"
-- Manter `min-w-[140px]` para caber no scroll horizontal
+1. Importar `X` de `lucide-react` (ícone de limpar, mais padrão que lixeira para inputs)
+2. No `<div className="relative">` do search bar (linha 133-141):
+   - Adicionar `pr-9` ao Input para dar espaço ao botão
+   - Adicionar botão com ícone `X` posicionado `absolute right-2 top-1/2 -translate-y-1/2`
+   - Mostrar apenas quando `busca.length > 0`
+   - `onClick={() => setBusca("")}`
 
-```text
-┌─────────────┐
-│             │
-│  [foto 1:1] │
-│             │
-├─────────────┤
-│ Nome        │
-│ R$ X,XX     │
-│  [✎] [🗑]  │
-└─────────────┘
+```tsx
+<div className="relative">
+  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+  <Input
+    placeholder="Buscar por nome, descrição ou tag..."
+    value={busca}
+    onChange={(e) => setBusca(e.target.value)}
+    className="pl-9 pr-9"
+  />
+  {busca && (
+    <button onClick={() => setBusca("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+      <X className="h-4 w-4" />
+    </button>
+  )}
+</div>
 ```
+
+### Arquivo editado
+- `src/pages/Catalogo.tsx`
 
