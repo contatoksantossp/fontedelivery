@@ -223,7 +223,7 @@ export function SlotRotaExpanded({
           <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
             <SortableContext items={rotaItens.map((i) => i.id)} strategy={verticalListSortingStrategy}>
               <div className="space-y-1.5">
-                {rotaItens.map((p) => (
+                {rotaItens.map((p, idx) => (
                   <SortableItem key={p.id} pedido={p} onRemove={onRemove} orderNum={idx + 1} color={entregadorCor || "#9ca3af"} />
                 ))}
               </div>
