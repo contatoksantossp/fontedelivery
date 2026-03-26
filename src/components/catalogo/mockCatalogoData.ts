@@ -1,4 +1,5 @@
 import { productImages, variantImages } from "@/assets/products";
+import { categoryImages, subcategoryImages } from "@/assets/categories";
 
 export interface CatalogCategoria {
   id: string;
