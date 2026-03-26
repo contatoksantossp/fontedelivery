@@ -93,7 +93,7 @@ export default function Rotas() {
     <div className="flex-1 flex overflow-hidden">
       {/* Coluna Esquerda — Kanban de Rotas */}
       <div className="w-[35%] flex flex-col p-3 border-r border-border overflow-hidden">
-        <KanbanColumn title="Rotas" count={activeCount} className="flex-1 min-h-0">
+        <KanbanColumn id="rotas" title="Rotas" count={activeCount} className="flex-1 min-h-0">
           {sortedRotas.map((rota) => (
             <RotaCard
               key={rota.id}
