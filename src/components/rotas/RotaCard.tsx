@@ -34,8 +34,8 @@ export function RotaCard({ rota, cor, selected, onSelect }: RotaCardProps) {
       style={{ borderLeftWidth: 3, borderLeftColor: cor }}
       className={cn(
         "rounded-lg border p-3 cursor-pointer transition-all",
-        "hover:border-primary/40",
-        selected ? "border-primary bg-primary/5 ring-1 ring-primary/20" : "border-border bg-card",
+        "hover:shadow-md",
+        selected ? "shadow-lg border-border bg-card" : "border-border bg-card",
         isConcluida && "opacity-50 bg-muted"
       )}
     >
