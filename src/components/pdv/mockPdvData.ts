@@ -35,10 +35,22 @@ export interface Categoria {
   subcategorias: Subcategoria[];
 }
 
+export interface EnderecoCache {
+  id: string;
+  rua: string;
+  numero?: string;
+  bairro: string;
+  cep: string;
+  cidade: string;
+}
+
 export interface EnderecoCliente {
   id: string;
   rua: string;
+  numero?: string;
   bairro: string;
+  cep?: string;
+  cidade?: string;
   complemento?: string;
 }
 
@@ -394,3 +406,36 @@ export const pedidosFilaMock: PedidoFila[] = [
     pagamentos: [{ id: "pg8", metodo: "qr", valor: 19.90 }],
   },
 ];
+
+// ── Cache de Endereços ──────────────────────────────────────
+export const enderecoCacheMock: EnderecoCache[] = [
+  { id: "ec1", rua: "Rua das Flores", numero: "123", bairro: "Centro", cep: "01010-000", cidade: "São Paulo" },
+  { id: "ec2", rua: "Av. Brasil", numero: "500", bairro: "Jardim Paulista", cep: "04510-000", cidade: "São Paulo" },
+  { id: "ec3", rua: "Av. Brasil", numero: "456", bairro: "Jardim Paulista", cep: "04510-010", cidade: "São Paulo" },
+  { id: "ec4", rua: "Rua Ipê", numero: "789", bairro: "Vila Nova", cep: "02020-100", cidade: "São Paulo" },
+  { id: "ec5", rua: "Rua Harmonia", numero: "55", bairro: "Pinheiros", cep: "05435-000", cidade: "São Paulo" },
+  { id: "ec6", rua: "Rua Augusta", numero: "200", bairro: "Consolação", cep: "01304-000", cidade: "São Paulo" },
+  { id: "ec7", rua: "Rua Oscar Freire", numero: "900", bairro: "Jardins", cep: "01426-001", cidade: "São Paulo" },
+  { id: "ec8", rua: "Av. Paulista", numero: "1578", bairro: "Bela Vista", cep: "01310-200", cidade: "São Paulo" },
+  { id: "ec9", rua: "Rua da Consolação", numero: "3000", bairro: "Cerqueira César", cep: "01416-000", cidade: "São Paulo" },
+  { id: "ec10", rua: "Av. Rebouças", numero: "1200", bairro: "Pinheiros", cep: "05402-100", cidade: "São Paulo" },
+  { id: "ec11", rua: "Rua Vergueiro", numero: "2500", bairro: "Vila Mariana", cep: "04101-300", cidade: "São Paulo" },
+  { id: "ec12", rua: "Av. Interlagos", bairro: "Interlagos", cep: "04661-100", cidade: "São Paulo" },
+  { id: "ec13", rua: "Rua Cardeal Arcoverde", numero: "1800", bairro: "Pinheiros", cep: "05407-002", cidade: "São Paulo" },
+  { id: "ec14", rua: "Rua Tabapuã", numero: "422", bairro: "Itaim Bibi", cep: "04533-001", cidade: "São Paulo" },
+  { id: "ec15", rua: "Av. Faria Lima", numero: "3477", bairro: "Itaim Bibi", cep: "04538-133", cidade: "São Paulo" },
+];
+
+export function simularBuscaAPI(texto: string): Promise<EnderecoCache> {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve({
+        id: `ec_api_${Date.now()}`,
+        rua: texto.trim(),
+        bairro: "Bairro Encontrado",
+        cep: "00000-000",
+        cidade: "São Paulo",
+      });
+    }, 500);
+  });
+}

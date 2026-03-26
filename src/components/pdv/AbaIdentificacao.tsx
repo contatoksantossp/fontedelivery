@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { clientesMock, Cliente, CanalVenda, Modalidade, EnderecoCliente } from "./mockPdvData";
+import { clientesMock, Cliente, CanalVenda, Modalidade, EnderecoCliente, EnderecoCache, enderecoCacheMock, simularBuscaAPI } from "./mockPdvData";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
-import { Search, Truck, MapPin, Store, MessageCircle, Smartphone, UserPlus, Plus } from "lucide-react";
+import { Search, Truck, MapPin, Store, MessageCircle, Smartphone, UserPlus, Plus, Loader2 } from "lucide-react";
 
 interface AbaIdentificacaoProps {
   canal: CanalVenda;
@@ -32,7 +32,14 @@ export function AbaIdentificacao({
 }: AbaIdentificacaoProps) {
   const [buscaCliente, setBuscaCliente] = useState("");
   const [novoEnderecoMode, setNovoEnderecoMode] = useState(false);
-  const [novoEndereco, setNovoEndereco] = useState({ rua: "", bairro: "", complemento: "" });
+
+  // Address search state
+  const [buscaEndereco, setBuscaEndereco] = useState("");
+  const [enderecoSelecionado, setEnderecoSelecionado] = useState<EnderecoCache | null>(null);
+  const [numero, setNumero] = useState("");
+  const [complemento, setComplemento] = useState("");
+  const [buscandoAPI, setBuscandoAPI] = useState(false);
+
   const showLocalizador = canal === "99food" || canal === "ifood";
 
   const clientesFiltrados = buscaCliente.trim()
@@ -41,6 +48,16 @@ export function AbaIdentificacao({
           (c) =>
             c.nome.toLowerCase().includes(buscaCliente.toLowerCase()) ||
             c.telefone.includes(buscaCliente)
+        )
+        .slice(0, 3)
+    : [];
+
+  const enderecosFiltrados = buscaEndereco.trim() && !enderecoSelecionado
+    ? enderecoCacheMock
+        .filter(
+          (e) =>
+            e.rua.toLowerCase().includes(buscaEndereco.toLowerCase()) ||
+            e.bairro.toLowerCase().includes(buscaEndereco.toLowerCase())
         )
         .slice(0, 3)
     : [];
@@ -59,18 +76,61 @@ export function AbaIdentificacao({
     setNovoEnderecoMode(true);
   };
 
-  const handleSalvarNovoEndereco = () => {
-    if (!cliente || !novoEndereco.rua.trim()) return;
-    const end: EnderecoCliente = {
+  const handleSelecionarEnderecoCache = (ec: EnderecoCache) => {
+    setEnderecoSelecionado(ec);
+    setNumero(ec.numero || "");
+    setComplemento("");
+    setBuscaEndereco(ec.rua);
+  };
+
+  const handleBuscarAPI = async () => {
+    if (!buscaEndereco.trim()) return;
+    setBuscandoAPI(true);
+    const resultado = await simularBuscaAPI(buscaEndereco);
+    setBuscandoAPI(false);
+    handleSelecionarEnderecoCache(resultado);
+  };
+
+  const handleSalvarEndereco = () => {
+    if (!cliente || !enderecoSelecionado || !numero.trim()) return;
+
+    // Check if address (rua + numero) already exists in cache
+    const existeNoCache = enderecoCacheMock.find(
+      (e) => e.rua.toLowerCase() === enderecoSelecionado.rua.toLowerCase() && e.numero === numero.trim()
+    );
+
+    if (!existeNoCache) {
+      const novoCacheEntry: EnderecoCache = {
+        id: `ec_new_${Date.now()}`,
+        rua: enderecoSelecionado.rua,
+        numero: numero.trim(),
+        bairro: enderecoSelecionado.bairro,
+        cep: enderecoSelecionado.cep,
+        cidade: enderecoSelecionado.cidade,
+      };
+      enderecoCacheMock.push(novoCacheEntry);
+    }
+
+    const novoEnd: EnderecoCliente = {
       id: `end_new_${Date.now()}`,
-      rua: novoEndereco.rua.trim(),
-      bairro: novoEndereco.bairro.trim(),
-      complemento: novoEndereco.complemento.trim() || undefined,
+      rua: `${enderecoSelecionado.rua}, ${numero.trim()}`,
+      numero: numero.trim(),
+      bairro: enderecoSelecionado.bairro,
+      cep: enderecoSelecionado.cep,
+      cidade: enderecoSelecionado.cidade,
+      complemento: complemento.trim() || undefined,
     };
-    cliente.enderecos.push(end);
-    setEnderecoId(end.id);
+    cliente.enderecos.push(novoEnd);
+    setEnderecoId(novoEnd.id);
+    resetEnderecoForm();
+  };
+
+  const resetEnderecoForm = () => {
     setNovoEnderecoMode(false);
-    setNovoEndereco({ rua: "", bairro: "", complemento: "" });
+    setBuscaEndereco("");
+    setEnderecoSelecionado(null);
+    setNumero("");
+    setComplemento("");
   };
 
   return (
@@ -116,7 +176,7 @@ export function AbaIdentificacao({
                   <p className="text-sm font-medium text-foreground">{cliente.nome}</p>
                   <p className="text-[10px] text-muted-foreground">{cliente.telefone || "Sem telefone"}</p>
                 </div>
-                <Button variant="ghost" size="sm" className="text-xs h-7" onClick={() => { setCliente(null); setEnderecoId(null); setNovoEnderecoMode(false); }}>
+                <Button variant="ghost" size="sm" className="text-xs h-7" onClick={() => { setCliente(null); setEnderecoId(null); resetEnderecoForm(); }}>
                   Trocar
                 </Button>
               </div>
@@ -144,7 +204,6 @@ export function AbaIdentificacao({
                       <span className="text-muted-foreground ml-2">{c.telefone}</span>
                     </button>
                   ))}
-                  {/* Criar novo */}
                   <button
                     onClick={handleCriarNovoCliente}
                     className="w-full text-left px-3 py-2 text-xs hover:bg-primary/5 flex items-center gap-1.5 text-primary font-medium"
@@ -158,32 +217,90 @@ export function AbaIdentificacao({
           )}
         </div>
 
-        {/* Novo endereço (após criar cliente sem endereços) */}
+        {/* Novo endereço — busca com cache */}
         {novoEnderecoMode && cliente && (
           <div>
             <p className="text-xs font-semibold text-muted-foreground mb-1">Cadastrar Endereço</p>
             <div className="space-y-1.5">
-              <Input
-                placeholder="Rua, número..."
-                value={novoEndereco.rua}
-                onChange={(e) => setNovoEndereco((p) => ({ ...p, rua: e.target.value }))}
-                className="h-8 text-xs"
-              />
-              <Input
-                placeholder="Bairro"
-                value={novoEndereco.bairro}
-                onChange={(e) => setNovoEndereco((p) => ({ ...p, bairro: e.target.value }))}
-                className="h-8 text-xs"
-              />
-              <Input
-                placeholder="Complemento (opcional)"
-                value={novoEndereco.complemento}
-                onChange={(e) => setNovoEndereco((p) => ({ ...p, complemento: e.target.value }))}
-                className="h-8 text-xs"
-              />
-              <Button size="sm" className="w-full h-8 text-xs" onClick={handleSalvarNovoEndereco} disabled={!novoEndereco.rua.trim()}>
-                Salvar Endereço
-              </Button>
+              {/* Search input */}
+              <div className="relative">
+                <Search className="absolute left-2 top-2 h-3.5 w-3.5 text-muted-foreground" />
+                <Input
+                  placeholder="Buscar endereço..."
+                  value={buscaEndereco}
+                  onChange={(e) => {
+                    setBuscaEndereco(e.target.value);
+                    if (enderecoSelecionado) {
+                      setEnderecoSelecionado(null);
+                      setNumero("");
+                      setComplemento("");
+                    }
+                  }}
+                  className="pl-7 h-8 text-xs"
+                />
+              </div>
+
+              {/* Search results */}
+              {buscaEndereco.trim() && !enderecoSelecionado && (
+                <div className="border border-border rounded-lg overflow-hidden">
+                  {enderecosFiltrados.map((e) => (
+                    <button
+                      key={e.id}
+                      onClick={() => handleSelecionarEnderecoCache(e)}
+                      className="w-full text-left px-3 py-2 text-xs hover:bg-secondary border-b border-border"
+                    >
+                      <p className="text-foreground">{e.rua}{e.numero ? `, ${e.numero}` : ""}</p>
+                      <p className="text-[10px] text-muted-foreground">{e.bairro} • {e.cep} • {e.cidade}</p>
+                    </button>
+                  ))}
+                  <button
+                    onClick={handleBuscarAPI}
+                    disabled={buscandoAPI}
+                    className="w-full text-left px-3 py-2 text-xs hover:bg-primary/5 flex items-center gap-1.5 text-primary font-medium"
+                  >
+                    {buscandoAPI ? (
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                    ) : (
+                      <Search className="h-3.5 w-3.5" />
+                    )}
+                    {buscandoAPI ? "Buscando..." : `Buscar "${buscaEndereco.trim()}"`}
+                  </button>
+                </div>
+              )}
+
+              {/* Revealed fields after selection */}
+              {enderecoSelecionado && (
+                <div className="space-y-1.5">
+                  <Input value={enderecoSelecionado.rua} readOnly className="h-8 text-xs bg-muted text-muted-foreground" />
+                  <Input value={enderecoSelecionado.bairro} readOnly className="h-8 text-xs bg-muted text-muted-foreground" />
+                  <div className="flex gap-1.5">
+                    <Input value={enderecoSelecionado.cep} readOnly className="h-8 text-xs bg-muted text-muted-foreground flex-1" />
+                    <Input value={enderecoSelecionado.cidade} readOnly className="h-8 text-xs bg-muted text-muted-foreground flex-1" />
+                  </div>
+                  <div className="flex gap-1.5">
+                    <Input
+                      placeholder="Número *"
+                      value={numero}
+                      onChange={(e) => setNumero(e.target.value)}
+                      className="h-8 text-xs flex-1"
+                    />
+                    <Input
+                      placeholder="Complemento"
+                      value={complemento}
+                      onChange={(e) => setComplemento(e.target.value)}
+                      className="h-8 text-xs flex-1"
+                    />
+                  </div>
+                  <Button
+                    size="sm"
+                    className="w-full h-8 text-xs"
+                    onClick={handleSalvarEndereco}
+                    disabled={!numero.trim()}
+                  >
+                    Salvar Endereço
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -217,7 +334,7 @@ export function AbaIdentificacao({
           </div>
         </div>
 
-        {/* Enderecos */}
+        {/* Enderecos salvos */}
         {modalidade === "entrega" && cliente && !novoEnderecoMode && (
           <div>
             <p className="text-xs font-semibold text-muted-foreground mb-1">Endereço</p>
