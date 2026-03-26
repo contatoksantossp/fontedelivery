@@ -2,7 +2,7 @@ import { useState } from "react";
 import { StatusBadge } from "./StatusBadge";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
-import { Wallet, Clock, Plus } from "lucide-react";
+import { Wallet, Clock, Plus, LayoutDashboard, Truck } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
