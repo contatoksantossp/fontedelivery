@@ -1,11 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { rotasMock, Rota } from "@/components/rotas/mockRotasData";
 import { RotaCard } from "@/components/rotas/RotaCard";
 import { RotaDetalhes } from "@/components/rotas/RotaDetalhes";
 import { RotaAcerto } from "@/components/rotas/RotaAcerto";
+import { RotaMapaLeaflet } from "@/components/rotas/RotaMapaLeaflet";
 import { KanbanColumn } from "@/components/visao-geral/KanbanColumn";
 import { useSidebar } from "@/components/ui/sidebar";
-import { Map } from "lucide-react";
+import { entregadoresMock } from "@/components/visao-geral/mockData";
 
 export default function Rotas() {
   const [rotas, setRotas] = useState<Rota[]>(rotasMock);
@@ -18,6 +19,18 @@ export default function Rotas() {
   }, [setOpen]);
 
   const selectedRota = rotas.find((r) => r.id === selectedId) || null;
+
+  // Map rotaId -> driver color
+  const corMap = useMemo(() => {
+    const map: Record<string, string> = {};
+    rotas.forEach((r) => {
+      const ent = entregadoresMock.find((e) => e.id === r.entregadorId);
+      map[r.id] = ent?.cor || "#9ca3af";
+    });
+    return map;
+  }, [rotas]);
+
+  const selectedCor = selectedId ? (corMap[selectedId] || "#9ca3af") : "#9ca3af";
 
   // Sort: active first, concluida last
   const sortedRotas = [...rotas].sort((a, b) => {
@@ -57,6 +70,14 @@ export default function Rotas() {
     );
   };
 
+  const handleBonificacaoChange = (rotaId: string, valor: number) => {
+    setRotas((prev) =>
+      prev.map((r) =>
+        r.id === rotaId ? { ...r, bonificacao: valor } : r
+      )
+    );
+  };
+
   return (
     <div className="flex-1 flex overflow-hidden">
       {/* Coluna Esquerda — Kanban de Rotas */}
@@ -66,6 +87,7 @@ export default function Rotas() {
             <RotaCard
               key={rota.id}
               rota={rota}
+              cor={corMap[rota.id]}
               selected={selectedId === rota.id}
               onSelect={(r) => setSelectedId(r.id)}
             />
@@ -75,7 +97,11 @@ export default function Rotas() {
 
       {/* Coluna Central — Detalhes */}
       <div className="w-[25%] border-r border-border flex flex-col overflow-hidden">
-        <RotaDetalhes rota={selectedRota} />
+        <RotaDetalhes
+          rota={selectedRota}
+          cor={selectedCor}
+          onBonificacaoChange={handleBonificacaoChange}
+        />
       </div>
 
       {/* Coluna Direita — Mapa ou Acerto */}
@@ -88,17 +114,12 @@ export default function Rotas() {
             onAlterarPagamento={handleAlterarPagamento}
           />
         ) : (
-          <div className="flex-1 flex flex-col items-center justify-center text-muted-foreground p-3">
-            <div className="rounded-xl bg-primary/10 p-4 mb-2">
-              <Map className="h-8 w-8 text-primary" />
-            </div>
-            <p className="text-xs">
-              {selectedRota
-                ? "Mapa focado na rota selecionada"
-                : "Mapa global — todos os entregadores"}
-            </p>
-            <p className="text-[10px] text-muted-foreground mt-1">Integração em breve</p>
-          </div>
+          <RotaMapaLeaflet
+            rota={selectedRota}
+            cor={selectedCor}
+            allRotas={rotas}
+            corMap={corMap}
+          />
         )}
       </div>
     </div>

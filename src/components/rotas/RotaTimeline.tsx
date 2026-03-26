@@ -4,26 +4,36 @@ import { cn } from "@/lib/utils";
 
 interface RotaTimelineProps {
   paradas: Parada[];
+  cor: string;
 }
 
-export function RotaTimeline({ paradas }: RotaTimelineProps) {
+export function RotaTimeline({ paradas, cor }: RotaTimelineProps) {
+  // Sort: entregues first, then pendentes
+  const sorted = [...paradas].sort((a, b) => {
+    if (a.paradaStatus === "entregue" && b.paradaStatus !== "entregue") return -1;
+    if (a.paradaStatus !== "entregue" && b.paradaStatus === "entregue") return 1;
+    return 0;
+  });
+
   return (
     <div className="relative pl-6">
       {/* Vertical line */}
       <div className="absolute left-[11px] top-2 bottom-2 w-px bg-border" />
 
-      {paradas.map((parada, i) => {
+      {sorted.map((parada) => {
         const entregue = parada.paradaStatus === "entregue";
         return (
           <div key={parada.id} className="relative pb-4 last:pb-0">
             {/* Icon */}
             <div
               className={cn(
-                "absolute left-[-13px] w-5 h-5 rounded-full flex items-center justify-center border-2",
-                entregue
-                  ? "bg-green-500/20 border-green-500 text-green-400"
-                  : "bg-yellow-500/20 border-yellow-500 text-yellow-400"
+                "absolute left-[-13px] w-5 h-5 rounded-full flex items-center justify-center border-2"
               )}
+              style={{
+                background: entregue ? "hsl(var(--muted) / 0.5)" : `${cor}33`,
+                borderColor: entregue ? "hsl(var(--muted-foreground))" : cor,
+                color: entregue ? "hsl(var(--muted-foreground))" : cor,
+              }}
             >
               {entregue ? (
                 <Check className="h-3 w-3" />
@@ -36,7 +46,10 @@ export function RotaTimeline({ paradas }: RotaTimelineProps) {
             <div className="ml-2">
               <div className="flex items-center gap-1.5">
                 <span className="text-xs font-semibold text-foreground">{parada.pedidoCodigo}</span>
-                <span className={cn("text-[10px]", entregue ? "text-green-400" : "text-yellow-400")}>
+                <span
+                  className="text-[10px]"
+                  style={{ color: entregue ? "hsl(var(--muted-foreground))" : cor }}
+                >
                   {entregue ? "Entregue" : "Pendente"}
                 </span>
               </div>
