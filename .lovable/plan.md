@@ -1,36 +1,26 @@
 
 
-## Adicionar botão de limpar busca no campo de pesquisa do Catálogo
+## Ajustes visuais no Catálogo
 
-### Mudança
-Adicionar um ícone de lixeira (ou X) no canto direito do input de busca, visível apenas quando há texto digitado. Ao clicar, limpa o campo.
+### 1. Cards de Categoria maiores — `src/components/catalogo/CategoriaCard.tsx`
+- Container: `w-24` → `w-[140px]`, `p-1.5` → `p-2`
+- Imagem: `h-16 w-16` → `aspect-square w-full rounded-lg`
+- Texto: `text-[11px]` → `text-xs`
 
-### Arquivo: `src/pages/Catalogo.tsx`
+### 2. Subcategorias em pílula maior — `src/components/catalogo/SubcategoriaCard.tsx`
+- Manter formato pill horizontal (`rounded-full`)
+- Imagem: `h-6 w-6` → `h-8 w-8`
+- Texto: `text-[11px]` → `text-xs`
+- Padding: `px-2 py-1` → `px-3 py-1.5`
+- Gap: `gap-1.5` → `gap-2`
+- Botões hover: `h-5 w-5` → `h-6 w-6`, ícones `h-2.5` → `h-3`
 
-1. Importar `X` de `lucide-react` (ícone de limpar, mais padrão que lixeira para inputs)
-2. No `<div className="relative">` do search bar (linha 133-141):
-   - Adicionar `pr-9` ao Input para dar espaço ao botão
-   - Adicionar botão com ícone `X` posicionado `absolute right-2 top-1/2 -translate-y-1/2`
-   - Mostrar apenas quando `busca.length > 0`
-   - `onClick={() => setBusca("")}`
+### 3. Botões "+ Nova/Novo" com mais destaque — `src/pages/Catalogo.tsx`
+- Trocar `variant="ghost"` por `variant="outline"` nos 3 botões de adicionar (categorias, subcategorias, produtos)
+- Adicionar classe `border-dashed`
 
-```tsx
-<div className="relative">
-  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-  <Input
-    placeholder="Buscar por nome, descrição ou tag..."
-    value={busca}
-    onChange={(e) => setBusca(e.target.value)}
-    className="pl-9 pr-9"
-  />
-  {busca && (
-    <button onClick={() => setBusca("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
-      <X className="h-4 w-4" />
-    </button>
-  )}
-</div>
-```
-
-### Arquivo editado
+### Arquivos editados
+- `src/components/catalogo/CategoriaCard.tsx`
+- `src/components/catalogo/SubcategoriaCard.tsx`
 - `src/pages/Catalogo.tsx`
 
