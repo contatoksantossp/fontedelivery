@@ -32,7 +32,7 @@ export function ProdutoCard({ produto, quantidade, expanded, onAddVariante, onEx
       <img
         src={produto.foto || "/placeholder.svg"}
         alt={produto.nome}
-        className="h-24 w-full object-cover"
+        className="w-full aspect-square object-cover"
       />
       <div className="p-2">
         <p className="text-xs font-medium text-foreground truncate">{produto.nome}</p>
