@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { PageContainer } from "@/components/PageContainer";
 import { MetricCard } from "@/components/MetricCard";
 import { Input } from "@/components/ui/input";
@@ -77,6 +77,16 @@ export default function Dashboard() {
     );
   };
 
+  const parseDate = (d: string) => {
+    const [dd, mm, yyyy] = d.split("/");
+    return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+  };
+
+  const itemsVisiveis = useMemo(() =>
+    [...items].sort((a, b) => parseDate(a.lastCount).getTime() - parseDate(b.lastCount).getTime()).slice(0, 10),
+    [items]
+  );
+
   return (
     <PageContainer title="Página Inicial" subtitle="Resumo operacional do mês — Março 2026">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -97,7 +107,7 @@ export default function Dashboard() {
             <p className="text-xs text-muted-foreground mt-0.5">Produtos ordenados pela última contagem</p>
           </div>
           <div className="space-y-3">
-            {items.map((item) => (
+            {itemsVisiveis.map((item) => (
               <div
                 key={item.id}
                 className="flex items-center gap-2 rounded-md border border-border bg-secondary/50 px-3 py-2.5"
