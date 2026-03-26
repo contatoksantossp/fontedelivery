@@ -39,20 +39,26 @@ export default function VisaoGeral() {
 
   const selectionMode = expandedSlot !== null;
 
-  // Map pedidoId -> cor do entregador atribuído à rota
+  // Map pedidoId -> cor do entregador atribuído à rota (cinza se sem entregador)
   const pedidoCorMap = useMemo(() => {
     const map = new Map<string, string>();
     [0, 1].forEach((i) => {
       const entId = entregadorPorRota[i];
-      if (entId) {
-        const ent = entregadoresMock.find((e) => e.id === entId);
-        if (ent) {
-          rotasItens[i].forEach((p) => map.set(p.id, ent.cor));
-        }
-      }
+      const ent = entId ? entregadoresMock.find((e) => e.id === entId) : null;
+      const color = ent?.cor || "#9ca3af";
+      rotasItens[i].forEach((p) => map.set(p.id, color));
     });
     return map;
   }, [rotasItens, entregadorPorRota]);
+
+  // Map pedidoId -> order number within route
+  const pedidoOrderMap = useMemo(() => {
+    const map = new Map<string, number>();
+    [0, 1].forEach((i) => {
+      rotasItens[i].forEach((p, idx) => map.set(p.id, idx + 1));
+    });
+    return map;
+  }, [rotasItens]);
 
   // Cor do entregador por rota
   const entregadorCorPorRota = useMemo<[string | null, string | null]>(() => {
