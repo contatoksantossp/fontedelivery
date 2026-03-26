@@ -79,7 +79,7 @@ export function RotaCard({ rota, cor, selected, onSelect }: RotaCardProps) {
       </div>
 
       {/* Mini-cards de pedidos */}
-      <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-thin">
+      <div className="flex flex-wrap gap-1.5 pb-1">
         {rota.paradas.map((p, index) => {
           const allDone = rota.status === "finalizada" || rota.status === "concluida";
           const entregue = allDone || p.paradaStatus === "entregue";
@@ -87,7 +87,7 @@ export function RotaCard({ rota, cor, selected, onSelect }: RotaCardProps) {
             <div
               key={p.id}
               className={cn(
-                "min-w-[120px] rounded-lg border px-2.5 py-2 text-[10px] flex-shrink-0 relative overflow-hidden transition-colors",
+                "min-w-0 flex-1 basis-[calc(50%-0.375rem)] rounded-lg border px-2.5 py-2 text-[10px] relative overflow-hidden transition-colors",
                 entregue
                   ? "bg-muted/40 text-muted-foreground border-border/50"
                   : "bg-card border-border shadow-sm"
