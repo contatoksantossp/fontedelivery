@@ -3,6 +3,13 @@ import { ItemPedido } from "@/components/visao-geral/mockData";
 export type RotaStatus = "pendente" | "em_rota" | "finalizada" | "concluida";
 export type ParadaStatus = "pendente" | "entregue";
 
+export interface PagamentoParada {
+  id: string;
+  metodo: string;
+  valor: number;
+  troco?: number;
+}
+
 export interface Parada {
   id: string;
   pedidoCodigo: string;
@@ -22,6 +29,8 @@ export interface Parada {
   origem: string;
   criadoEm: string;
   baixaRealizada?: boolean;
+  desconto?: number;
+  pagamentos?: PagamentoParada[];
 }
 
 export interface Rota {

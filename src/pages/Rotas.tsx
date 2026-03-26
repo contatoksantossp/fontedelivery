@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { rotasMock, Rota } from "@/components/rotas/mockRotasData";
+import { rotasMock, Rota, PagamentoParada } from "@/components/rotas/mockRotasData";
 import { RotaCard } from "@/components/rotas/RotaCard";
 import { RotaDetalhes } from "@/components/rotas/RotaDetalhes";
 import { RotaAcerto } from "@/components/rotas/RotaAcerto";
