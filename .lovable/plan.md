@@ -1,33 +1,27 @@
 
 
-## Mover botões Edit/Delete para baixo do card de categoria
+## Redesign do VarianteCard para parecer com o ProdutoPaiCard
 
-### Problema
-Os botões de editar/excluir ficam como overlay no meio da imagem, bloqueando o clique de seleção da categoria.
+### Mudança
+Redesenhar o `VarianteCard` para ter layout similar ao card pai: imagem quadrada (1:1) no topo, nome e preço abaixo, e botões edit/delete discretos embaixo.
 
-### Solução
-Remover o overlay da imagem e colocar os botões **abaixo do nome**, visíveis apenas no hover (`group-hover`) ou quando a categoria está selecionada. Isso empurra o conteúdo abaixo (subcategorias) naturalmente.
+### Arquivo: `src/components/catalogo/VarianteCard.tsx`
 
-### Arquivo: `src/components/catalogo/CategoriaCard.tsx`
+- Imagem: trocar `h-16 w-full` por `aspect-square w-full` para ficar 1:1
+- Remover EAN e tags da visualização do card (manter compacto)
+- Layout vertical: imagem → nome → preço → botões
+- Botões menores como ícones (`h-6 w-6`) centralizados, sem texto "Editar"
+- Manter `min-w-[140px]` para caber no scroll horizontal
 
-- Remover o `<div>` overlay (linhas 27-44) de dentro da imagem
-- Adicionar uma `<div>` após o `<span>` do nome com os botões Edit/Delete
-- Essa div usa `hidden group-hover:flex` + mostrar também quando `selected`
-- Botões pequenos lado a lado: `h-5 w-5` com ícones `h-3 w-3`
-- Layout: `flex items-center justify-center gap-1`
-
-```tsx
-{/* Botões aparecem abaixo no hover ou quando selecionado */}
-<div className={`flex items-center justify-center gap-1 ${selected ? "flex" : "hidden group-hover:flex"}`}>
-  <Button size="icon" variant="ghost" className="h-5 w-5" onClick={...}>
-    <Edit className="h-3 w-3" />
-  </Button>
-  <Button size="icon" variant="ghost" className="h-5 w-5" onClick={...}>
-    <Trash2 className="h-3 w-3" />
-  </Button>
-</div>
+```text
+┌─────────────┐
+│             │
+│  [foto 1:1] │
+│             │
+├─────────────┤
+│ Nome        │
+│ R$ X,XX     │
+│  [✎] [🗑]  │
+└─────────────┘
 ```
-
-### Arquivo editado
-- `src/components/catalogo/CategoriaCard.tsx`
 
