@@ -1,7 +1,7 @@
 import { Rota, RotaStatus } from "./mockRotasData";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
-import { Bike, Car, Truck as TruckIcon } from "lucide-react";
+import { Bike, Car, Truck as TruckIcon, Check, Clock } from "lucide-react";
 
 const statusConfig: Record<RotaStatus, { label: string; className: string }> = {
   pendente: { label: "Pendente", className: "bg-yellow-500/15 text-yellow-400 border-yellow-500/30" },
@@ -18,11 +18,12 @@ const veiculoIcon: Record<string, React.ElementType> = {
 
 interface RotaCardProps {
   rota: Rota;
+  cor: string;
   selected: boolean;
   onSelect: (rota: Rota) => void;
 }
 
-export function RotaCard({ rota, selected, onSelect }: RotaCardProps) {
+export function RotaCard({ rota, cor, selected, onSelect }: RotaCardProps) {
   const cfg = statusConfig[rota.status];
   const isConcluida = rota.status === "concluida";
   const VeiculoIcon = veiculoIcon[rota.entregadorVeiculo] || TruckIcon;
@@ -30,6 +31,7 @@ export function RotaCard({ rota, selected, onSelect }: RotaCardProps) {
   return (
     <div
       onClick={() => onSelect(rota)}
+      style={{ borderLeftWidth: 3, borderLeftColor: cor }}
       className={cn(
         "rounded-lg border p-3 cursor-pointer transition-all",
         "hover:border-primary/40",
@@ -40,6 +42,7 @@ export function RotaCard({ rota, selected, onSelect }: RotaCardProps) {
       {/* Header */}
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
+          <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: cor }} />
           <VeiculoIcon className="h-4 w-4 text-muted-foreground" />
           <span className="text-sm font-semibold text-foreground">{rota.entregadorNome}</span>
         </div>
@@ -55,21 +58,35 @@ export function RotaCard({ rota, selected, onSelect }: RotaCardProps) {
       </div>
 
       {/* Mini-cards de pedidos */}
-      <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-thin">
-        {rota.paradas.map((p) => (
-          <div
-            key={p.id}
-            className={cn(
-              "min-w-[110px] rounded-md border px-2 py-1.5 text-[10px] flex-shrink-0",
-              p.paradaStatus === "entregue"
-                ? "bg-muted/50 text-muted-foreground border-border"
-                : "bg-card border-border text-foreground"
-            )}
-          >
-            <p className="font-medium truncate">{p.pedidoCodigo}</p>
-            <p className="truncate text-muted-foreground">{p.cliente}</p>
-          </div>
-        ))}
+      <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-thin">
+        {rota.paradas.map((p) => {
+          const entregue = p.paradaStatus === "entregue";
+          return (
+            <div
+              key={p.id}
+              className={cn(
+                "min-w-[120px] rounded-lg border px-2.5 py-2 text-[10px] flex-shrink-0 relative overflow-hidden transition-colors",
+                entregue
+                  ? "bg-muted/40 text-muted-foreground border-border/50"
+                  : "bg-card border-border shadow-sm"
+              )}
+            >
+              <div
+                className="absolute top-0 left-0 w-full h-[2px]"
+                style={{ background: entregue ? "hsl(var(--muted-foreground))" : cor }}
+              />
+              <div className="flex items-center gap-1.5 mb-0.5">
+                {entregue ? (
+                  <Check className="h-3 w-3 text-muted-foreground" />
+                ) : (
+                  <Clock className="h-3 w-3 text-yellow-400" />
+                )}
+                <span className="font-semibold">{p.pedidoCodigo}</span>
+              </div>
+              <p className="truncate text-muted-foreground">{p.cliente}</p>
+            </div>
+          );
+        })}
       </div>
 
       {/* Footer */}

@@ -2,7 +2,8 @@ import { Rota } from "./mockRotasData";
 import { RotaTimeline } from "./RotaTimeline";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { MapPin, Clock, Navigation, DollarSign, Bike, Car, Truck } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { MapPin, Clock, Navigation, DollarSign, Bike, Car, Truck, Gift } from "lucide-react";
 
 const veiculoIcon: Record<string, React.ElementType> = {
   Moto: Truck,
@@ -12,9 +13,11 @@ const veiculoIcon: Record<string, React.ElementType> = {
 
 interface RotaDetalhesProps {
   rota: Rota | null;
+  cor: string;
+  onBonificacaoChange?: (rotaId: string, valor: number) => void;
 }
 
-export function RotaDetalhes({ rota }: RotaDetalhesProps) {
+export function RotaDetalhes({ rota, cor, onBonificacaoChange }: RotaDetalhesProps) {
   if (!rota) {
     return (
       <div className="flex-1 flex items-center justify-center text-muted-foreground p-4">
@@ -29,25 +32,52 @@ export function RotaDetalhes({ rota }: RotaDetalhesProps) {
   const VeiculoIcon = veiculoIcon[rota.entregadorVeiculo] || Truck;
   const totalTaxas = rota.paradas.reduce((s, p) => s + p.taxaEntrega, 0);
   const totalPedidos = rota.paradas.reduce((s, p) => s + p.totalPedido, 0);
+  const canEditBonus = rota.status !== "finalizada" && rota.status !== "concluida";
 
   return (
     <div className="flex flex-col h-full">
-      {/* Header */}
+      {/* Header with driver color */}
       <div className="p-3 border-b border-border">
         <div className="flex items-center gap-2 mb-1">
-          <VeiculoIcon className="h-4 w-4 text-primary" />
+          <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ background: cor }} />
+          <VeiculoIcon className="h-4 w-4" style={{ color: cor }} />
           <h3 className="text-sm font-bold text-foreground">{rota.entregadorNome}</h3>
         </div>
         <p className="text-[10px] text-muted-foreground">{rota.entregadorVeiculo} · {rota.paradas.length} parada{rota.paradas.length !== 1 ? "s" : ""}</p>
       </div>
 
-      {/* Timeline */}
-      <div className="px-3 py-2 border-b border-border">
+      {/* Timeline - top half */}
+      <div className="px-3 py-2 border-b border-border max-h-[40%] overflow-y-auto scrollbar-thin">
         <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">Rota</p>
-        <RotaTimeline paradas={rota.paradas} />
+        <RotaTimeline paradas={rota.paradas} cor={cor} />
       </div>
 
-      {/* Pedidos detalhados */}
+      {/* Bonificação */}
+      <div className="px-3 py-2 border-b border-border">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+            <Gift className="h-3.5 w-3.5" />
+            <span className="font-medium">Bonificação</span>
+          </div>
+          {canEditBonus ? (
+            <div className="flex items-center gap-1">
+              <span className="text-[10px] text-muted-foreground">R$</span>
+              <Input
+                type="number"
+                min={0}
+                step={0.5}
+                value={rota.bonificacao}
+                onChange={(e) => onBonificacaoChange?.(rota.id, parseFloat(e.target.value) || 0)}
+                className="w-16 h-6 text-[11px] px-1.5 py-0 text-right"
+              />
+            </div>
+          ) : (
+            <span className="text-[11px] font-medium text-foreground">R$ {rota.bonificacao.toFixed(2)}</span>
+          )}
+        </div>
+      </div>
+
+      {/* Pedidos detalhados - bottom half */}
       <ScrollArea className="flex-1">
         <div className="p-3">
           <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">Pedidos</p>
