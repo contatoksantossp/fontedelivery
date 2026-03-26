@@ -143,6 +143,7 @@ export default function Parceiros() {
             clientes={clientes}
             onToggleOnline={toggleOnline}
             onExcluir={excluirEntregador}
+            onEdit={editEntregador}
           />
         </TabsContent>
 
