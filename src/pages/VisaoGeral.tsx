@@ -213,6 +213,7 @@ export default function VisaoGeral() {
                 ))}
               </TabsContent>
               <TabsContent value="retiradas" className="space-y-2 mt-0">
+                {prontosRetirada.map((p) => (
                   <PedidoCard
                     key={p.id}
                     pedido={p}
