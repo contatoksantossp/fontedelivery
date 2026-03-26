@@ -1,6 +1,5 @@
 import { Produto } from "./mockPdvData";
 import { cn } from "@/lib/utils";
-import { Badge } from "@/components/ui/badge";
 
 interface ProdutoCardProps {
   produto: Produto;
@@ -42,11 +41,6 @@ export function ProdutoCard({ produto, quantidade, expanded, onAddVariante, onEx
             {hasMultipleVariants ? `a partir de R$ ${minPrice.toFixed(2)}` : `R$ ${minPrice.toFixed(2)}`}
           </span>
         </div>
-        {produto.comboConfig && (
-          <Badge variant="outline" className="text-[9px] mt-1 border-warning text-warning px-1 py-0">
-            Combo {produto.comboConfig.slots}x • -{produto.comboConfig.desconto}%
-          </Badge>
-        )}
       </div>
     </button>
   );
