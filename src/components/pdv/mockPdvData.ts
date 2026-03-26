@@ -1,3 +1,5 @@
+import { productImages, variantImages } from "@/assets/products";
+
 export interface Variante {
   id: string;
   nome: string;
