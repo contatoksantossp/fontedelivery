@@ -1,5 +1,5 @@
 import { Pedido } from "./mockData";
-import { Clock, X, Check, Truck, MapPin, Route, Timer } from "lucide-react";
+import { Clock, X, Check, Truck, MapPin, Route, Timer, Undo2, Pencil } from "lucide-react";
 import { PedidoRastreio, RastreioStatus } from "@/components/PedidoRastreio";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -14,7 +14,7 @@ interface PedidoCardProps {
   rotaColor?: string;
   rotaOrder?: number;
   onSelect: (pedido: Pedido) => void;
-  onAction: (pedidoId: string, action: "cancelar" | "pronto" | "despachar" | "finalizar") => void;
+  onAction: (pedidoId: string, action: "cancelar" | "pronto" | "despachar" | "finalizar" | "voltar" | "editar") => void;
 }
 
 function useTimer(criadoEm: Date) {
@@ -36,7 +36,8 @@ function useTimer(criadoEm: Date) {
 export function PedidoCard({ pedido, selected, selectionMode, inRota, rotaColor, rotaOrder, onSelect, onAction }: PedidoCardProps) {
   const elapsed = useTimer(pedido.criadoEm);
   const isPendente = pedido.status === "pendente";
-  const isEligible = selectionMode && pedido.status === "pronto" && pedido.tipo === "entrega" && !inRota;
+  const isPronto = pedido.status === "pronto";
+  const isEligible = selectionMode && isPronto && pedido.tipo === "entrega" && !inRota;
 
   const style = undefined;
 
@@ -114,23 +115,47 @@ export function PedidoCard({ pedido, selected, selectionMode, inRota, rotaColor,
               Cancelar
             </Button>
             {isPendente ? (
-              <Button
-                size="sm"
-                className="h-7 px-2.5 text-xs"
-                onClick={(e) => { e.stopPropagation(); onAction(pedido.id, "pronto"); }}
-              >
-                <Check className="h-3 w-3 mr-0.5" />
-                Pronto
-              </Button>
-            ) : pedido.tipo === "retirada" ? (
-              <Button
-                size="sm"
-                className="h-7 px-2.5 text-xs"
-                onClick={(e) => { e.stopPropagation(); onAction(pedido.id, "finalizar"); }}
-              >
-                <Check className="h-3 w-3 mr-0.5" />
-                Retirado
-              </Button>
+              <>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="h-7 px-2 text-xs"
+                  onClick={(e) => { e.stopPropagation(); onAction(pedido.id, "editar"); }}
+                >
+                  <Pencil className="h-3 w-3 mr-0.5" />
+                  Editar
+                </Button>
+                <Button
+                  size="sm"
+                  className="h-7 px-2.5 text-xs"
+                  onClick={(e) => { e.stopPropagation(); onAction(pedido.id, "pronto"); }}
+                >
+                  <Check className="h-3 w-3 mr-0.5" />
+                  Pronto
+                </Button>
+              </>
+            ) : isPronto && !inRota ? (
+              <>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="h-7 px-2 text-xs"
+                  onClick={(e) => { e.stopPropagation(); onAction(pedido.id, "voltar"); }}
+                >
+                  <Undo2 className="h-3 w-3 mr-0.5" />
+                  Voltar
+                </Button>
+                {pedido.tipo === "retirada" && (
+                  <Button
+                    size="sm"
+                    className="h-7 px-2.5 text-xs"
+                    onClick={(e) => { e.stopPropagation(); onAction(pedido.id, "finalizar"); }}
+                  >
+                    <Check className="h-3 w-3 mr-0.5" />
+                    Retirado
+                  </Button>
+                )}
+              </>
             ) : null}
           </div>
         )}
