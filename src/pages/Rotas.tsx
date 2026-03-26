@@ -123,6 +123,7 @@ export default function Rotas() {
             onDarBaixa={handleDarBaixa}
             onConcluirRota={handleConcluirRota}
             onAlterarPagamento={handleAlterarPagamento}
+            onAlterarPagamentos={handleAlterarPagamentos}
           />
         ) : (
           <RotaMapaLeaflet
