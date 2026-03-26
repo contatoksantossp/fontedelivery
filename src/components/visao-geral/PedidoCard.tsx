@@ -1,9 +1,10 @@
 import { Pedido } from "./mockData";
-import { Clock, X, Check, Truck, MapPin, Route } from "lucide-react";
+import { Clock, X, Check, Truck, MapPin, Route, Timer, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { format } from "date-fns";
 
 interface PedidoCardProps {
   pedido: Pedido;
