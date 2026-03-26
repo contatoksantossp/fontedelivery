@@ -1,26 +1,12 @@
 
 
-## Gráfico por hora no Diário + Cards no Semanal/Mensal + Mocks diferenciados
+## Ajustar proporções das colunas na página Rotas
 
-### Mudanças
+Alterar as larguras das 3 colunas em `src/pages/Rotas.tsx`:
+- Coluna esquerda: de `w-[40%]` para `w-[35%]`
+- Coluna central: de `w-[20%]` para `w-[25%]`
+- Coluna direita: mantém `w-[40%]`
 
-**1. Mock data (`mockFinanceiroData.ts`)**
-- Adicionar novo tipo `VendaPorHora` com campos `hora: string` e `valor: number`
-- Criar mock `vendasPorHoraMock`: array com 24 entradas (00h–23h) simulando vendas por hora do caixa atual
-- Criar mocks separados para semanal e mensal:
-  - `topProdutosSemanalMock` e `topProdutosMensalMock` — mesmos produtos mas com quantidades/valores diferentes do diário
-  - `recebimentosSemanalMock` e `recebimentosMensalMock` — valores diferentes do `recebimentosPorMetodo` diário
-
-**2. AbaResumo (`AbaResumo.tsx`)**
-- **Diário**: Adicionar gráfico de barras por hora (BarChart com XAxis=hora, Bar=valor) **acima** dos MetricCards existentes
-- **Semanal/Mensal**: Mover os 4 cards de totais para **abaixo** do gráfico de barras (inverter a ordem atual: gráfico primeiro, cards depois)
-- Atualizar props para receber os novos mocks (vendasPorHora, topProdutos e recebimentos por período)
-
-**3. Financeiro.tsx**
-- Importar e passar os novos mocks para `AbaResumo`
-
-### Arquivos editados
-- `src/components/financeiro/mockFinanceiroData.ts`
-- `src/components/financeiro/AbaResumo.tsx`
-- `src/pages/Financeiro.tsx`
+### Arquivo editado
+- `src/pages/Rotas.tsx` — linhas ~68 e ~76, trocar as classes de largura
 
