@@ -37,7 +37,7 @@ export interface CatalogVariante {
   descricao: string;
   foto: string;
   tags: string[];
-  sku: string;
+  ean: string;
   custo: number;
   valorVenda: number;
   estoqueMinimo: number;
