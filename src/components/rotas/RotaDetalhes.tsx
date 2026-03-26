@@ -133,8 +133,11 @@ export function RotaDetalhes({ rota, cor, onBonificacaoChange }: RotaDetalhesPro
                       <span>Pagamento</span>
                       <span>{parada.formaPagamento}</span>
                     </div>
+                    <div className="flex justify-between text-muted-foreground">
+                      <span>Origem</span>
+                      <span>{parada.origem}</span>
+                    </div>
 
-                    {/* Itens */}
                     <div className="pt-1 border-t border-border">
                       <p className="text-[10px] font-semibold text-muted-foreground mb-1">Itens:</p>
                       {parada.itens.map((item, idx) => (

@@ -19,6 +19,7 @@ export interface Parada {
   formaPagamento: string;
   observacoes?: string;
   paradaStatus: ParadaStatus;
+  origem: string;
   baixaRealizada?: boolean;
 }
 
@@ -74,6 +75,7 @@ export const rotasMock: Rota[] = [
           { nome: "Gelo 5kg", qtd: 1, preco: 8.9 },
         ],
         formaPagamento: "PIX",
+        origem: "WhatsApp",
         observacoes: "Ligar ao chegar",
         paradaStatus: "pendente",
       },
@@ -95,6 +97,7 @@ export const rotasMock: Rota[] = [
           { nome: "Gelo 5kg", qtd: 1, preco: 8.9 },
         ],
         formaPagamento: "Cartão Crédito",
+        origem: "iFood",
         paradaStatus: "pendente",
       },
       {
@@ -115,6 +118,7 @@ export const rotasMock: Rota[] = [
           { nome: "Gelo 10kg", qtd: 1, preco: 15.9 },
         ],
         formaPagamento: "Cartão Débito",
+        origem: "Balcão",
         paradaStatus: "entregue",
       },
     ],
@@ -152,6 +156,7 @@ export const rotasMock: Rota[] = [
           { nome: "Coca-Cola 2L", qtd: 2, preco: 11.0 },
         ],
         formaPagamento: "Cartão Crédito",
+        origem: "iFood",
         observacoes: "Deixar na portaria",
         paradaStatus: "pendente",
       },
@@ -173,6 +178,7 @@ export const rotasMock: Rota[] = [
           { nome: "Trident", qtd: 2, preco: 3.5 },
         ],
         formaPagamento: "PIX",
+        origem: "WhatsApp",
         paradaStatus: "pendente",
       },
     ],
@@ -210,6 +216,7 @@ export const rotasMock: Rota[] = [
           { nome: "Red Bull 250ml", qtd: 2, preco: 12.0 },
         ],
         formaPagamento: "Dinheiro",
+        origem: "Telefone",
         paradaStatus: "entregue",
       },
       {
@@ -229,6 +236,7 @@ export const rotasMock: Rota[] = [
           { nome: "Essência Narguile Menta", qtd: 1, preco: 18.0 },
         ],
         formaPagamento: "PIX",
+        origem: "Balcão",
         paradaStatus: "entregue",
       },
       {
@@ -249,6 +257,7 @@ export const rotasMock: Rota[] = [
           { nome: "Carvão Vegetal 4kg", qtd: 1, preco: 19.9 },
         ],
         formaPagamento: "Cartão Crédito",
+        origem: "WhatsApp",
         observacoes: "Entregar no portão lateral",
         paradaStatus: "entregue",
       },
@@ -288,6 +297,7 @@ export const rotasMock: Rota[] = [
           { nome: "Isqueiro BIC", qtd: 1, preco: 5.0 },
         ],
         formaPagamento: "PIX",
+        origem: "iFood",
         paradaStatus: "entregue",
         baixaRealizada: true,
       },
@@ -309,6 +319,7 @@ export const rotasMock: Rota[] = [
           { nome: "Doritos 167g", qtd: 1, preco: 12.0 },
         ],
         formaPagamento: "Dinheiro",
+        origem: "Telefone",
         paradaStatus: "entregue",
         baixaRealizada: true,
       },
