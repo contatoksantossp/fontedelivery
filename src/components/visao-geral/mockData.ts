@@ -17,6 +17,7 @@ export interface Pedido {
   tipo: "entrega" | "retirada";
   status: "pendente" | "pronto";
   criadoEm: Date;
+  prontoEm?: Date;
   itens: ItemPedido[];
   subtotal: number;
   taxaEntrega: number;
@@ -110,6 +111,7 @@ export const pedidosMock: Pedido[] = [
     tipo: "entrega",
     status: "pronto",
     criadoEm: new Date(Date.now() - 35 * 60000),
+    prontoEm: new Date(Date.now() - 20 * 60000),
     itens: [
       { nome: "Absolut Vodka 750ml", qtd: 1, preco: 89.90 },
       { nome: "Red Bull 473ml", qtd: 2, preco: 17.00 },
@@ -133,6 +135,7 @@ export const pedidosMock: Pedido[] = [
     tipo: "retirada",
     status: "pronto",
     criadoEm: new Date(Date.now() - 40 * 60000),
+    prontoEm: new Date(Date.now() - 28 * 60000),
     itens: [
       { nome: "Vinho Casillero del Diablo 750ml", qtd: 1, preco: 49.90 },
       { nome: "Trident", qtd: 1, preco: 3.50 },
@@ -179,6 +182,7 @@ export const pedidosMock: Pedido[] = [
     tipo: "entrega",
     status: "pronto",
     criadoEm: new Date(Date.now() - 25 * 60000),
+    prontoEm: new Date(Date.now() - 12 * 60000),
     itens: [
       { nome: "Corona Extra 355ml", qtd: 12, preco: 7.00 },
       { nome: "Limão Siciliano", qtd: 3, preco: 2.50 },
@@ -201,6 +205,7 @@ export const pedidosMock: Pedido[] = [
     tipo: "entrega",
     status: "pronto",
     criadoEm: new Date(Date.now() - 30 * 60000),
+    prontoEm: new Date(Date.now() - 18 * 60000),
     itens: [
       { nome: "Whisky Jack Daniel's 750ml", qtd: 1, preco: 149.90 },
       { nome: "Gelo 10kg", qtd: 2, preco: 15.90 },

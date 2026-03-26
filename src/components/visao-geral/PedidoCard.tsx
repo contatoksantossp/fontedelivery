@@ -1,9 +1,10 @@
 import { Pedido } from "./mockData";
-import { Clock, X, Check, Truck, MapPin, Route } from "lucide-react";
+import { Clock, X, Check, Truck, MapPin, Route, Timer, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { format } from "date-fns";
 
 interface PedidoCardProps {
   pedido: Pedido;
@@ -142,6 +143,36 @@ export function PedidoCard({ pedido, selected, selectionMode, inRota, rotaColor,
         {isEligible && (
           <span className="text-xs text-primary font-medium">+ Adicionar</span>
         )}
+      </div>
+
+      {/* Rastreio */}
+      <div className="mt-3 pt-2 border-t border-border/50">
+        <div className="flex items-center gap-3 text-[10px]">
+          <div className="flex items-center gap-1 text-muted-foreground">
+            <Clock className="h-3 w-3 text-primary" />
+            <span>{format(pedido.criadoEm, "HH:mm")}</span>
+          </div>
+          <div className="flex-1 h-px bg-border relative">
+            {pedido.prontoEm && (
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-primary" />
+            )}
+          </div>
+          {pedido.prontoEm ? (
+            <div className="flex items-center gap-1 text-primary">
+              <CheckCircle2 className="h-3 w-3" />
+              <span>{format(pedido.prontoEm, "HH:mm")}</span>
+            </div>
+          ) : (
+            <div className="flex items-center gap-1 text-muted-foreground/50">
+              <CheckCircle2 className="h-3 w-3" />
+              <span>—</span>
+            </div>
+          )}
+          <div className="flex items-center gap-1 text-muted-foreground ml-1">
+            <Timer className="h-3 w-3" />
+            <span className="font-mono">{elapsed}</span>
+          </div>
+        </div>
       </div>
     </div>
   );
