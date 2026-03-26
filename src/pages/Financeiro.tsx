@@ -5,6 +5,8 @@ import { PageContainer } from "@/components/PageContainer";
 import { AbaCaixa } from "@/components/financeiro/AbaCaixa";
 import { AbaResumo } from "@/components/financeiro/AbaResumo";
 import { AbaExtrato } from "@/components/financeiro/AbaExtrato";
+import { AbaContas, contasMock } from "@/components/financeiro/AbaContas";
+import type { ContaPagar } from "@/components/financeiro/ContaDialog";
 import {
   caixaStateMock,
   entregadoresTurnoMock,
@@ -20,8 +22,17 @@ export default function Financeiro() {
   const [caixa, setCaixa] = useState<CaixaState>(caixaStateMock);
   const [entregadores, setEntregadores] = useState<EntregadorTurno[]>(entregadoresTurnoMock);
   const [transacoes, setTransacoes] = useState<Transacao[]>(transacoesMock);
+  const [contas, setContas] = useState<ContaPagar[]>(contasMock);
 
   useEffect(() => { setOpen(false); }, [setOpen]);
+
+  const handleAdicionarConta = useCallback((dados: Omit<ContaPagar, "id" | "paga" | "dataPagamento">) => {
+    setContas(prev => [...prev, { ...dados, id: `c-${Date.now()}`, paga: false }]);
+  }, []);
+
+  const handleDarBaixa = useCallback((id: string) => {
+    setContas(prev => prev.map(c => c.id === id ? { ...c, paga: true, dataPagamento: new Date().toISOString() } : c));
+  }, []);
 
   const handleAbrirCaixa = useCallback((fundo: number) => {
     setCaixa(prev => ({ ...prev, status: "aberto", fundoInicial: fundo, entradas: 0, saidas: 0, saldoEsperado: fundo }));
@@ -99,6 +110,7 @@ export default function Financeiro() {
           <TabsTrigger value="caixa">Caixa</TabsTrigger>
           <TabsTrigger value="resumo">Resumo</TabsTrigger>
           <TabsTrigger value="extrato">Extrato</TabsTrigger>
+          <TabsTrigger value="contas">Minhas Contas</TabsTrigger>
         </TabsList>
         <TabsContent value="caixa">
           <AbaCaixa
@@ -121,6 +133,9 @@ export default function Financeiro() {
         </TabsContent>
         <TabsContent value="extrato">
           <AbaExtrato transacoes={transacoes} onLancar={handleLancar} />
+        </TabsContent>
+        <TabsContent value="contas">
+          <AbaContas contas={contas} onAdicionarConta={handleAdicionarConta} onDarBaixa={handleDarBaixa} />
         </TabsContent>
       </Tabs>
     </PageContainer>
