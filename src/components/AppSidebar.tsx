@@ -50,7 +50,7 @@ export function AppSidebar() {
                       className="flex items-center gap-3 rounded-md px-3 py-2 text-sm text-sidebar-foreground transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                       activeClassName="bg-primary/10 text-primary font-semibold"
                     >
-                      <item.icon className="h-4 w-4 shrink-0" />
+                      <item.icon className="shrink-0 w-[30px] h-[30px]" />
                       {!collapsed && <span>{item.title}</span>}
                     </NavLink>
                   </SidebarMenuButton>
@@ -69,7 +69,7 @@ export function AppSidebar() {
                 to="/"
                 className="flex items-center gap-3 rounded-md px-3 py-2 text-sm text-destructive hover:bg-destructive/10 transition-colors"
               >
-                <LogOut className="h-4 w-4 shrink-0" />
+                <LogOut className="shrink-0 w-[30px] h-[30px]" />
                 {!collapsed && <span>Sair</span>}
               </NavLink>
             </SidebarMenuButton>
