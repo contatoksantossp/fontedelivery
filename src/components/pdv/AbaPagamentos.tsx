@@ -79,7 +79,7 @@ export function AbaPagamentos({
             {desconto > 0 && (
               <div className="flex justify-between text-xs">
                 <span className="text-muted-foreground">Desconto</span>
-                <span className="text-green-500">-R$ {desconto.toFixed(2)}</span>
+                <span className="text-success">-R$ {desconto.toFixed(2)}</span>
               </div>
             )}
             {taxaEntrega > 0 && (
@@ -130,8 +130,8 @@ export function AbaPagamentos({
           )}
           {falta <= 0 && pago > 0 && (
             <div className="flex justify-between items-baseline px-1">
-              <span className="text-xs font-bold text-green-500 uppercase tracking-wider">Pago</span>
-              <span className="text-base font-bold text-green-500">R$ {pago.toFixed(2)}</span>
+              <span className="text-xs font-bold text-success uppercase tracking-wider">Pago</span>
+              <span className="text-base font-bold text-success">R$ {pago.toFixed(2)}</span>
             </div>
           )}
 
