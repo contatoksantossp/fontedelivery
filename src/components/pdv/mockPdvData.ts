@@ -52,6 +52,7 @@ export interface EnderecoCliente {
   cep?: string;
   cidade?: string;
   complemento?: string;
+  principal?: boolean;
 }
 
 export interface Cliente {
@@ -298,22 +299,22 @@ export const clientesMock: Cliente[] = [
   {
     id: "c1", nome: "Maria Silva", telefone: "(11) 98765-4321", apelido: "Mari",
     enderecos: [
-      { id: "end1", rua: "Rua das Flores, 123", bairro: "Centro" },
+      { id: "end1", rua: "Rua das Flores, 123", bairro: "Centro", principal: true },
       { id: "end2", rua: "Av. Brasil, 500", bairro: "Jardim Paulista", complemento: "Apto 42" },
     ],
   },
   {
     id: "c2", nome: "João Oliveira", telefone: "(11) 91234-5678",
-    enderecos: [{ id: "end3", rua: "Av. Brasil, 456", bairro: "Jardim Paulista" }],
+    enderecos: [{ id: "end3", rua: "Av. Brasil, 456", bairro: "Jardim Paulista", principal: true }],
   },
   {
     id: "c3", nome: "Ana Costa", telefone: "(11) 99876-1234", apelido: "Aninha",
-    enderecos: [{ id: "end4", rua: "Rua Ipê, 789", bairro: "Vila Nova" }],
+    enderecos: [{ id: "end4", rua: "Rua Ipê, 789", bairro: "Vila Nova", principal: true }],
   },
   {
     id: "c4", nome: "Pedro Santos", telefone: "(11) 92345-6789",
     enderecos: [
-      { id: "end5", rua: "Rua Harmonia, 55", bairro: "Pinheiros" },
+      { id: "end5", rua: "Rua Harmonia, 55", bairro: "Pinheiros", principal: true },
       { id: "end6", rua: "Rua Augusta, 200", bairro: "Consolação" },
     ],
   },

@@ -35,9 +35,17 @@ export default function PDV() {
 
   // Identificacao
   const [canal, setCanalVenda] = useState<CanalVenda>("balcao");
-  const [modalidade, setModalidade] = useState<Modalidade>("retirada");
+  const [modalidade, setModalidadeState] = useState<Modalidade>("retirada");
   const [cliente, setCliente] = useState<Cliente | null>(null);
   const [enderecoId, setEnderecoId] = useState<string | null>(null);
+
+  const setModalidade = useCallback((m: Modalidade) => {
+    setModalidadeState(m);
+    if (m === "entrega" && cliente) {
+      const principal = cliente.enderecos.find(e => e.principal);
+      if (principal) setEnderecoId(principal.id);
+    }
+  }, [cliente]);
 
   // Pagamentos
   const [pagamentos, setPagamentos] = useState<Pagamento[]>([]);
