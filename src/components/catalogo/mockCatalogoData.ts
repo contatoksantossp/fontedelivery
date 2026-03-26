@@ -1,4 +1,5 @@
 import { productImages, variantImages } from "@/assets/products";
+import { categoryImages, subcategoryImages } from "@/assets/categories";
 
 export interface CatalogCategoria {
   id: string;
@@ -60,35 +61,35 @@ export interface KitCombo {
 
 // ── Categorias ──────────────────────────────────────────────
 export const categoriasMock: CatalogCategoria[] = [
-  { id: "cat1", nome: "Bebidas", descricao: "Refrigerantes, sucos, energéticos e água", imagem: "/placeholder.svg", ativo: true },
-  { id: "cat2", nome: "Adega", descricao: "Cervejas, vinhos, destilados e espumantes", imagem: "/placeholder.svg", ativo: true },
-  { id: "cat3", nome: "Tabacaria", descricao: "Cigarros, sedas, essências e acessórios", imagem: "/placeholder.svg", ativo: true },
-  { id: "cat4", nome: "Conveniência", descricao: "Snacks, sorvetes, doces e descartáveis", imagem: "/placeholder.svg", ativo: true },
-  { id: "cat5", nome: "Mercearia", descricao: "Carvão, gelo, enlatados e itens básicos", imagem: "/placeholder.svg", ativo: true },
+  { id: "cat1", nome: "Bebidas", descricao: "Refrigerantes, sucos, energéticos e água", imagem: categoryImages.cat1, ativo: true },
+  { id: "cat2", nome: "Adega", descricao: "Cervejas, vinhos, destilados e espumantes", imagem: categoryImages.cat2, ativo: true },
+  { id: "cat3", nome: "Tabacaria", descricao: "Cigarros, sedas, essências e acessórios", imagem: categoryImages.cat3, ativo: true },
+  { id: "cat4", nome: "Conveniência", descricao: "Snacks, sorvetes, doces e descartáveis", imagem: categoryImages.cat4, ativo: true },
+  { id: "cat5", nome: "Mercearia", descricao: "Carvão, gelo, enlatados e itens básicos", imagem: categoryImages.cat5, ativo: true },
 ];
 
 // ── Subcategorias ───────────────────────────────────────────
 export const subcategoriasMock: CatalogSubcategoria[] = [
-  { id: "sub1a", nome: "Refrigerantes", descricao: "Refrigerantes gelados", imagem: "/placeholder.svg", ativo: true, categoriaId: "cat1" },
-  { id: "sub1b", nome: "Sucos", descricao: "Sucos naturais e industrializados", imagem: "/placeholder.svg", ativo: true, categoriaId: "cat1" },
-  { id: "sub1c", nome: "Energéticos", descricao: "Bebidas energéticas", imagem: "/placeholder.svg", ativo: true, categoriaId: "cat1" },
-  { id: "sub1d", nome: "Água", descricao: "Água mineral e com gás", imagem: "/placeholder.svg", ativo: true, categoriaId: "cat1" },
-  { id: "sub2a", nome: "Cervejas", descricao: "Cervejas nacionais e importadas", imagem: "/placeholder.svg", ativo: true, categoriaId: "cat2" },
-  { id: "sub2b", nome: "Vinhos", descricao: "Vinhos tintos, brancos e rosés", imagem: "/placeholder.svg", ativo: true, categoriaId: "cat2" },
-  { id: "sub2c", nome: "Destilados", descricao: "Vodka, whisky, gin e cachaça", imagem: "/placeholder.svg", ativo: true, categoriaId: "cat2" },
-  { id: "sub2d", nome: "Espumantes", descricao: "Espumantes e champagnes", imagem: "/placeholder.svg", ativo: true, categoriaId: "cat2" },
-  { id: "sub3a", nome: "Cigarros", descricao: "Cigarros nacionais e importados", imagem: "/placeholder.svg", ativo: true, categoriaId: "cat3" },
-  { id: "sub3b", nome: "Seda / Papel", descricao: "Sedas e papéis para enrolar", imagem: "/placeholder.svg", ativo: true, categoriaId: "cat3" },
-  { id: "sub3c", nome: "Essências", descricao: "Essências para narguile", imagem: "/placeholder.svg", ativo: true, categoriaId: "cat3" },
-  { id: "sub3d", nome: "Acessórios", descricao: "Isqueiros, piteiras e acessórios", imagem: "/placeholder.svg", ativo: true, categoriaId: "cat3" },
-  { id: "sub4a", nome: "Snacks", descricao: "Salgadinhos e petiscos", imagem: "/placeholder.svg", ativo: true, categoriaId: "cat4" },
-  { id: "sub4b", nome: "Sorvetes", descricao: "Picolés e potes", imagem: "/placeholder.svg", ativo: true, categoriaId: "cat4" },
-  { id: "sub4c", nome: "Doces", descricao: "Chocolates, balas e chicletes", imagem: "/placeholder.svg", ativo: true, categoriaId: "cat4" },
-  { id: "sub4d", nome: "Descartáveis", descricao: "Copos, pratos e talheres", imagem: "/placeholder.svg", ativo: true, categoriaId: "cat4" },
-  { id: "sub5a", nome: "Carvão / Gelo", descricao: "Carvão vegetal e gelo", imagem: "/placeholder.svg", ativo: true, categoriaId: "cat5" },
-  { id: "sub5b", nome: "Enlatados", descricao: "Conservas e enlatados", imagem: "/placeholder.svg", ativo: true, categoriaId: "cat5" },
-  { id: "sub5c", nome: "Biscoitos", descricao: "Biscoitos e bolachas", imagem: "/placeholder.svg", ativo: true, categoriaId: "cat5" },
-  { id: "sub5d", nome: "Higiene", descricao: "Itens de higiene pessoal", imagem: "/placeholder.svg", ativo: true, categoriaId: "cat5" },
+  { id: "sub1a", nome: "Refrigerantes", descricao: "Refrigerantes gelados", imagem: subcategoryImages.sub1a, ativo: true, categoriaId: "cat1" },
+  { id: "sub1b", nome: "Sucos", descricao: "Sucos naturais e industrializados", imagem: subcategoryImages.sub1b, ativo: true, categoriaId: "cat1" },
+  { id: "sub1c", nome: "Energéticos", descricao: "Bebidas energéticas", imagem: subcategoryImages.sub1c, ativo: true, categoriaId: "cat1" },
+  { id: "sub1d", nome: "Água", descricao: "Água mineral e com gás", imagem: subcategoryImages.sub1d, ativo: true, categoriaId: "cat1" },
+  { id: "sub2a", nome: "Cervejas", descricao: "Cervejas nacionais e importadas", imagem: subcategoryImages.sub2a, ativo: true, categoriaId: "cat2" },
+  { id: "sub2b", nome: "Vinhos", descricao: "Vinhos tintos, brancos e rosés", imagem: subcategoryImages.sub2b, ativo: true, categoriaId: "cat2" },
+  { id: "sub2c", nome: "Destilados", descricao: "Vodka, whisky, gin e cachaça", imagem: subcategoryImages.sub2c, ativo: true, categoriaId: "cat2" },
+  { id: "sub2d", nome: "Espumantes", descricao: "Espumantes e champagnes", imagem: subcategoryImages.sub2d, ativo: true, categoriaId: "cat2" },
+  { id: "sub3a", nome: "Cigarros", descricao: "Cigarros nacionais e importados", imagem: subcategoryImages.sub3a, ativo: true, categoriaId: "cat3" },
+  { id: "sub3b", nome: "Seda / Papel", descricao: "Sedas e papéis para enrolar", imagem: subcategoryImages.sub3b, ativo: true, categoriaId: "cat3" },
+  { id: "sub3c", nome: "Essências", descricao: "Essências para narguile", imagem: subcategoryImages.sub3c, ativo: true, categoriaId: "cat3" },
+  { id: "sub3d", nome: "Acessórios", descricao: "Isqueiros, piteiras e acessórios", imagem: subcategoryImages.sub3d, ativo: true, categoriaId: "cat3" },
+  { id: "sub4a", nome: "Snacks", descricao: "Salgadinhos e petiscos", imagem: subcategoryImages.sub4a, ativo: true, categoriaId: "cat4" },
+  { id: "sub4b", nome: "Sorvetes", descricao: "Picolés e potes", imagem: subcategoryImages.sub4b, ativo: true, categoriaId: "cat4" },
+  { id: "sub4c", nome: "Doces", descricao: "Chocolates, balas e chicletes", imagem: subcategoryImages.sub4c, ativo: true, categoriaId: "cat4" },
+  { id: "sub4d", nome: "Descartáveis", descricao: "Copos, pratos e talheres", imagem: subcategoryImages.sub4d, ativo: true, categoriaId: "cat4" },
+  { id: "sub5a", nome: "Carvão / Gelo", descricao: "Carvão vegetal e gelo", imagem: subcategoryImages.sub5a, ativo: true, categoriaId: "cat5" },
+  { id: "sub5b", nome: "Enlatados", descricao: "Conservas e enlatados", imagem: subcategoryImages.sub5b, ativo: true, categoriaId: "cat5" },
+  { id: "sub5c", nome: "Biscoitos", descricao: "Biscoitos e bolachas", imagem: subcategoryImages.sub5c, ativo: true, categoriaId: "cat5" },
+  { id: "sub5d", nome: "Higiene", descricao: "Itens de higiene pessoal", imagem: subcategoryImages.sub5d, ativo: true, categoriaId: "cat5" },
 ];
 
 // ── Produtos ────────────────────────────────────────────────
@@ -173,7 +174,7 @@ export const variantesMock: CatalogVariante[] = [
 // ── Kits / Combos ───────────────────────────────────────────
 export const kitCombosMock: KitCombo[] = [
   {
-    id: "kc1", nome: "Kit Churrasco", imagem: "/placeholder.svg", ativo: true, tipo: "kit",
+    id: "kc1", nome: "Kit Churrasco", imagem: subcategoryImages.sub5a, ativo: true, tipo: "kit",
     tipoDesconto: "%", valorDesconto: 10, subcategoriaVinculo: "sub5a",
     slots: [
       { id: "s1", subcategoriaId: "sub5a", nome: "Carvão/Gelo" },
@@ -182,7 +183,7 @@ export const kitCombosMock: KitCombo[] = [
     ],
   },
   {
-    id: "kc2", nome: "Combo Happy Hour", imagem: "/placeholder.svg", ativo: true, tipo: "combo",
+    id: "kc2", nome: "Combo Happy Hour", imagem: subcategoryImages.sub2c, ativo: true, tipo: "combo",
     tipoDesconto: "R$", valorDesconto: 8, subcategoriaVinculo: "sub2c",
     slots: [
       { id: "s4", subcategoriaId: "sub2c", nome: "Destilado" },
