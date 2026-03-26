@@ -70,6 +70,17 @@ export default function Rotas() {
     );
   };
 
+  const handleAlterarPagamentos = (paradaId: string, pagamentos: PagamentoParada[]) => {
+    setRotas((prev) =>
+      prev.map((r) => ({
+        ...r,
+        paradas: r.paradas.map((p) =>
+          p.id === paradaId ? { ...p, pagamentos } : p
+        ),
+      }))
+    );
+  };
+
   const handleBonificacaoChange = (rotaId: string, valor: number) => {
     setRotas((prev) =>
       prev.map((r) =>
