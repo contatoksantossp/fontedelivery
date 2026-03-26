@@ -10,7 +10,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Truck, MapPin, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { DndContext, DragEndEvent } from "@dnd-kit/core";
 import { toast } from "sonner";
 
 export default function VisaoGeral() {
@@ -123,15 +122,7 @@ export default function VisaoGeral() {
     }
   }, [selectionMode, pedidosNaRota, expandedSlot, addToRota]);
 
-  const handleDragEnd = useCallback((event: DragEndEvent) => {
-    const { active, over } = event;
-    if (over?.id === "prontos" && active.id) {
-      const pedido = pedidos.find((p) => p.id === active.id);
-      if (pedido && pedido.status === "pendente") {
-        handleAction(active.id as string, "pronto");
-      }
-    }
-  }, [pedidos]);
+  const handleDragEnd = useCallback(() => {}, []);
 
   const handleDespachar = useCallback((slotIndex: number) => {
     const entId = entregadorPorRota[slotIndex];
@@ -160,7 +151,6 @@ export default function VisaoGeral() {
   return (
     <div className="flex-1 flex overflow-hidden">
       {/* Coluna Esquerda — Kanbans */}
-      <DndContext onDragEnd={handleDragEnd}>
         <div className="flex-[35] min-w-[320px] flex flex-row gap-2 p-2 border-r border-border overflow-hidden">
           <KanbanColumn
             id="pendentes"
@@ -231,7 +221,6 @@ export default function VisaoGeral() {
             </Tabs>
           </KanbanColumn>
         </div>
-      </DndContext>
 
       {/* Coluna Central — Detalhes ou Rota Expandida */}
       <div className="flex-[25] min-w-[240px] border-r border-border flex flex-col overflow-hidden">

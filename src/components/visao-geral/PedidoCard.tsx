@@ -1,12 +1,10 @@
 import { Pedido } from "./mockData";
-import { Clock, X, Check, Truck, MapPin, Route, Timer, GripHorizontal } from "lucide-react";
+import { Clock, X, Check, Truck, MapPin, Route, Timer } from "lucide-react";
 import { PedidoRastreio, RastreioStatus } from "@/components/PedidoRastreio";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { useDraggable } from "@dnd-kit/core";
-import { CSS } from "@dnd-kit/utilities";
 
 interface PedidoCardProps {
   pedido: Pedido;
@@ -39,33 +37,21 @@ export function PedidoCard({ pedido, selected, selectionMode, inRota, rotaColor,
   const isPendente = pedido.status === "pendente";
   const isEligible = selectionMode && pedido.status === "pronto" && pedido.tipo === "entrega" && !inRota;
 
-  const isDraggable = isPendente && !selectionMode;
-  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
-    id: pedido.id,
-    disabled: !isDraggable,
-  });
-
-  const style = transform
-    ? { transform: CSS.Translate.toString(transform), opacity: isDragging ? 0.5 : 1 }
-    : undefined;
+  const style = undefined;
 
   return (
     <div
-      ref={setNodeRef}
-      
       onClick={() => {
-        if (inRota || isDragging) return;
+        if (inRota) return;
         onSelect(pedido);
       }}
       className={cn(
         "rounded-lg border bg-card p-3 transition-all",
         inRota && !rotaColor && "opacity-50 cursor-not-allowed",
         inRota && rotaColor && "cursor-not-allowed",
-        !inRota && !isDraggable && "cursor-pointer hover:border-primary/50",
-        isDraggable && "hover:border-primary/50",
+        !inRota && "cursor-pointer hover:border-primary/50",
         selected && !inRota && "border-primary ring-1 ring-primary/30",
         isEligible && "border-dashed border-primary/60 animate-pulse",
-        isDragging && "z-50 shadow-lg"
       )}
       style={{
         ...(inRota && rotaColor
@@ -123,15 +109,14 @@ export function PedidoCard({ pedido, selected, selectionMode, inRota, rotaColor,
               Cancelar
             </Button>
             {isPendente ? (
-              <div
-                {...listeners}
-                {...attributes}
-                className="flex items-center gap-1 cursor-grab active:cursor-grabbing bg-primary/10 hover:bg-primary/20 text-primary px-2.5 py-1 rounded-md transition-colors select-none"
-                onClick={(e) => e.stopPropagation()}
+              <Button
+                size="sm"
+                className="h-7 px-2.5 text-xs"
+                onClick={(e) => { e.stopPropagation(); onAction(pedido.id, "pronto"); }}
               >
-                <GripHorizontal className="h-3.5 w-3.5" />
-                <span className="text-[10px] font-bold whitespace-nowrap">Arraste →</span>
-              </div>
+                <Check className="h-3 w-3 mr-0.5" />
+                Pronto
+              </Button>
             ) : pedido.tipo === "retirada" ? (
               <Button
                 size="sm"
