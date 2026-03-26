@@ -113,6 +113,7 @@ export default function Financeiro() {
         </TabsContent>
         <TabsContent value="resumo">
           <AbaResumo
+            caixa={caixa}
             vendasDiarias={vendasDiariasMock}
             topProdutos={topProdutosMock}
             recebimentos={recebimentosPorMetodo}
