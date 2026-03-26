@@ -1,9 +1,14 @@
 import { useState, useMemo } from "react";
-import { Plus, Banknote, CreditCard, Smartphone, QrCode } from "lucide-react";
+import { Plus, Banknote, CreditCard, Smartphone, QrCode, CalendarIcon } from "lucide-react";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
 import { ValorOculto } from "./ValorOculto";
 import { LancamentoDialog } from "./LancamentoDialog";
 import type { Transacao, TransacaoTipo, TransacaoMetodo } from "./mockFinanceiroData";
@@ -27,10 +32,22 @@ const MetodoIcon: Record<TransacaoMetodo, typeof Banknote> = {
   qrcode: QrCode,
 };
 
+// Simula datas de caixas abertos/fechados para filtro
+const caixasMock = [
+  { id: "cx1", label: "Caixa 25/03 — Aberto", data: "2026-03-25" },
+  { id: "cx2", label: "Caixa 24/03 — R$ 2.780,00", data: "2026-03-24" },
+  { id: "cx3", label: "Caixa 23/03 — R$ 3.120,50", data: "2026-03-23" },
+  { id: "cx4", label: "Caixa 22/03 — R$ 2.450,00", data: "2026-03-22" },
+  { id: "cx5", label: "Caixa 21/03 — R$ 1.980,00", data: "2026-03-21" },
+];
+
 export function AbaExtrato({ transacoes, onLancar }: AbaExtratoProps) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [filtroMetodo, setFiltroMetodo] = useState<string>("todos");
   const [filtroTipo, setFiltroTipo] = useState<string>("todos");
+  const [filtroCaixa, setFiltroCaixa] = useState<string>("todos");
+  const [dataInicio, setDataInicio] = useState<Date | undefined>(undefined);
+  const [dataFim, setDataFim] = useState<Date | undefined>(undefined);
   const [limite, setLimite] = useState(20);
 
   const saldoTotal = useMemo(() =>
@@ -52,11 +69,40 @@ export function AbaExtrato({ transacoes, onLancar }: AbaExtratoProps) {
     return transacoes.filter(t => {
       if (filtroMetodo !== "todos" && t.metodo !== filtroMetodo) return false;
       if (filtroTipo !== "todos" && t.tipo !== filtroTipo) return false;
+
+      // Filtro por intervalo de datas
+      if (dataInicio) {
+        const tDate = new Date(t.dataHora);
+        const inicio = new Date(dataInicio);
+        inicio.setHours(0, 0, 0, 0);
+        if (tDate < inicio) return false;
+      }
+      if (dataFim) {
+        const tDate = new Date(t.dataHora);
+        const fim = new Date(dataFim);
+        fim.setHours(23, 59, 59, 999);
+        if (tDate > fim) return false;
+      }
+
+      // Filtro por caixa (baseado na data do caixa)
+      if (filtroCaixa !== "todos") {
+        const caixa = caixasMock.find(c => c.id === filtroCaixa);
+        if (caixa) {
+          const tDateStr = new Date(t.dataHora).toISOString().split("T")[0];
+          if (tDateStr !== caixa.data) return false;
+        }
+      }
+
       return true;
     });
-  }, [transacoes, filtroMetodo, filtroTipo]);
+  }, [transacoes, filtroMetodo, filtroTipo, dataInicio, dataFim, filtroCaixa]);
 
   const displayed = filtered.slice(0, limite);
+
+  const limparFiltrosDatas = () => {
+    setDataInicio(undefined);
+    setDataFim(undefined);
+  };
 
   return (
     <div className="space-y-6">
@@ -78,6 +124,77 @@ export function AbaExtrato({ transacoes, onLancar }: AbaExtratoProps) {
 
       {/* Filtros + Botão Lançar */}
       <div className="flex flex-wrap items-center gap-3">
+        {/* Filtro intervalo de datas */}
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              className={cn(
+                "w-[160px] justify-start text-left font-normal text-sm",
+                !dataInicio && "text-muted-foreground"
+              )}
+            >
+              <CalendarIcon className="h-4 w-4 mr-1.5" />
+              {dataInicio ? format(dataInicio, "dd/MM/yyyy") : "Data início"}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0" align="start">
+            <Calendar
+              mode="single"
+              selected={dataInicio}
+              onSelect={setDataInicio}
+              initialFocus
+              locale={ptBR}
+              className={cn("p-3 pointer-events-auto")}
+            />
+          </PopoverContent>
+        </Popover>
+
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              className={cn(
+                "w-[160px] justify-start text-left font-normal text-sm",
+                !dataFim && "text-muted-foreground"
+              )}
+            >
+              <CalendarIcon className="h-4 w-4 mr-1.5" />
+              {dataFim ? format(dataFim, "dd/MM/yyyy") : "Data fim"}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0" align="start">
+            <Calendar
+              mode="single"
+              selected={dataFim}
+              onSelect={setDataFim}
+              initialFocus
+              locale={ptBR}
+              className={cn("p-3 pointer-events-auto")}
+            />
+          </PopoverContent>
+        </Popover>
+
+        {(dataInicio || dataFim) && (
+          <Button variant="ghost" size="sm" onClick={limparFiltrosDatas} className="text-xs text-muted-foreground">
+            Limpar datas
+          </Button>
+        )}
+
+        {/* Filtro por caixa */}
+        <Select value={filtroCaixa} onValueChange={setFiltroCaixa}>
+          <SelectTrigger className="w-[200px]">
+            <SelectValue placeholder="Caixa" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="todos">Todos os caixas</SelectItem>
+            {caixasMock.map(c => (
+              <SelectItem key={c.id} value={c.id}>{c.label}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        {/* Filtros existentes */}
         <Select value={filtroMetodo} onValueChange={setFiltroMetodo}>
           <SelectTrigger className="w-36">
             <SelectValue placeholder="Método" />
