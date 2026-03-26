@@ -96,11 +96,12 @@ export function MapaRotas({
       });
 
       marker.on("click", () => onMarkerClick(pedido));
-      marker.bindTooltip(
-        `<div style="font-size:11px;font-weight:600;">${pedido.codigo}</div><div style="font-size:10px;">${pedido.cliente}</div><div style="font-size:10px;opacity:0.7;">${pedido.endereco}</div>`,
+      marker.bindPopup(
+        `<div style="font-size:11px;font-weight:600;">${pedido.codigo}</div><div style="font-size:10px;">${pedido.cliente}</div>`,
         {
-          direction: "top",
+          closeButton: true,
           offset: [0, -10],
+          className: "leaflet-popup-compact",
         }
       );
 
