@@ -1,6 +1,5 @@
 import { Edit, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import type { CatalogCategoria } from "./mockCatalogoData";
 
 interface Props {
@@ -13,26 +12,45 @@ interface Props {
 
 export function CategoriaCard({ categoria, selected, onSelect, onEdit, onDelete }: Props) {
   return (
-    <div
+    <button
       onClick={() => onSelect(categoria.id)}
-      className={`relative min-w-[200px] cursor-pointer rounded-lg border p-4 transition-all ${
-        selected ? "border-primary bg-primary/10" : "border-border bg-card hover:border-primary/50"
+      className={`group relative flex w-20 flex-shrink-0 flex-col items-center gap-1 rounded-lg p-1.5 transition-all ${
+        selected ? "bg-primary/15 ring-1 ring-primary" : "hover:bg-secondary"
       }`}
     >
-      <img src={categoria.imagem} alt={categoria.nome} className="mb-3 h-24 w-full rounded-md object-cover bg-muted" />
-      <h3 className="font-semibold text-card-foreground">{categoria.nome}</h3>
-      <p className="mt-1 text-xs text-muted-foreground line-clamp-2">{categoria.descricao}</p>
-      {!categoria.ativo && (
-        <Badge variant="secondary" className="mt-2">Inativo</Badge>
-      )}
-      <div className="mt-3 flex gap-1">
-        <Button size="sm" variant="ghost" onClick={(e) => { e.stopPropagation(); onEdit(categoria); }}>
-          <Edit className="h-3.5 w-3.5" />
-        </Button>
-        <Button size="sm" variant="ghost" className="text-destructive" onClick={(e) => { e.stopPropagation(); onDelete(categoria.id); }}>
-          <Trash2 className="h-3.5 w-3.5" />
-        </Button>
+      <div className="relative h-14 w-14 overflow-hidden rounded-lg bg-muted">
+        <img src={categoria.imagem} alt={categoria.nome} className="h-full w-full object-cover" />
+        {!categoria.ativo && (
+          <div className="absolute inset-0 bg-background/60" />
+        )}
+        {/* Hover overlay with actions */}
+        <div className="absolute inset-0 flex items-center justify-center gap-0.5 bg-black/50 opacity-0 transition-opacity group-hover:opacity-100">
+          <Button
+            size="icon"
+            variant="ghost"
+            className="h-6 w-6 text-white hover:bg-white/20 hover:text-white"
+            onClick={(e) => { e.stopPropagation(); onEdit(categoria); }}
+          >
+            <Edit className="h-3 w-3" />
+          </Button>
+          <Button
+            size="icon"
+            variant="ghost"
+            className="h-6 w-6 text-white hover:bg-white/20 hover:text-white"
+            onClick={(e) => { e.stopPropagation(); onDelete(categoria.id); }}
+          >
+            <Trash2 className="h-3 w-3" />
+          </Button>
+        </div>
       </div>
-    </div>
+      <span className={`w-full truncate text-center text-[10px] font-medium ${
+        selected ? "text-primary" : "text-muted-foreground"
+      }`}>
+        {categoria.nome}
+      </span>
+      {!categoria.ativo && (
+        <span className="absolute right-0.5 top-0.5 h-1.5 w-1.5 rounded-full bg-destructive" />
+      )}
+    </button>
   );
 }
