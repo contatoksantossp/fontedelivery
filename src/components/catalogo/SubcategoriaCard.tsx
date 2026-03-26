@@ -14,7 +14,7 @@ export function SubcategoriaCard({ subcategoria, selected, onSelect, onEdit, onD
   return (
     <button
       onClick={() => onSelect(subcategoria.id)}
-      className={`group relative flex flex-shrink-0 items-center gap-1.5 rounded-full border px-2 py-1 transition-all ${
+      className={`group relative flex flex-shrink-0 items-center gap-2 rounded-full border px-3 py-1.5 transition-all ${
         selected
           ? "border-primary bg-primary text-primary-foreground"
           : "border-border bg-card text-card-foreground hover:border-primary/50"
@@ -23,9 +23,9 @@ export function SubcategoriaCard({ subcategoria, selected, onSelect, onEdit, onD
       <img
         src={subcategoria.imagem}
         alt={subcategoria.nome}
-        className="h-6 w-6 rounded-full object-cover bg-muted flex-shrink-0"
+        className="h-8 w-8 rounded-full object-cover bg-muted flex-shrink-0"
       />
-      <span className="whitespace-nowrap text-[11px] font-medium">{subcategoria.nome}</span>
+      <span className="whitespace-nowrap text-xs font-medium">{subcategoria.nome}</span>
       {!subcategoria.ativo && (
         <span className="h-1.5 w-1.5 rounded-full bg-destructive flex-shrink-0" />
       )}
@@ -34,18 +34,18 @@ export function SubcategoriaCard({ subcategoria, selected, onSelect, onEdit, onD
         <Button
           size="icon"
           variant="ghost"
-          className={`h-5 w-5 ${selected ? "text-primary-foreground hover:bg-white/20 hover:text-primary-foreground" : "hover:bg-secondary"}`}
+          className={`h-6 w-6 ${selected ? "text-primary-foreground hover:bg-white/20 hover:text-primary-foreground" : "hover:bg-secondary"}`}
           onClick={(e) => { e.stopPropagation(); onEdit(subcategoria); }}
         >
-          <Edit className="h-2.5 w-2.5" />
+          <Edit className="h-3 w-3" />
         </Button>
         <Button
           size="icon"
           variant="ghost"
-          className={`h-5 w-5 ${selected ? "text-primary-foreground hover:bg-white/20 hover:text-primary-foreground" : "text-destructive hover:bg-secondary"}`}
+          className={`h-6 w-6 ${selected ? "text-primary-foreground hover:bg-white/20 hover:text-primary-foreground" : "text-destructive hover:bg-secondary"}`}
           onClick={(e) => { e.stopPropagation(); onDelete(subcategoria.id); }}
         >
-          <Trash2 className="h-2.5 w-2.5" />
+          <Trash2 className="h-3 w-3" />
         </Button>
       </div>
     </button>
