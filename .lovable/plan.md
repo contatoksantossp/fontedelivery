@@ -1,35 +1,27 @@
 
 
-## Drag-and-drop de Pendentes → Prontos
+## Drag handle dedicado no PedidoCard
 
-Substituir o botao "Pronto" nos cards pendentes por arrastar o card da coluna Pendentes para a coluna Prontos, usando `@dnd-kit` (ja instalado no projeto).
+O problema: os listeners de drag estão no card inteiro (linha 55), impedindo o clique de abrir detalhes.
 
-### Arquitetura
+### Solução
 
-```text
-DndContext (VisaoGeral)
-├── Droppable "pendentes" (KanbanColumn)
-│   └── Draggable PedidoCard (cada pedido pendente)
-└── Droppable "prontos" (KanbanColumn)
-    └── PedidoCard (cards prontos, nao arrastáveis)
-```
+Mover os `listeners` e `attributes` do drag para uma área específica dentro do card, visível apenas em cards pendentes. No lugar onde ficava o botão "Pronto" (que foi removido), adicionar um handle de arrasto com ícone `GripHorizontal` e texto "Arraste →".
 
-Quando um card pendente é solto na coluna "prontos", dispara `handleAction(pedidoId, "pronto")`.
+### Alterações em `src/components/visao-geral/PedidoCard.tsx`
 
-### Arquivos editados
+1. **Remover `listeners` e `attributes` do div raiz** (linha 55) — o card volta a ser clicável normalmente
+2. **Adicionar handle de drag nos cards pendentes** — na área de botões (linha 114-150), quando `isPendente && !selectionMode`, renderizar um elemento com os `listeners` e `attributes`:
+   ```
+   <div {...listeners} {...attributes} className="flex items-center gap-1 cursor-grab ...">
+     <GripHorizontal className="h-3.5 w-3.5" />
+     <span>Arraste →</span>
+   </div>
+   ```
+3. **Manter `ref={setNodeRef}`** no div raiz (necessário para o dnd-kit calcular posição)
+4. **Manter `transform`/`opacity` style** no div raiz para o feedback visual durante drag
+5. **Remover `cursor-grab`** da classe do card raiz, já que o grab fica só no handle
+6. Importar `GripHorizontal` do lucide-react
 
-**1. `src/pages/VisaoGeral.tsx`**
-- Envolver as duas KanbanColumns com `DndContext` do @dnd-kit
-- No `onDragEnd`: se `over.id === "prontos"` e o pedido arrastado é pendente, chamar `handleAction(active.id, "pronto")`
-- Passar estado de drag ativo para highlight visual na coluna destino
-
-**2. `src/components/visao-geral/KanbanColumn.tsx`**
-- Tornar droppable usando `useDroppable` com um `id` prop
-- Adicionar highlight visual (borda primary, fundo sutil) quando `isOver` e há item sendo arrastado
-
-**3. `src/components/visao-geral/PedidoCard.tsx`**
-- Cards pendentes: envolver com `useDraggable` (id = pedido.id)
-- Remover o botao "Pronto" dos cards pendentes (manter Cancelar)
-- Aplicar `transform` e `opacity` durante drag
-- Cards prontos e em selectionMode: sem drag
+O card fica clicável para abrir detalhes, e o drag só inicia ao segurar no handle "Arraste →".
 
