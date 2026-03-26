@@ -3,7 +3,7 @@ import { StatusBadge } from "./StatusBadge";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { Wallet, Clock, Plus, LayoutDashboard, Truck } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
@@ -12,6 +12,7 @@ import { toast } from "sonner";
 
 export function AppHeader() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [lojaAberta, setLojaAberta] = useState(true);
   const [confirmOpen, setConfirmOpen] = useState(false);
 
@@ -39,11 +40,11 @@ export function AppHeader() {
           </div>
 
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="sm" className="gap-1.5 text-muted-foreground" onClick={() => navigate("/visao-geral")}>
+            <Button variant="ghost" size="sm" className={`gap-1.5 ${location.pathname === "/visao-geral" ? "text-primary bg-primary/10" : "text-muted-foreground"}`} onClick={() => navigate("/visao-geral")}>
               <LayoutDashboard className="h-4 w-4" />
               Visão Geral
             </Button>
-            <Button variant="ghost" size="sm" className="gap-1.5 text-muted-foreground" onClick={() => navigate("/rotas")}>
+            <Button variant="ghost" size="sm" className={`gap-1.5 ${location.pathname === "/rotas" ? "text-primary bg-primary/10" : "text-muted-foreground"}`} onClick={() => navigate("/rotas")}>
               <Truck className="h-4 w-4" />
               Logística
             </Button>
