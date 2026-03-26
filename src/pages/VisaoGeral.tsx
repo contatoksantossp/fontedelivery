@@ -122,7 +122,7 @@ export default function VisaoGeral() {
     }
   }, [selectionMode, pedidosNaRota, expandedSlot, addToRota]);
 
-  const handleDragEnd = useCallback(() => {}, []);
+  
 
   const handleDespachar = useCallback((slotIndex: number) => {
     const entId = entregadorPorRota[slotIndex];
@@ -149,9 +149,9 @@ export default function VisaoGeral() {
   }, [entregadorPorRota, rotasItens, navigate]);
 
   return (
-    <div className="flex-1 flex overflow-hidden">
+    <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
       {/* Coluna Esquerda — Kanbans */}
-        <div className="flex-[35] min-w-[320px] flex flex-row gap-2 p-2 border-r border-border overflow-hidden">
+        <div className="flex-1 lg:flex-[35] min-h-[300px] lg:min-h-0 lg:min-w-[320px] flex flex-row gap-2 p-2 border-b lg:border-b-0 lg:border-r border-border overflow-hidden">
           <KanbanColumn
             id="pendentes"
             title="Pedidos Pendentes"
@@ -223,7 +223,7 @@ export default function VisaoGeral() {
         </div>
 
       {/* Coluna Central — Detalhes ou Rota Expandida */}
-      <div className="flex-[25] min-w-[240px] border-r border-border flex flex-col overflow-hidden">
+      <div className="flex-1 lg:flex-[25] min-h-[250px] lg:min-h-0 lg:min-w-[240px] border-b lg:border-b-0 lg:border-r border-border flex flex-col overflow-hidden">
         {selectionMode ? (
           <SlotRotaExpanded
             slotIndex={expandedSlot!}
@@ -241,7 +241,7 @@ export default function VisaoGeral() {
       </div>
 
       {/* Coluna Direita — Mapa + Rotas */}
-      <div className="flex-[40] min-w-[350px] p-2 overflow-y-auto">
+      <div className="flex-1 lg:flex-[40] min-h-[350px] lg:min-h-0 lg:min-w-[350px] p-2 overflow-y-auto">
         <MapaRotas
           pedidosProntos={prontos}
           expandedSlot={expandedSlot}

@@ -90,9 +90,9 @@ export default function Rotas() {
   };
 
   return (
-    <div className="flex-1 flex overflow-hidden">
+    <div className="flex-1 flex flex-col lg:flex-row overflow-auto lg:overflow-hidden">
       {/* Coluna Esquerda — Kanban de Rotas */}
-      <div className="w-[35%] flex flex-col p-3 border-r border-border overflow-hidden">
+      <div className="lg:w-[35%] min-h-[300px] lg:min-h-0 flex flex-col p-3 border-b lg:border-b-0 lg:border-r border-border overflow-hidden">
         <KanbanColumn id="rotas" title="Rotas" count={activeCount} className="flex-1 min-h-0">
           {sortedRotas.map((rota) => (
             <RotaCard
@@ -107,7 +107,7 @@ export default function Rotas() {
       </div>
 
       {/* Coluna Central — Detalhes */}
-      <div className="w-[25%] border-r border-border flex flex-col overflow-hidden">
+      <div className="lg:w-[25%] min-h-[250px] lg:min-h-0 border-b lg:border-b-0 lg:border-r border-border flex flex-col overflow-hidden">
         <RotaDetalhes
           rota={selectedRota}
           cor={selectedCor}
@@ -116,7 +116,7 @@ export default function Rotas() {
       </div>
 
       {/* Coluna Direita — Mapa ou Acerto */}
-      <div className="w-[40%] flex flex-col overflow-hidden">
+      <div className="lg:w-[40%] min-h-[350px] lg:min-h-0 flex flex-col overflow-hidden">
         {selectedRota?.status === "finalizada" ? (
           <RotaAcerto
             rota={selectedRota}
