@@ -161,7 +161,7 @@ export default function VisaoGeral() {
     <div className="flex-1 flex overflow-hidden">
       {/* Coluna Esquerda — Kanbans */}
       <DndContext onDragEnd={handleDragEnd}>
-        <div className="w-[35%] flex flex-row gap-2 p-3 border-r border-border overflow-hidden">
+        <div className="flex-[35] min-w-[320px] flex flex-row gap-2 p-2 border-r border-border overflow-hidden">
           <KanbanColumn
             id="pendentes"
             title="Pedidos Pendentes"
@@ -234,7 +234,7 @@ export default function VisaoGeral() {
       </DndContext>
 
       {/* Coluna Central — Detalhes ou Rota Expandida */}
-      <div className="w-[25%] border-r border-border flex flex-col overflow-hidden">
+      <div className="flex-[25] min-w-[240px] border-r border-border flex flex-col overflow-hidden">
         {selectionMode ? (
           <SlotRotaExpanded
             slotIndex={expandedSlot!}
@@ -252,7 +252,7 @@ export default function VisaoGeral() {
       </div>
 
       {/* Coluna Direita — Mapa + Rotas */}
-      <div className="w-[40%] p-3 overflow-y-auto">
+      <div className="flex-[40] min-w-[350px] p-2 overflow-y-auto">
         <MapaRotas
           pedidosProntos={prontos}
           expandedSlot={expandedSlot}
