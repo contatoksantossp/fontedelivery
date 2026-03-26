@@ -305,7 +305,7 @@ function ParadaAcertoItem({
                 return (
                   <button
                     key={m.id}
-                    onClick={() => setMetodoSel(m.id)}
+                    onClick={() => handleMetodoClick(m.id)}
                     className={cn(
                       "flex flex-col items-center gap-0.5 rounded border p-1.5 text-[8px] transition-colors",
                       metodoSel === m.id
@@ -320,16 +320,31 @@ function ParadaAcertoItem({
               })}
             </div>
 
-            {/* Troco shortcuts for dinheiro */}
+            {/* Troco section for dinheiro */}
             {metodoSel === "dinheiro" && valorInput && (
-              <div className="flex gap-1 flex-wrap">
-                {[10, 20, 50, 100].map((v) => (
-                  <Button key={v} variant="outline" size="sm" className="text-[9px] h-5 px-2"
-                    onClick={() => setValorInput(String(v))}
-                  >
-                    R${v}
-                  </Button>
-                ))}
+              <div className="space-y-1">
+                <p className="text-[9px] font-semibold text-muted-foreground uppercase">Troco recebido</p>
+                <Input
+                  type="number"
+                  placeholder="Valor recebido R$"
+                  value={trocoInput}
+                  onChange={(e) => setTrocoInput(e.target.value)}
+                  className="h-7 text-[11px]"
+                />
+                <div className="flex gap-1">
+                  {[2, 5, 10, 20, 50].map((v) => (
+                    <Button key={v} variant="outline" size="sm" className="flex-1 text-[9px] h-5 px-1"
+                      onClick={() => handleAddTroco(v)}
+                    >
+                      +{v}
+                    </Button>
+                  ))}
+                </div>
+                {trocoCalculado > 0 && (
+                  <p className="text-[10px] font-semibold text-primary text-center">
+                    Troco: R$ {trocoCalculado.toFixed(2)}
+                  </p>
+                )}
               </div>
             )}
 
