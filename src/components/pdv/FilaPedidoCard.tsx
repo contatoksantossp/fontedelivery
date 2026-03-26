@@ -52,7 +52,7 @@ export function FilaPedidoCard({ pedido, selected, onSelect }: FilaPedidoCardPro
 
       {/* L2: Cliente + Modalidade */}
       <div className="flex items-center justify-between mt-1">
-        <p className="text-[11px] text-muted-foreground truncate flex-1">{pedido.cliente}</p>
+        <p className="text-muted-foreground truncate flex-1 text-base">{pedido.cliente}</p>
         <div className="flex items-center gap-0.5 text-muted-foreground ml-1">
           {pedido.modalidade === "entrega" ? (
             <Truck className="h-3 w-3" />
@@ -64,19 +64,19 @@ export function FilaPedidoCard({ pedido, selected, onSelect }: FilaPedidoCardPro
 
       {/* L3: Endereço (somente entrega) */}
       {pedido.modalidade === "entrega" && pedido.endereco && (
-        <p className="text-[10px] text-muted-foreground/70 truncate mt-0.5">
+        <p className="text-muted-foreground/70 truncate mt-0.5 text-xs">
           {pedido.endereco}
         </p>
       )}
 
       {/* L4: Valor + Ícones pagamento */}
       <div className="flex items-center justify-between mt-1">
-        <span className="text-xs font-bold text-foreground">
+        <span className="font-bold text-foreground text-lg">
           R$ {pedido.total.toFixed(2)}
         </span>
         <div className="flex items-center gap-1">
           {paymentIcons.map((Icon, idx) => (
-            <Icon key={idx} className="h-3 w-3 text-muted-foreground" />
+            <Icon key={idx} className="text-muted-foreground w-[40px] h-[20px]" />
           ))}
         </div>
       </div>
