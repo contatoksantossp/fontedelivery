@@ -133,15 +133,6 @@ export default function VisaoGeral() {
           {pendentes.length === 0 && (
             <p className="text-xs text-muted-foreground text-center py-4">Nenhum pedido pendente</p>
           )}
-          <Button
-            variant="outline"
-            size="sm"
-            className="w-full gap-1.5 border-dashed"
-            onClick={() => navigate("/pdv")}
-          >
-            <Plus className="h-3.5 w-3.5" />
-            Novo Pedido
-          </Button>
           {pendentes.map((p) => (
             <PedidoCard
               key={p.id}
