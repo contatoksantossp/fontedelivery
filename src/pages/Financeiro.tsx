@@ -5,6 +5,8 @@ import { PageContainer } from "@/components/PageContainer";
 import { AbaCaixa } from "@/components/financeiro/AbaCaixa";
 import { AbaResumo } from "@/components/financeiro/AbaResumo";
 import { AbaExtrato } from "@/components/financeiro/AbaExtrato";
+import { AbaContas, contasMock } from "@/components/financeiro/AbaContas";
+import type { ContaPagar } from "@/components/financeiro/ContaDialog";
 import {
   caixaStateMock,
   entregadoresTurnoMock,
