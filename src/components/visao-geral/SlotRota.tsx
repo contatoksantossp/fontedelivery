@@ -35,7 +35,7 @@ interface SlotRotaProps {
   onDespachar?: (slotIndex: number) => void;
 }
 
-function SortableItem({ pedido, onRemove }: { pedido: Pedido; onRemove: (id: string) => void }) {
+function SortableItem({ pedido, onRemove, orderNum, color }: { pedido: Pedido; onRemove: (id: string) => void; orderNum: number; color: string }) {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: pedido.id });
   const style = { transform: CSS.Transform.toString(transform), transition };
 
@@ -45,6 +45,12 @@ function SortableItem({ pedido, onRemove }: { pedido: Pedido; onRemove: (id: str
       style={style}
       className="flex items-center gap-2 rounded-md border bg-card p-2 text-sm"
     >
+      <span
+        className="w-5 h-5 rounded-full flex items-center justify-center text-white text-[10px] font-bold shrink-0"
+        style={{ backgroundColor: color }}
+      >
+        {orderNum}
+      </span>
       <button {...attributes} {...listeners} className="cursor-grab text-muted-foreground hover:text-foreground">
         <GripVertical className="h-4 w-4" />
       </button>
