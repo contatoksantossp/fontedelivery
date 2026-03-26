@@ -47,6 +47,7 @@ export function RotaCard({ rota, cor, selected, onSelect }: RotaCardProps) {
   const cfg = statusConfig[rota.status];
   const isConcluida = rota.status === "concluida";
   const VeiculoIcon = veiculoIcon[rota.entregadorVeiculo] || TruckIcon;
+  const formatElapsed = useElapsedTick(rota.paradas);
 
   return (
     <div
@@ -114,7 +115,16 @@ export function RotaCard({ rota, cor, selected, onSelect }: RotaCardProps) {
                 )}
                 <span className="font-semibold">{p.pedidoCodigo}</span>
               </div>
-              <p className="truncate text-muted-foreground">{p.cliente}</p>
+              <div className="flex items-center justify-between">
+                <p className="truncate text-muted-foreground flex-1">{p.cliente}</p>
+                <span className={cn(
+                  "flex items-center gap-0.5 shrink-0 ml-1",
+                  entregue ? "text-muted-foreground" : "text-primary"
+                )}>
+                  <Timer className="h-2.5 w-2.5" />
+                  {formatElapsed(p.criadoEm, entregue)}
+                </span>
+              </div>
             </div>
           );
         })}
