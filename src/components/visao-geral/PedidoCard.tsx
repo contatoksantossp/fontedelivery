@@ -1,5 +1,5 @@
 import { Pedido } from "./mockData";
-import { Clock, X, Check, Truck, MapPin, Route, Timer } from "lucide-react";
+import { Clock, X, Check, Truck, MapPin, Route, Timer, GripHorizontal } from "lucide-react";
 import { PedidoRastreio, RastreioStatus } from "@/components/PedidoRastreio";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
