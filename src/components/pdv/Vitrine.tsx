@@ -13,6 +13,7 @@ import { toast } from "sonner";
 
 interface VitrineProps {
   onAddItem: (produto: Produto, variante: Variante, qty: number) => void;
+  onUpdateItemPrice: (produtoId: string, varianteId: string, novoPreco: number) => void;
 }
 
 export function Vitrine({ onAddItem }: VitrineProps) {
