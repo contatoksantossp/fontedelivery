@@ -155,143 +155,143 @@ export const produtosMock: Produto[] = [
   // Bebidas
   {
     id: "p1", nome: "Coca-Cola", preco: 5.00, categoriaId: "cat1", subcategoriaId: "sub1a",
-    codigoBarras: "7894900010015", foto: "/placeholder.svg",
+    codigoBarras: "7894900010015", foto: productImages.p1,
     variantes: [
-      { id: "v1a", nome: "Lata 350ml", preco: 5.00, foto: "/placeholder.svg" },
-      { id: "v1b", nome: "600ml", preco: 7.00, foto: "/placeholder.svg" },
-      { id: "v1c", nome: "2L", preco: 11.00, foto: "/placeholder.svg" },
+      { id: "v1a", nome: "Lata 350ml", preco: 5.00, foto: variantImages.v1a },
+      { id: "v1b", nome: "600ml", preco: 7.00, foto: variantImages.v1b },
+      { id: "v1c", nome: "2L", preco: 11.00, foto: variantImages.v1c },
     ],
   },
   {
     id: "p2", nome: "Guaraná Antarctica", preco: 4.50, categoriaId: "cat1", subcategoriaId: "sub1a",
-    foto: "/placeholder.svg",
+    foto: productImages.p2,
     variantes: [
-      { id: "v2a", nome: "Lata 350ml", preco: 4.50, foto: "/placeholder.svg" },
-      { id: "v2b", nome: "2L", preco: 9.00, foto: "/placeholder.svg" },
+      { id: "v2a", nome: "Lata 350ml", preco: 4.50, foto: variantImages.v2a },
+      { id: "v2b", nome: "2L", preco: 9.00, foto: variantImages.v2b },
     ],
   },
   {
     id: "p3", nome: "Red Bull", preco: 12.00, categoriaId: "cat1", subcategoriaId: "sub1c",
-    foto: "/placeholder.svg",
+    foto: productImages.p3,
     variantes: [
-      { id: "v3a", nome: "250ml", preco: 12.00, foto: "/placeholder.svg" },
-      { id: "v3b", nome: "473ml", preco: 17.00, foto: "/placeholder.svg" },
+      { id: "v3a", nome: "250ml", preco: 12.00, foto: variantImages.v3a },
+      { id: "v3b", nome: "473ml", preco: 17.00, foto: variantImages.v3b },
     ],
   },
   {
     id: "p4", nome: "Água Mineral Crystal", preco: 2.50, categoriaId: "cat1", subcategoriaId: "sub1d",
-    foto: "/placeholder.svg",
+    foto: productImages.p4,
     variantes: [
-      { id: "v4a", nome: "500ml", preco: 2.50, foto: "/placeholder.svg" },
-      { id: "v4b", nome: "1.5L", preco: 4.00, foto: "/placeholder.svg" },
+      { id: "v4a", nome: "500ml", preco: 2.50, foto: variantImages.v4a },
+      { id: "v4b", nome: "1.5L", preco: 4.00, foto: variantImages.v4b },
     ],
   },
   // Adega
   {
     id: "p5", nome: "Skol Lata", preco: 4.50, categoriaId: "cat2", subcategoriaId: "sub2a",
-    codigoBarras: "7891149100101", foto: "/placeholder.svg",
-    variantes: [{ id: "v5", nome: "Lata 350ml", preco: 4.50, foto: "/placeholder.svg" }],
+    codigoBarras: "7891149100101", foto: productImages.p5,
+    variantes: [{ id: "v5", nome: "Lata 350ml", preco: 4.50, foto: variantImages.v5 }],
   },
   {
     id: "p6", nome: "Heineken", preco: 8.50, categoriaId: "cat2", subcategoriaId: "sub2a",
-    foto: "/placeholder.svg",
+    foto: productImages.p6,
     variantes: [
-      { id: "v6a", nome: "Long Neck 330ml", preco: 8.50, foto: "/placeholder.svg" },
-      { id: "v6b", nome: "Lata 350ml", preco: 7.50, foto: "/placeholder.svg" },
+      { id: "v6a", nome: "Long Neck 330ml", preco: 8.50, foto: variantImages.v6a },
+      { id: "v6b", nome: "Lata 350ml", preco: 7.50, foto: variantImages.v6b },
     ],
   },
   {
     id: "p7", nome: "Brahma Litrão", preco: 9.00, categoriaId: "cat2", subcategoriaId: "sub2a",
-    foto: "/placeholder.svg",
-    variantes: [{ id: "v7", nome: "1L", preco: 9.00, foto: "/placeholder.svg" }],
+    foto: productImages.p7,
+    variantes: [{ id: "v7", nome: "1L", preco: 9.00, foto: variantImages.v7 }],
   },
   {
     id: "p8", nome: "Vinho Casillero del Diablo", preco: 49.90, categoriaId: "cat2", subcategoriaId: "sub2b",
-    foto: "/placeholder.svg",
-    variantes: [{ id: "v8", nome: "750ml", preco: 49.90, foto: "/placeholder.svg" }],
+    foto: productImages.p8,
+    variantes: [{ id: "v8", nome: "750ml", preco: 49.90, foto: variantImages.v8 }],
   },
   {
     id: "p9", nome: "Absolut Vodka", preco: 89.90, categoriaId: "cat2", subcategoriaId: "sub2c",
-    foto: "/placeholder.svg",
+    foto: productImages.p9,
     variantes: [
-      { id: "v9a", nome: "750ml", preco: 89.90, foto: "/placeholder.svg" },
-      { id: "v9b", nome: "1L", preco: 109.90, foto: "/placeholder.svg" },
+      { id: "v9a", nome: "750ml", preco: 89.90, foto: variantImages.v9a },
+      { id: "v9b", nome: "1L", preco: 109.90, foto: variantImages.v9b },
     ],
   },
   // Tabacaria
   {
     id: "p10", nome: "Marlboro Box", preco: 12.00, categoriaId: "cat3", subcategoriaId: "sub3a",
-    foto: "/placeholder.svg",
-    variantes: [{ id: "v10", nome: "Maço", preco: 12.00, foto: "/placeholder.svg" }],
+    foto: productImages.p10,
+    variantes: [{ id: "v10", nome: "Maço", preco: 12.00, foto: variantImages.v10 }],
   },
   {
     id: "p11", nome: "Seda Smoking", preco: 4.00, categoriaId: "cat3", subcategoriaId: "sub3b",
-    foto: "/placeholder.svg",
-    variantes: [{ id: "v11", nome: "King Size", preco: 4.00, foto: "/placeholder.svg" }],
+    foto: productImages.p11,
+    variantes: [{ id: "v11", nome: "King Size", preco: 4.00, foto: variantImages.v11 }],
   },
   {
     id: "p12", nome: "Essência Narguile", preco: 18.00, categoriaId: "cat3", subcategoriaId: "sub3c",
-    foto: "/placeholder.svg",
+    foto: productImages.p12,
     variantes: [
-      { id: "v12a", nome: "50g Menta", preco: 18.00, foto: "/placeholder.svg" },
-      { id: "v12b", nome: "50g Uva", preco: 18.00, foto: "/placeholder.svg" },
+      { id: "v12a", nome: "50g Menta", preco: 18.00, foto: variantImages.v12a },
+      { id: "v12b", nome: "50g Uva", preco: 18.00, foto: variantImages.v12b },
     ],
   },
   {
     id: "p13", nome: "Isqueiro BIC", preco: 5.00, categoriaId: "cat3", subcategoriaId: "sub3d",
-    foto: "/placeholder.svg",
-    variantes: [{ id: "v13", nome: "Único", preco: 5.00, foto: "/placeholder.svg" }],
+    foto: productImages.p13,
+    variantes: [{ id: "v13", nome: "Único", preco: 5.00, foto: variantImages.v13 }],
   },
   // Conveniência
   {
     id: "p14", nome: "Doritos", preco: 7.50, categoriaId: "cat4", subcategoriaId: "sub4a",
-    foto: "/placeholder.svg",
+    foto: productImages.p14,
     variantes: [
-      { id: "v14a", nome: "96g", preco: 7.50, foto: "/placeholder.svg" },
-      { id: "v14b", nome: "167g", preco: 12.00, foto: "/placeholder.svg" },
+      { id: "v14a", nome: "96g", preco: 7.50, foto: variantImages.v14a },
+      { id: "v14b", nome: "167g", preco: 12.00, foto: variantImages.v14b },
     ],
   },
   {
     id: "p15", nome: "Trident", preco: 3.50, categoriaId: "cat4", subcategoriaId: "sub4c",
-    foto: "/placeholder.svg",
-    variantes: [{ id: "v15", nome: "8 unidades", preco: 3.50, foto: "/placeholder.svg" }],
+    foto: productImages.p15,
+    variantes: [{ id: "v15", nome: "8 unidades", preco: 3.50, foto: variantImages.v15 }],
   },
   {
     id: "p16", nome: "Picolé Kibon", preco: 5.00, categoriaId: "cat4", subcategoriaId: "sub4b",
-    foto: "/placeholder.svg",
+    foto: productImages.p16,
     variantes: [
-      { id: "v16a", nome: "Morango", preco: 5.00, foto: "/placeholder.svg" },
-      { id: "v16b", nome: "Chocolate", preco: 6.00, foto: "/placeholder.svg" },
+      { id: "v16a", nome: "Morango", preco: 5.00, foto: variantImages.v16a },
+      { id: "v16b", nome: "Chocolate", preco: 6.00, foto: variantImages.v16b },
     ],
   },
   // Mercearia
   {
     id: "p17", nome: "Carvão Vegetal", preco: 19.90, categoriaId: "cat5", subcategoriaId: "sub5a",
-    foto: "/placeholder.svg",
+    foto: productImages.p17,
     variantes: [
-      { id: "v17a", nome: "Saco 4kg", preco: 19.90, foto: "/placeholder.svg" },
-      { id: "v17b", nome: "Saco 8kg", preco: 34.90, foto: "/placeholder.svg" },
+      { id: "v17a", nome: "Saco 4kg", preco: 19.90, foto: variantImages.v17a },
+      { id: "v17b", nome: "Saco 8kg", preco: 34.90, foto: variantImages.v17b },
     ],
   },
   {
     id: "p18", nome: "Gelo", preco: 8.90, categoriaId: "cat5", subcategoriaId: "sub5a",
-    foto: "/placeholder.svg",
+    foto: productImages.p18,
     variantes: [
-      { id: "v18a", nome: "Saco 5kg", preco: 8.90, foto: "/placeholder.svg" },
-      { id: "v18b", nome: "Saco 10kg", preco: 15.90, foto: "/placeholder.svg" },
+      { id: "v18a", nome: "Saco 5kg", preco: 8.90, foto: variantImages.v18a },
+      { id: "v18b", nome: "Saco 10kg", preco: 15.90, foto: variantImages.v18b },
     ],
   },
   // Kits
   {
     id: "p19", nome: "Kit Churrasco", preco: 39.90, categoriaId: "cat5", subcategoriaId: "sub5a",
-    foto: "/placeholder.svg",
-    variantes: [{ id: "v19", nome: "Único", preco: 39.90, foto: "/placeholder.svg" }],
+    foto: productImages.p17,
+    variantes: [{ id: "v19", nome: "Único", preco: 39.90, foto: variantImages.v17a }],
     comboConfig: { slots: 3, desconto: 10 },
   },
   {
     id: "p20", nome: "Combo Happy Hour", preco: 99.90, categoriaId: "cat2", subcategoriaId: "sub2c",
-    foto: "/placeholder.svg",
-    variantes: [{ id: "v20", nome: "Único", preco: 99.90, foto: "/placeholder.svg" }],
+    foto: productImages.p9,
+    variantes: [{ id: "v20", nome: "Único", preco: 99.90, foto: variantImages.v9a }],
     comboConfig: { slots: 3, desconto: 8 },
   },
 ];
