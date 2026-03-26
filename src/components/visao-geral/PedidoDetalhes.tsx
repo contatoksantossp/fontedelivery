@@ -1,13 +1,25 @@
+import { useState, useEffect, useRef } from "react";
 import { Pedido } from "./mockData";
-import { Phone, MapPin, FileText, CreditCard } from "lucide-react";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
+import { Printer } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface PedidoDetalhesProps {
   pedido: Pedido | null;
 }
 
 export function PedidoDetalhes({ pedido }: PedidoDetalhesProps) {
+  const [printed, setPrinted] = useState(false);
+  const cupomRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setPrinted(false);
+  }, [pedido?.id]);
+
+  const handlePrint = () => {
+    window.print();
+    setPrinted(true);
+  };
+
   if (!pedido) {
     return (
       <div className="flex-1 flex items-center justify-center text-muted-foreground text-sm">
@@ -16,101 +28,118 @@ export function PedidoDetalhes({ pedido }: PedidoDetalhesProps) {
     );
   }
 
+  const separator = "- - - - - - - - - - - - - - - - - -";
+
   return (
-    <ScrollArea className="flex-1">
-      <div className="p-4 space-y-4">
+    <div className="flex-1 flex flex-col overflow-hidden bg-white">
+      {/* Botão Imprimir */}
+      <div className="p-2 border-b border-gray-200">
+        <Button
+          onClick={handlePrint}
+          className={`w-full text-xs font-bold transition-all ${
+            printed
+              ? "bg-gray-300 text-gray-500 hover:bg-gray-400"
+              : "bg-orange-500 hover:bg-orange-600 text-white"
+          }`}
+          size="sm"
+        >
+          <Printer className="h-3.5 w-3.5 mr-1.5" />
+          {printed ? "Impresso ✓" : "Imprimir Cupom"}
+        </Button>
+      </div>
+
+      {/* Cupom */}
+      <div
+        id="cupom-print"
+        ref={cupomRef}
+        className="flex-1 overflow-y-auto p-4 font-mono text-xs text-black bg-white"
+      >
         {/* Header */}
-        <div>
-          <div className="flex items-center gap-2 mb-1">
-            <span className="font-display font-bold text-lg text-foreground">{pedido.codigo}</span>
-            <span className="text-xs bg-primary/15 text-primary px-2 py-0.5 rounded-full capitalize">
-              {pedido.status}
-            </span>
-          </div>
-          <p className="text-sm font-medium text-foreground">{pedido.cliente}</p>
+        <div className="text-center space-y-0.5 mb-1">
+          <p className="font-bold text-sm">PEDIDO</p>
+          <p className="font-bold text-lg">{pedido.codigo}</p>
+          <p className="text-[10px] text-gray-500 uppercase">{pedido.tipo === "entrega" ? "Entrega" : "Retirada"}</p>
         </div>
 
-        <Separator />
+        <p className="text-center text-gray-400 text-[10px]">{separator}</p>
 
-        {/* Contato e Endereço */}
-        <div className="space-y-2">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Phone className="h-3.5 w-3.5 shrink-0" />
-            <span>{pedido.telefone}</span>
-          </div>
+        {/* Cliente */}
+        <div className="my-2 space-y-0.5">
+          <p className="font-bold">{pedido.cliente}</p>
+          <p className="text-gray-600">{pedido.telefone}</p>
           {pedido.tipo === "entrega" && (
-            <div className="flex items-start gap-2 text-sm text-muted-foreground">
-              <MapPin className="h-3.5 w-3.5 shrink-0 mt-0.5" />
-              <span>{pedido.endereco}, {pedido.bairro}</span>
-            </div>
+            <p className="text-gray-600">{pedido.endereco}, {pedido.bairro}</p>
           )}
         </div>
 
-        <Separator />
+        <p className="text-center text-gray-400 text-[10px]">{separator}</p>
 
         {/* Itens */}
-        <div>
-          <h4 className="text-xs font-display font-semibold text-foreground uppercase tracking-wider mb-2">
-            Itens do Pedido
-          </h4>
-          <div className="space-y-1.5">
-            {pedido.itens.map((item, i) => (
-              <div key={i} className="flex justify-between text-sm">
-                <div>
-                  <span className="text-foreground">{item.qtd}x {item.nome}</span>
-                  {item.obs && (
-                    <p className="text-xs text-muted-foreground ml-4">↳ {item.obs}</p>
-                  )}
-                </div>
-                <span className="text-foreground font-medium whitespace-nowrap">
-                  R$ {(item.qtd * item.preco).toFixed(2)}
+        <div className="my-2">
+          <p className="font-bold mb-1">ITENS</p>
+          {pedido.itens.map((item, i) => (
+            <div key={i} className="mb-1">
+              <div className="flex justify-between">
+                <span>{item.qtd}x {item.nome}</span>
+                <span className="font-medium">
+                  {(item.qtd * item.preco).toFixed(2)}
                 </span>
               </div>
-            ))}
-          </div>
+              {item.obs && (
+                <p className="text-gray-500 text-[10px] ml-3">↳ {item.obs}</p>
+              )}
+            </div>
+          ))}
         </div>
 
         {pedido.observacoes && (
           <>
-            <Separator />
-            <div className="flex items-start gap-2 text-sm">
-              <FileText className="h-3.5 w-3.5 shrink-0 mt-0.5 text-muted-foreground" />
-              <p className="text-muted-foreground">{pedido.observacoes}</p>
+            <p className="text-center text-gray-400 text-[10px]">{separator}</p>
+            <div className="my-2">
+              <p className="font-bold mb-0.5">OBS:</p>
+              <p className="text-gray-600">{pedido.observacoes}</p>
             </div>
           </>
         )}
 
-        <Separator />
+        <p className="text-center text-gray-400 text-[10px]">{separator}</p>
 
-        {/* Financeiro */}
-        <div className="space-y-1.5 text-sm">
-          <div className="flex justify-between text-muted-foreground">
+        {/* Totais */}
+        <div className="my-2 space-y-0.5">
+          <div className="flex justify-between">
             <span>Subtotal</span>
-            <span>R$ {pedido.subtotal.toFixed(2)}</span>
+            <span>{pedido.subtotal.toFixed(2)}</span>
           </div>
           {pedido.taxaEntrega > 0 && (
-            <div className="flex justify-between text-muted-foreground">
-              <span>Taxa de Entrega</span>
-              <span>R$ {pedido.taxaEntrega.toFixed(2)}</span>
+            <div className="flex justify-between">
+              <span>Taxa Entrega</span>
+              <span>{pedido.taxaEntrega.toFixed(2)}</span>
             </div>
           )}
           {pedido.desconto > 0 && (
-            <div className="flex justify-between text-primary">
+            <div className="flex justify-between text-orange-600">
               <span>Desconto</span>
-              <span>-R$ {pedido.desconto.toFixed(2)}</span>
+              <span>-{pedido.desconto.toFixed(2)}</span>
             </div>
           )}
-          <Separator />
-          <div className="flex justify-between font-bold text-foreground text-base">
-            <span>Total</span>
+        </div>
+
+        <p className="text-center text-gray-400 text-[10px]">{separator}</p>
+
+        <div className="my-2">
+          <div className="flex justify-between font-bold text-sm">
+            <span>TOTAL</span>
             <span>R$ {pedido.total.toFixed(2)}</span>
           </div>
-          <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-1">
-            <CreditCard className="h-3 w-3" />
-            <span>{pedido.formaPagamento}</span>
-          </div>
+          <p className="text-gray-500 mt-0.5">Pagamento: {pedido.formaPagamento}</p>
         </div>
+
+        <p className="text-center text-gray-400 text-[10px]">{separator}</p>
+
+        <p className="text-center text-[10px] text-gray-400 mt-2">
+          ** Documento sem valor fiscal **
+        </p>
       </div>
-    </ScrollArea>
+    </div>
   );
 }
