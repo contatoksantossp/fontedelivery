@@ -1,8 +1,11 @@
 import { StatusBadge } from "./StatusBadge";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { Wallet, Clock } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Wallet, Clock, Plus } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export function AppHeader() {
+  const navigate = useNavigate();
   return (
     <header className="sticky top-0 z-40 flex h-14 items-center gap-4 border-b bg-card px-4">
       <SidebarTrigger className="text-muted-foreground hover:text-foreground" />
@@ -15,6 +18,11 @@ export function AppHeader() {
           </div>
           <StatusBadge status="online" />
         </div>
+
+        <Button size="sm" className="gap-1.5" onClick={() => navigate("/pdv")}>
+          <Plus className="h-4 w-4" />
+          Novo Pedido
+        </Button>
 
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
