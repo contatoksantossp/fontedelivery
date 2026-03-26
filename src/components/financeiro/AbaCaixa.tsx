@@ -177,7 +177,7 @@ export function AbaCaixa({ caixa, entregadores, recebimentosPorMetodo, onAbrirCa
             <DialogTitle>Fechar Caixa</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
-            <p className="text-sm text-muted-foreground">Saldo esperado: R$ {caixa.saldoEsperado.toFixed(2)}</p>
+            <p className="text-sm text-muted-foreground">Saldo esperado: R$ {caixa.saldoEsperado.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</p>
             <div>
               <label className="text-sm text-muted-foreground">Contagem em caixa (R$)</label>
               <Input type="number" value={contagem} onChange={e => setContagem(e.target.value)} />
