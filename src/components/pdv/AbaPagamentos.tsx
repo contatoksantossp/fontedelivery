@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { Pagamento } from "./mockPdvData";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,7 +26,7 @@ const metodos: { id: MetodoPag; label: string; icon: React.ReactNode }[] = [
   { id: "qr", label: "QR Code", icon: <QrCode className="h-3.5 w-3.5" /> },
 ];
 
-const atalhosTroco = [10, 20, 50, 100];
+const atalhosTroco = [2, 5, 10, 20, 50];
 
 export function AbaPagamentos({
   subtotal, desconto, taxaEntrega,
@@ -38,32 +38,54 @@ export function AbaPagamentos({
 
   const [metodoSelecionado, setMetodoSelecionado] = useState<MetodoPag>("pix");
   const [valorInput, setValorInput] = useState("");
-  const [trocoExtra, setTrocoExtra] = useState(0);
+  const [trocoInput, setTrocoInput] = useState("");
 
   const valorNumerico = parseFloat(valorInput) || 0;
+  const trocoRecebido = parseFloat(trocoInput) || 0;
   const trocoCalculado = metodoSelecionado === "dinheiro" && valorNumerico > 0
-    ? Math.max(0, (valorNumerico + trocoExtra) - falta)
+    ? Math.max(0, trocoRecebido - valorNumerico)
     : 0;
 
   const handleFracao = (fracao: number) => {
-    setValorInput((total * fracao).toFixed(2));
-    setTrocoExtra(0);
+    setValorInput((falta * fracao).toFixed(2));
+    setTrocoInput("");
   };
 
-  const handleLancar = () => {
+  const handleLancar = useCallback(() => {
     const valor = parseFloat(valorInput);
     if (isNaN(valor) || valor <= 0) return;
 
-    const troco = metodoSelecionado === "dinheiro" ? Math.max(0, (valor + trocoExtra) - falta) : undefined;
+    const isDinheiro = metodoSelecionado === "dinheiro";
+    const troco = isDinheiro ? Math.max(0, (parseFloat(trocoInput) || 0) - valor) : undefined;
 
     onAddPagamento({
       id: crypto.randomUUID(),
       metodo: metodoSelecionado,
-      valor: metodoSelecionado === "dinheiro" ? Math.min(valor, falta) : valor,
+      valor: isDinheiro ? Math.min(valor, falta) : valor,
       troco: troco && troco > 0 ? troco : undefined,
     });
     setValorInput("");
-    setTrocoExtra(0);
+    setTrocoInput("");
+  }, [valorInput, metodoSelecionado, trocoInput, falta, onAddPagamento]);
+
+  const handleMetodoClick = (id: MetodoPag) => {
+    setMetodoSelecionado(id);
+    if (id !== "dinheiro" && valorInput && parseFloat(valorInput) > 0) {
+      // Auto-launch for digital methods
+      const valor = parseFloat(valorInput);
+      onAddPagamento({
+        id: crypto.randomUUID(),
+        metodo: id,
+        valor,
+      });
+      setValorInput("");
+      setTrocoInput("");
+    }
+  };
+
+  const handleAddTroco = (val: number) => {
+    const current = parseFloat(trocoInput || "0");
+    setTrocoInput((current + val).toString());
   };
 
   return (
@@ -124,8 +146,8 @@ export function AbaPagamentos({
           {/* Falta */}
           {falta > 0 && (
             <div className="flex justify-between items-baseline px-1">
-              <span className="text-xs font-bold text-warning uppercase tracking-wider">Falta:</span>
-              <span className="text-base font-bold text-warning">R$ {falta.toFixed(2)}</span>
+              <span className="text-xs font-bold text-destructive uppercase tracking-wider">Falta:</span>
+              <span className="text-base font-bold text-destructive">R$ {falta.toFixed(2)}</span>
             </div>
           )}
           {falta <= 0 && pago > 0 && (
@@ -147,16 +169,16 @@ export function AbaPagamentos({
             type="number"
             placeholder="R$ 0,00"
             value={valorInput}
-            onChange={(e) => { setValorInput(e.target.value); setTrocoExtra(0); }}
+            onChange={(e) => { setValorInput(e.target.value); setTrocoInput(""); }}
             className="h-9 text-sm"
           />
 
-          {/* Métodos de pagamento — grid-cols-5 */}
+          {/* Métodos de pagamento */}
           <div className="grid grid-cols-5 gap-1">
             {metodos.map((m) => (
               <button
                 key={m.id}
-                onClick={() => setMetodoSelecionado(m.id)}
+                onClick={() => handleMetodoClick(m.id)}
                 className={cn(
                   "flex flex-col items-center gap-0.5 rounded-lg border p-1.5 text-[9px] transition-colors",
                   metodoSelecionado === m.id
@@ -170,13 +192,16 @@ export function AbaPagamentos({
             ))}
           </div>
 
-          {/* Troco inline (dinheiro) */}
+          {/* Troco (dinheiro) */}
           {metodoSelecionado === "dinheiro" && valorNumerico > 0 && (
             <div className="rounded-lg border border-border bg-card p-2.5 space-y-2">
-              <div className="flex justify-between items-baseline">
-                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Troco para:</span>
-                <span className="text-sm font-bold text-primary">R$ {trocoCalculado.toFixed(2)}</span>
-              </div>
+              <Input
+                type="number"
+                placeholder="Valor recebido R$"
+                value={trocoInput}
+                onChange={(e) => setTrocoInput(e.target.value)}
+                className="h-8 text-sm"
+              />
               <div className="flex gap-1.5">
                 {atalhosTroco.map((val) => (
                   <Button
@@ -184,12 +209,18 @@ export function AbaPagamentos({
                     variant="outline"
                     size="sm"
                     className="flex-1 text-[10px] h-7"
-                    onClick={() => setTrocoExtra((prev) => prev + val)}
+                    onClick={() => handleAddTroco(val)}
                   >
-                    +R${val}
+                    +{val}
                   </Button>
                 ))}
               </div>
+              {trocoCalculado > 0 && (
+                <div className="flex justify-between items-baseline">
+                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Troco:</span>
+                  <span className="text-sm font-bold text-primary">R$ {trocoCalculado.toFixed(2)}</span>
+                </div>
+              )}
             </div>
           )}
 
