@@ -20,6 +20,7 @@ export default function Configuracoes() {
   const [horarios, setHorarios] = useState<HorarioFuncionamento[]>([...mockHorarios.map(h => ({ ...h }))]);
   const [faixasCliente, setFaixasCliente] = useState<FaixaKm[]>([...mockFaixasCliente.map(f => ({ ...f }))]);
   const [faixasEntregador, setFaixasEntregador] = useState<FaixaKm[]>([...mockFaixasEntregador.map(f => ({ ...f }))]);
+  const [enderecos, setEnderecos] = useState<EnderecoCache[]>([...enderecoCacheMock.map(e => ({ ...e }))]);
 
   return (
     <PageContainer title="Configurações" subtitle="Gerencie o perfil da loja e configurações de entrega">
@@ -27,6 +28,7 @@ export default function Configuracoes() {
         <TabsList>
           <TabsTrigger value="perfil">Perfil da Loja</TabsTrigger>
           <TabsTrigger value="entrega">Configuração de Entrega</TabsTrigger>
+          <TabsTrigger value="enderecos">Endereços Cache</TabsTrigger>
         </TabsList>
 
         <TabsContent value="perfil">
@@ -40,6 +42,10 @@ export default function Configuracoes() {
             faixasEntregador={faixasEntregador}
             setFaixasEntregador={setFaixasEntregador}
           />
+        </TabsContent>
+
+        <TabsContent value="enderecos">
+          <AbaEnderecosCache enderecos={enderecos} setEnderecos={setEnderecos} />
         </TabsContent>
       </Tabs>
     </PageContainer>
