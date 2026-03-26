@@ -30,7 +30,7 @@ export function SubcategoriaCard({ subcategoria, selected, onSelect, onEdit, onD
         <span className="h-1.5 w-1.5 rounded-full bg-destructive flex-shrink-0" />
       )}
       {/* Hover actions */}
-      <div className="ml-0.5 flex gap-0 opacity-0 transition-opacity group-hover:opacity-100">
+      <div className={`ml-0.5 flex gap-0 transition-opacity ${selected ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}>
         <Button
           size="icon"
           variant="ghost"
