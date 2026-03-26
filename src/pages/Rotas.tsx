@@ -60,7 +60,7 @@ export default function Rotas() {
   return (
     <div className="flex-1 flex overflow-hidden">
       {/* Coluna Esquerda — Kanban de Rotas */}
-      <div className="w-[40%] flex flex-col p-3 border-r border-border overflow-hidden">
+      <div className="w-[35%] flex flex-col p-3 border-r border-border overflow-hidden">
         <KanbanColumn title="Rotas" count={activeCount} className="flex-1 min-h-0">
           {sortedRotas.map((rota) => (
             <RotaCard
@@ -74,7 +74,7 @@ export default function Rotas() {
       </div>
 
       {/* Coluna Central — Detalhes */}
-      <div className="w-[20%] border-r border-border flex flex-col overflow-hidden">
+      <div className="w-[25%] border-r border-border flex flex-col overflow-hidden">
         <RotaDetalhes rota={selectedRota} />
       </div>
 
