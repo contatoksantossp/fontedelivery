@@ -1,13 +1,28 @@
 
 
-## Scroll horizontal para cards de promoções
+## Fornecedores: scroll horizontal + histórico com filtros e itens expandíveis
 
-### O que muda
-- Trocar o grid vertical (`grid grid-cols-1 lg:grid-cols-2`) por um container com scroll horizontal (`flex overflow-x-auto`)
-- Cada card ganha largura fixa (~380px) e `flex-shrink-0` para não comprimir
-- Cards ficam lado a lado, rolando horizontalmente
-- Altura dos cards fica livre (sem limitar), permitindo listar muitos produtos para baixo
+### Mudanças
 
-### Arquivo editado
-- `src/components/cupons/AbaPromocoes.tsx` — linha 56: trocar `div.grid` por `div.flex overflow-x-auto gap-4 pb-2` e adicionar `w-[380px] flex-shrink-0` em cada Card
+**1. Layout horizontal**
+- Trocar `grid grid-cols-1 md:grid-cols-2` por `flex overflow-x-auto gap-4 pb-2`
+- Cada card com `w-[340px] flex-shrink-0`
+
+**2. Histórico com filtros de período**
+- Adicionar estado de filtro por fornecedor: `7d`, `30d`, `12m`, `intervalo`
+- Botões de filtro rápido (7 dias, 30 dias, 12 meses) como grupo de toggles acima da tabela
+- Filtro por intervalo de datas com dois DatePickers (de/até) usando Popover+Calendar
+- Filtrar `f.historico` pela data antes de renderizar
+
+**3. Pedidos expandíveis**
+- Atualizar `HistoricoCompra` no mock para incluir campo `itens: { nome: string; qtd: number; valorUnit: number }[]`
+- Cada linha do histórico vira um `Collapsible` — ao clicar expande e mostra os itens comprados em sub-lista
+- Adicionar ícone ChevronRight que rotaciona ao expandir
+
+### Mock data
+- Adicionar `itens` nos registros existentes de `fornecedoresMock`
+
+### Arquivos editados
+- `src/components/parceiros/mockParceirosData.ts` — interface `HistoricoCompra` + itens nos mocks
+- `src/components/parceiros/AbaFornecedores.tsx` — layout horizontal, filtros de data, linhas expandíveis
 
