@@ -62,7 +62,7 @@ export function PedidoCard({ pedido, selected, selectionMode, inRota, rotaColor,
         inRota && !rotaColor && "opacity-50 cursor-not-allowed",
         inRota && rotaColor && "cursor-not-allowed",
         !inRota && !isDraggable && "cursor-pointer hover:border-primary/50",
-        isDraggable && "cursor-grab active:cursor-grabbing hover:border-primary/50",
+        isDraggable && "hover:border-primary/50",
         selected && !inRota && "border-primary ring-1 ring-primary/30",
         isEligible && "border-dashed border-primary/60 animate-pulse",
         isDragging && "z-50 shadow-lg"
