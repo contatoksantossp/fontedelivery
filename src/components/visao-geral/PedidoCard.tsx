@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { format } from "date-fns";
+import { useDraggable } from "@dnd-kit/core";
+import { CSS } from "@dnd-kit/utilities";
 
 interface PedidoCardProps {
   pedido: Pedido;
@@ -38,25 +39,40 @@ export function PedidoCard({ pedido, selected, selectionMode, inRota, rotaColor,
   const isPendente = pedido.status === "pendente";
   const isEligible = selectionMode && pedido.status === "pronto" && pedido.tipo === "entrega" && !inRota;
 
+  const isDraggable = isPendente && !selectionMode;
+  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
+    id: pedido.id,
+    disabled: !isDraggable,
+  });
+
+  const style = transform
+    ? { transform: CSS.Translate.toString(transform), opacity: isDragging ? 0.5 : 1 }
+    : undefined;
+
   return (
     <div
+      ref={setNodeRef}
+      {...(isDraggable ? { ...listeners, ...attributes } : {})}
       onClick={() => {
-        if (inRota) return;
+        if (inRota || isDragging) return;
         onSelect(pedido);
       }}
       className={cn(
         "rounded-lg border bg-card p-3 transition-all",
         inRota && !rotaColor && "opacity-50 cursor-not-allowed",
         inRota && rotaColor && "cursor-not-allowed",
-        !inRota && "cursor-pointer hover:border-primary/50",
+        !inRota && !isDraggable && "cursor-pointer hover:border-primary/50",
+        isDraggable && "cursor-grab active:cursor-grabbing hover:border-primary/50",
         selected && !inRota && "border-primary ring-1 ring-primary/30",
-        isEligible && "border-dashed border-primary/60 animate-pulse"
+        isEligible && "border-dashed border-primary/60 animate-pulse",
+        isDragging && "z-50 shadow-lg"
       )}
-      style={
-        inRota && rotaColor
+      style={{
+        ...(inRota && rotaColor
           ? { backgroundColor: rotaColor + "20", borderColor: rotaColor + "50" }
-          : undefined
-      }
+          : undefined),
+        ...style,
+      }}
     >
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
@@ -106,16 +122,7 @@ export function PedidoCard({ pedido, selected, selectionMode, inRota, rotaColor,
               <X className="h-3 w-3 mr-0.5" />
               Cancelar
             </Button>
-            {isPendente ? (
-              <Button
-                size="sm"
-                className="h-7 px-2.5 text-xs"
-                onClick={(e) => { e.stopPropagation(); onAction(pedido.id, "pronto"); }}
-              >
-                <Check className="h-3 w-3 mr-0.5" />
-                Pronto
-              </Button>
-            ) : pedido.tipo === "retirada" ? (
+            {isPendente ? null : pedido.tipo === "retirada" ? (
               <Button
                 size="sm"
                 className="h-7 px-2.5 text-xs"

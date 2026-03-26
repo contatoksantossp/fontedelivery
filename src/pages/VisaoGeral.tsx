@@ -10,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Truck, MapPin, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { DndContext, DragEndEvent } from "@dnd-kit/core";
 
 export default function VisaoGeral() {
   const [pedidos, setPedidos] = useState<Pedido[]>(pedidosMock);
