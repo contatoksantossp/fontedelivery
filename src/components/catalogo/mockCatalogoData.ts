@@ -24,9 +24,13 @@ export interface CatalogProduto {
   descricao: string;
   foto: string;
   destaque: boolean;
+  ativo: boolean;
+  ean: string;
   subcategoriaId: string;
   categoriaId: string;
 }
+
+export type UnidadeMedida = "un" | "kg" | "L" | "ml" | "g" | "pct";
 
 export interface CatalogVariante {
   id: string;
@@ -38,6 +42,7 @@ export interface CatalogVariante {
   custo: number;
   valorVenda: number;
   estoqueMinimo: number;
+  unidade: UnidadeMedida;
   produtoId: string;
 }
 
