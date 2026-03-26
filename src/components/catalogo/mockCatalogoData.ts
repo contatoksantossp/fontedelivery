@@ -25,7 +25,6 @@ export interface CatalogProduto {
   foto: string;
   destaque: boolean;
   ativo: boolean;
-  ean: string;
   subcategoriaId: string;
   categoriaId: string;
 }
