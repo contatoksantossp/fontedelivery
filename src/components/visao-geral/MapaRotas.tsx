@@ -17,6 +17,7 @@ interface MapaRotasProps {
   entregadorCorPorRota: [string | null, string | null];
   selectedEntregador: [string | null, string | null];
   onSelectEntregador: (slotIndex: number, entregadorId: string) => void;
+  onDespachar: (slotIndex: number) => void;
 }
 
 function createPinIcon(color: string, eligible: boolean) {
@@ -42,6 +43,7 @@ export function MapaRotas({
   entregadorCorPorRota,
   selectedEntregador,
   onSelectEntregador,
+  onDespachar,
 }: MapaRotasProps) {
   const pedidosNaRota = new Set(rotasItens.flat().map((p) => p.id));
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
@@ -136,6 +138,7 @@ export function MapaRotas({
             entregadorCor={entregadorCorPorRota[i]}
             selectedEntregadorId={selectedEntregador[i]}
             onSelectEntregador={(id) => onSelectEntregador(i, id)}
+            onDespachar={onDespachar}
           />
         ))}
       </div>

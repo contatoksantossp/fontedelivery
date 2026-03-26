@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Truck, MapPin, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { DndContext, DragEndEvent } from "@dnd-kit/core";
+import { toast } from "sonner";
 
 export default function VisaoGeral() {
   const [pedidos, setPedidos] = useState<Pedido[]>(pedidosMock);
@@ -132,6 +133,30 @@ export default function VisaoGeral() {
     }
   }, [pedidos]);
 
+  const handleDespachar = useCallback((slotIndex: number) => {
+    const entId = entregadorPorRota[slotIndex];
+    const ent = entId ? entregadoresMock.find((e) => e.id === entId) : null;
+    const itens = rotasItens[slotIndex];
+    if (!ent || itens.length === 0) return;
+
+    // Remove dispatched pedidos from the list and clear the slot
+    setPedidos((prev) => prev.filter((p) => !itens.some((r) => r.id === p.id)));
+    setRotasItens((prev) => {
+      const copy: [Pedido[], Pedido[]] = [prev[0].slice(), prev[1].slice()];
+      copy[slotIndex] = [];
+      return copy;
+    });
+    setEntregadorPorRota((prev) => {
+      const copy: [string | null, string | null] = [...prev];
+      copy[slotIndex] = null;
+      return copy;
+    });
+    setExpandedSlot(null);
+
+    toast.success(`Rota despachada para ${ent.nome} com ${itens.length} pedido(s)!`);
+    navigate("/rotas");
+  }, [entregadorPorRota, rotasItens, navigate]);
+
   return (
     <div className="flex-1 flex overflow-hidden">
       {/* Coluna Esquerda — Kanbans */}
@@ -242,6 +267,7 @@ export default function VisaoGeral() {
           entregadorCorPorRota={entregadorCorPorRota}
           selectedEntregador={entregadorPorRota}
           onSelectEntregador={handleSelectEntregador}
+          onDespachar={handleDespachar}
         />
       </div>
     </div>
