@@ -120,10 +120,27 @@
     position: absolute;
     left: 0;
     top: 0;
-    width: 80mm;
+    width: 100%;
     background: white !important;
     color: black !important;
-    padding: 8px !important;
+    padding: 12px !important;
+    font-size: 14pt !important;
+    font-weight: 600 !important;
+    line-height: 1.5 !important;
+  }
+  #cupom-print p,
+  #cupom-print span,
+  #cupom-print div {
+    font-size: 12pt !important;
+  }
+  #cupom-print .font-bold {
+    font-weight: 800 !important;
+  }
+  #cupom-print .text-lg {
+    font-size: 18pt !important;
+  }
+  #cupom-print .text-sm {
+    font-size: 14pt !important;
   }
 }
 
