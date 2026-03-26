@@ -64,7 +64,7 @@ export function PedidoDetalhes({ pedido }: PedidoDetalhesProps) {
         <p className="text-center text-gray-400 text-[10px]">{separator}</p>
 
         {/* Cliente */}
-        <div className="my-2 space-y-0.5">
+        <div className="space-y-0.5 my-0">
           <p className="text-2xl font-extrabold text-center">{pedido.cliente}</p>
           <p className="text-gray-600">{pedido.telefone}</p>
           {pedido.tipo === "entrega" && (
@@ -75,7 +75,7 @@ export function PedidoDetalhes({ pedido }: PedidoDetalhesProps) {
         <p className="text-center text-gray-400 text-[10px]">{separator}</p>
 
         {/* Itens */}
-        <div className="my-2">
+        <div className="my-0">
           <p className="font-bold mb-1">ITENS</p>
           {pedido.itens.map((item, i) => (
             <div key={i} className="mb-1">
@@ -105,7 +105,7 @@ export function PedidoDetalhes({ pedido }: PedidoDetalhesProps) {
         <p className="text-center text-gray-400 text-[10px]">{separator}</p>
 
         {/* Totais */}
-        <div className="my-2 space-y-0.5">
+        <div className="space-y-0.5 my-0">
           <div className="flex justify-between">
             <span>Subtotal</span>
             <span>{pedido.subtotal.toFixed(2)}</span>
