@@ -96,6 +96,7 @@ function ParadaAcertoItem({
   const [editando, setEditando] = useState(false);
   const [metodoSel, setMetodoSel] = useState("pix");
   const [valorInput, setValorInput] = useState("");
+  const [trocoInput, setTrocoInput] = useState("");
 
   const pagamentos = parada.pagamentos || [];
   const desconto = parada.desconto || 0;
@@ -107,18 +108,43 @@ function ParadaAcertoItem({
 
   const podeDarBaixa = parada.baixaRealizada || (pagamentos.length > 0 && falta <= 0.01);
 
+  const trocoRecebido = parseFloat(trocoInput || "0");
+  const valorNum = parseFloat(valorInput || "0");
+  const trocoCalculado = metodoSel === "dinheiro" ? Math.max(0, trocoRecebido - valorNum) : 0;
+
   const handleLancar = () => {
     const valor = parseFloat(valorInput);
     if (isNaN(valor) || valor <= 0) return;
 
+    const valorEfetivo = Math.min(valor, falta);
     const novoPag: PagamentoParada = {
       id: crypto.randomUUID(),
       metodo: metodoSel,
-      valor,
-      troco: metodoSel === "dinheiro" && valor > falta ? valor - falta : undefined,
+      valor: valorEfetivo,
+      troco: metodoSel === "dinheiro" && trocoCalculado > 0 ? trocoCalculado : undefined,
     };
     onAlterarPagamentos([...pagamentos, novoPag]);
     setValorInput("");
+    setTrocoInput("");
+  };
+
+  const handleMetodoClick = (id: string) => {
+    setMetodoSel(id);
+    if (id !== "dinheiro" && valorInput && parseFloat(valorInput) > 0) {
+      // Auto-launch for non-cash methods
+      const valor = parseFloat(valorInput);
+      if (!isNaN(valor) && valor > 0) {
+        const valorEfetivo = Math.min(valor, falta);
+        const novoPag: PagamentoParada = {
+          id: crypto.randomUUID(),
+          metodo: id,
+          valor: valorEfetivo,
+        };
+        onAlterarPagamentos([...pagamentos, novoPag]);
+        setValorInput("");
+      }
+    }
+    setTrocoInput("");
   };
 
   const handleRemoverPag = (id: string) => {
@@ -126,7 +152,12 @@ function ParadaAcertoItem({
   };
 
   const handleFracao = (frac: number) => {
-    setValorInput((total * frac).toFixed(2));
+    setValorInput((falta * frac).toFixed(2));
+  };
+
+  const handleAddTroco = (val: number) => {
+    const current = parseFloat(trocoInput || "0");
+    setTrocoInput((current + val).toString());
   };
 
   const handleDarBaixaClick = () => {
