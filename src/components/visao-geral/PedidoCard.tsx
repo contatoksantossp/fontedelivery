@@ -99,12 +99,12 @@ export function PedidoCard({ pedido, selected, selectionMode, inRota, rotaColor,
         <p className="text-xs text-muted-foreground truncate">{pedido.endereco} — {pedido.bairro}</p>
       )}
 
-      <div className="flex items-center justify-between mt-3">
+      <div className="flex flex-col gap-2 mt-3">
         <span className="text-sm font-bold text-foreground">
           R$ {pedido.total.toFixed(2)}
         </span>
         {!selectionMode && (
-          <div className="flex gap-1.5">
+          <div className="flex flex-wrap gap-1.5">
             <Button
               size="sm"
               variant="ghost"
