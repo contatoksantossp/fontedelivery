@@ -91,10 +91,6 @@ export function PedidoCard({ pedido, selected, selectionMode, inRota, rotaColor,
             </span>
           )}
         </div>
-        <div className="flex items-center gap-1 text-muted-foreground">
-          <Clock className="h-3 w-3" />
-          <span className="text-xs font-mono">{elapsed}</span>
-        </div>
       </div>
 
       <p className="text-sm font-medium text-foreground truncate">{pedido.cliente}</p>
