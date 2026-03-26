@@ -14,6 +14,11 @@ import {
   vendasDiariasMock,
   topProdutosMock,
   recebimentosPorMetodo,
+  vendasPorHoraMock,
+  topProdutosSemanalMock,
+  topProdutosMensalMock,
+  recebimentosSemanalMock,
+  recebimentosMensalMock,
 } from "@/components/financeiro/mockFinanceiroData";
 import type { CaixaState, EntregadorTurno, Transacao, TransacaoTipo, TransacaoMetodo } from "@/components/financeiro/mockFinanceiroData";
 
@@ -129,6 +134,11 @@ export default function Financeiro() {
             vendasDiarias={vendasDiariasMock}
             topProdutos={topProdutosMock}
             recebimentos={recebimentosPorMetodo}
+            vendasPorHora={vendasPorHoraMock}
+            topProdutosSemanal={topProdutosSemanalMock}
+            topProdutosMensal={topProdutosMensalMock}
+            recebimentosSemanal={recebimentosSemanalMock}
+            recebimentosMensal={recebimentosMensalMock}
           />
         </TabsContent>
         <TabsContent value="extrato">
