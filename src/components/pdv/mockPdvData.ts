@@ -105,48 +105,48 @@ export interface PedidoFila {
 // ── Categorias ──────────────────────────────────────────────
 export const categoriasMock: Categoria[] = [
   {
-    id: "cat1", nome: "Bebidas", foto: "/placeholder.svg",
+    id: "cat1", nome: "Bebidas", foto: categoryImages.cat1,
     subcategorias: [
-      { id: "sub1a", nome: "Refrigerantes", foto: "/placeholder.svg" },
-      { id: "sub1b", nome: "Sucos", foto: "/placeholder.svg" },
-      { id: "sub1c", nome: "Energéticos", foto: "/placeholder.svg" },
-      { id: "sub1d", nome: "Água", foto: "/placeholder.svg" },
+      { id: "sub1a", nome: "Refrigerantes", foto: subcategoryImages.sub1a },
+      { id: "sub1b", nome: "Sucos", foto: subcategoryImages.sub1b },
+      { id: "sub1c", nome: "Energéticos", foto: subcategoryImages.sub1c },
+      { id: "sub1d", nome: "Água", foto: subcategoryImages.sub1d },
     ],
   },
   {
-    id: "cat2", nome: "Adega", foto: "/placeholder.svg",
+    id: "cat2", nome: "Adega", foto: categoryImages.cat2,
     subcategorias: [
-      { id: "sub2a", nome: "Cervejas", foto: "/placeholder.svg" },
-      { id: "sub2b", nome: "Vinhos", foto: "/placeholder.svg" },
-      { id: "sub2c", nome: "Destilados", foto: "/placeholder.svg" },
-      { id: "sub2d", nome: "Espumantes", foto: "/placeholder.svg" },
+      { id: "sub2a", nome: "Cervejas", foto: subcategoryImages.sub2a },
+      { id: "sub2b", nome: "Vinhos", foto: subcategoryImages.sub2b },
+      { id: "sub2c", nome: "Destilados", foto: subcategoryImages.sub2c },
+      { id: "sub2d", nome: "Espumantes", foto: subcategoryImages.sub2d },
     ],
   },
   {
-    id: "cat3", nome: "Tabacaria", foto: "/placeholder.svg",
+    id: "cat3", nome: "Tabacaria", foto: categoryImages.cat3,
     subcategorias: [
-      { id: "sub3a", nome: "Cigarros", foto: "/placeholder.svg" },
-      { id: "sub3b", nome: "Seda / Papel", foto: "/placeholder.svg" },
-      { id: "sub3c", nome: "Essências", foto: "/placeholder.svg" },
-      { id: "sub3d", nome: "Acessórios", foto: "/placeholder.svg" },
+      { id: "sub3a", nome: "Cigarros", foto: subcategoryImages.sub3a },
+      { id: "sub3b", nome: "Seda / Papel", foto: subcategoryImages.sub3b },
+      { id: "sub3c", nome: "Essências", foto: subcategoryImages.sub3c },
+      { id: "sub3d", nome: "Acessórios", foto: subcategoryImages.sub3d },
     ],
   },
   {
-    id: "cat4", nome: "Conveniência", foto: "/placeholder.svg",
+    id: "cat4", nome: "Conveniência", foto: categoryImages.cat4,
     subcategorias: [
-      { id: "sub4a", nome: "Snacks", foto: "/placeholder.svg" },
-      { id: "sub4b", nome: "Sorvetes", foto: "/placeholder.svg" },
-      { id: "sub4c", nome: "Doces", foto: "/placeholder.svg" },
-      { id: "sub4d", nome: "Descartáveis", foto: "/placeholder.svg" },
+      { id: "sub4a", nome: "Snacks", foto: subcategoryImages.sub4a },
+      { id: "sub4b", nome: "Sorvetes", foto: subcategoryImages.sub4b },
+      { id: "sub4c", nome: "Doces", foto: subcategoryImages.sub4c },
+      { id: "sub4d", nome: "Descartáveis", foto: subcategoryImages.sub4d },
     ],
   },
   {
-    id: "cat5", nome: "Mercearia", foto: "/placeholder.svg",
+    id: "cat5", nome: "Mercearia", foto: categoryImages.cat5,
     subcategorias: [
-      { id: "sub5a", nome: "Carvão / Gelo", foto: "/placeholder.svg" },
-      { id: "sub5b", nome: "Enlatados", foto: "/placeholder.svg" },
-      { id: "sub5c", nome: "Biscoitos", foto: "/placeholder.svg" },
-      { id: "sub5d", nome: "Higiene", foto: "/placeholder.svg" },
+      { id: "sub5a", nome: "Carvão / Gelo", foto: subcategoryImages.sub5a },
+      { id: "sub5b", nome: "Enlatados", foto: subcategoryImages.sub5b },
+      { id: "sub5c", nome: "Biscoitos", foto: subcategoryImages.sub5c },
+      { id: "sub5d", nome: "Higiene", foto: subcategoryImages.sub5d },
     ],
   },
 ];
