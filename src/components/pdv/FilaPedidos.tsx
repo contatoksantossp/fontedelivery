@@ -3,15 +3,15 @@ import { PedidoFila, CanalVenda } from "./mockPdvData";
 import { FilaPedidoCard } from "./FilaPedidoCard";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { ClipboardList, Plus, Store, MessageCircle, Smartphone } from "lucide-react";
 
-const filtrosCanal: { id: CanalVenda | "todos"; label: string; icon: React.ReactNode }[] = [
-  { id: "todos", label: "Todos", icon: <ClipboardList className="h-3 w-3" /> },
-  { id: "balcao", label: "Balcão", icon: <Store className="h-3 w-3" /> },
-  { id: "whatsapp", label: "WhatsApp", icon: <MessageCircle className="h-3 w-3" /> },
-  { id: "ifood", label: "iFood", icon: <Smartphone className="h-3 w-3" /> },
-  { id: "99food", label: "99Food", icon: <Smartphone className="h-3 w-3" /> },
-  { id: "app", label: "App", icon: <Smartphone className="h-3 w-3" /> },
+const canaisIndividuais: { id: CanalVenda; label: string; icon: React.ReactNode }[] = [
+  { id: "balcao", label: "Balcão", icon: <Store className="h-3.5 w-3.5" /> },
+  { id: "whatsapp", label: "WhatsApp", icon: <MessageCircle className="h-3.5 w-3.5" /> },
+  { id: "ifood", label: "iFood", icon: <Smartphone className="h-3.5 w-3.5" /> },
+  { id: "99food", label: "99Food", icon: <Smartphone className="h-3.5 w-3.5" /> },
+  { id: "app", label: "App", icon: <Smartphone className="h-3.5 w-3.5" /> },
 ];
 
 interface FilaPedidosProps {
@@ -39,21 +39,36 @@ export function FilaPedidos({ pedidos, selectedId, onSelect }: FilaPedidosProps)
           <Plus className="h-3.5 w-3.5" />
           Novo Pedido
         </Button>
-        <div className="flex flex-wrap gap-1">
-          {filtrosCanal.map((f) => (
-            <button
-              key={f.id}
-              onClick={() => setFiltroCanal(f.id)}
-              className={`flex items-center gap-1 px-2 py-1 rounded-md text-[10px] font-medium transition-colors ${
-                filtroCanal === f.id
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-muted text-muted-foreground hover:bg-accent"
-              }`}
-            >
-              {f.icon}
-              {f.label}
-            </button>
-          ))}
+        <div className="flex flex-col gap-1">
+          <div className="flex gap-1 w-full">
+            {canaisIndividuais.map((f) => (
+              <button
+                key={f.id}
+                onClick={() => setFiltroCanal(f.id)}
+                className={cn(
+                  "flex-1 flex flex-col items-center justify-center gap-0.5 rounded-lg border py-1.5 transition-colors min-w-0",
+                  filtroCanal === f.id
+                    ? "border-primary bg-primary/10 text-primary"
+                    : "border-border bg-card text-muted-foreground hover:text-foreground"
+                )}
+              >
+                {f.icon}
+                <span className="text-[9px] font-medium leading-none truncate w-full text-center">{f.label}</span>
+              </button>
+            ))}
+          </div>
+          <button
+            onClick={() => setFiltroCanal("todos")}
+            className={cn(
+              "w-full flex items-center justify-center gap-1.5 rounded-lg border py-1.5 text-xs font-medium transition-colors",
+              filtroCanal === "todos"
+                ? "border-primary bg-primary/10 text-primary"
+                : "border-border bg-card text-muted-foreground hover:text-foreground"
+            )}
+          >
+            <ClipboardList className="h-3.5 w-3.5" />
+            Todos
+          </button>
         </div>
       </div>
       <ScrollArea className="flex-1">
