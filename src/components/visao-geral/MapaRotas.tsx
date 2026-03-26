@@ -17,6 +17,7 @@ interface MapaRotasProps {
   entregadorCorPorRota: [string | null, string | null];
   selectedEntregador: [string | null, string | null];
   onSelectEntregador: (slotIndex: number, entregadorId: string) => void;
+  onDespachar: (slotIndex: number) => void;
 }
 
 function createPinIcon(color: string, eligible: boolean) {
