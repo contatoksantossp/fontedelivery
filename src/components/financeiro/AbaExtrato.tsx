@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
-import { Plus, Banknote, CreditCard, Smartphone, QrCode, CalendarIcon } from "lucide-react";
-import { format } from "date-fns";
+import { Plus, Banknote, CreditCard, Smartphone, QrCode, CalendarIcon, Search, X } from "lucide-react";
+import { format, startOfMonth, endOfMonth } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -32,7 +32,6 @@ const MetodoIcon: Record<TransacaoMetodo, typeof Banknote> = {
   qrcode: QrCode,
 };
 
-// Simula datas de caixas abertos/fechados para filtro
 const caixasMock = [
   { id: "cx1", label: "Caixa 25/03 — Aberto", data: "2026-03-25" },
   { id: "cx2", label: "Caixa 24/03 — R$ 2.780,00", data: "2026-03-24" },
@@ -41,52 +40,75 @@ const caixasMock = [
   { id: "cx5", label: "Caixa 21/03 — R$ 1.980,00", data: "2026-03-21" },
 ];
 
+const hoje = new Date();
+const defaultInicio = startOfMonth(hoje);
+const defaultFim = endOfMonth(hoje);
+
+interface Filtros {
+  dataInicio: Date | undefined;
+  dataFim: Date | undefined;
+  metodo: string;
+  tipo: string;
+  caixa: string;
+}
+
+const filtrosPadrao: Filtros = {
+  dataInicio: defaultInicio,
+  dataFim: defaultFim,
+  metodo: "todos",
+  tipo: "todos",
+  caixa: "todos",
+};
+
+function filtrosIguais(a: Filtros, b: Filtros) {
+  return (
+    a.dataInicio?.getTime() === b.dataInicio?.getTime() &&
+    a.dataFim?.getTime() === b.dataFim?.getTime() &&
+    a.metodo === b.metodo &&
+    a.tipo === b.tipo &&
+    a.caixa === b.caixa
+  );
+}
+
 export function AbaExtrato({ transacoes, onLancar }: AbaExtratoProps) {
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [filtroMetodo, setFiltroMetodo] = useState<string>("todos");
-  const [filtroTipo, setFiltroTipo] = useState<string>("todos");
-  const [filtroCaixa, setFiltroCaixa] = useState<string>("todos");
-  const [dataInicio, setDataInicio] = useState<Date | undefined>(undefined);
-  const [dataFim, setDataFim] = useState<Date | undefined>(undefined);
+  const [pendente, setPendente] = useState<Filtros>({ ...filtrosPadrao });
+  const [aplicado, setAplicado] = useState<Filtros>({ ...filtrosPadrao });
   const [limite, setLimite] = useState(20);
 
-  const saldoTotal = useMemo(() =>
-    transacoes.reduce((s, t) => s + (t.tipo === "entrada" ? t.valor : -t.valor), 0),
-    [transacoes]
-  );
+  const isPadrao = filtrosIguais(aplicado, filtrosPadrao);
 
-  const saldoDinheiro = useMemo(() =>
-    transacoes.filter(t => t.metodo === "dinheiro").reduce((s, t) => s + (t.tipo === "entrada" ? t.valor : -t.valor), 0),
-    [transacoes]
-  );
+  const handleFiltrar = () => {
+    setAplicado({ ...pendente });
+    setLimite(20);
+  };
 
-  const saldoContas = useMemo(() =>
-    transacoes.filter(t => t.metodo !== "dinheiro").reduce((s, t) => s + (t.tipo === "entrada" ? t.valor : -t.valor), 0),
-    [transacoes]
-  );
+  const handleLimpar = () => {
+    setPendente({ ...filtrosPadrao });
+    setAplicado({ ...filtrosPadrao });
+    setLimite(20);
+  };
 
   const filtered = useMemo(() => {
     return transacoes.filter(t => {
-      if (filtroMetodo !== "todos" && t.metodo !== filtroMetodo) return false;
-      if (filtroTipo !== "todos" && t.tipo !== filtroTipo) return false;
+      if (aplicado.metodo !== "todos" && t.metodo !== aplicado.metodo) return false;
+      if (aplicado.tipo !== "todos" && t.tipo !== aplicado.tipo) return false;
 
-      // Filtro por intervalo de datas
-      if (dataInicio) {
+      if (aplicado.dataInicio) {
         const tDate = new Date(t.dataHora);
-        const inicio = new Date(dataInicio);
+        const inicio = new Date(aplicado.dataInicio);
         inicio.setHours(0, 0, 0, 0);
         if (tDate < inicio) return false;
       }
-      if (dataFim) {
+      if (aplicado.dataFim) {
         const tDate = new Date(t.dataHora);
-        const fim = new Date(dataFim);
+        const fim = new Date(aplicado.dataFim);
         fim.setHours(23, 59, 59, 999);
         if (tDate > fim) return false;
       }
 
-      // Filtro por caixa (baseado na data do caixa)
-      if (filtroCaixa !== "todos") {
-        const caixa = caixasMock.find(c => c.id === filtroCaixa);
+      if (aplicado.caixa !== "todos") {
+        const caixa = caixasMock.find(c => c.id === aplicado.caixa);
         if (caixa) {
           const tDateStr = new Date(t.dataHora).toISOString().split("T")[0];
           if (tDateStr !== caixa.data) return false;
@@ -95,14 +117,24 @@ export function AbaExtrato({ transacoes, onLancar }: AbaExtratoProps) {
 
       return true;
     });
-  }, [transacoes, filtroMetodo, filtroTipo, dataInicio, dataFim, filtroCaixa]);
+  }, [transacoes, aplicado]);
 
   const displayed = filtered.slice(0, limite);
 
-  const limparFiltrosDatas = () => {
-    setDataInicio(undefined);
-    setDataFim(undefined);
-  };
+  const saldoTotal = useMemo(() =>
+    filtered.reduce((s, t) => s + (t.tipo === "entrada" ? t.valor : -t.valor), 0),
+    [filtered]
+  );
+
+  const saldoDinheiro = useMemo(() =>
+    filtered.filter(t => t.metodo === "dinheiro").reduce((s, t) => s + (t.tipo === "entrada" ? t.valor : -t.valor), 0),
+    [filtered]
+  );
+
+  const saldoContas = useMemo(() =>
+    filtered.filter(t => t.metodo !== "dinheiro").reduce((s, t) => s + (t.tipo === "entrada" ? t.valor : -t.valor), 0),
+    [filtered]
+  );
 
   return (
     <div className="space-y-6">
@@ -122,27 +154,26 @@ export function AbaExtrato({ transacoes, onLancar }: AbaExtratoProps) {
         </div>
       </div>
 
-      {/* Filtros + Botão Lançar */}
+      {/* Filtros + Botões */}
       <div className="flex flex-wrap items-center gap-3">
-        {/* Filtro intervalo de datas */}
         <Popover>
           <PopoverTrigger asChild>
             <Button
               variant="outline"
               className={cn(
                 "w-[160px] justify-start text-left font-normal text-sm",
-                !dataInicio && "text-muted-foreground"
+                !pendente.dataInicio && "text-muted-foreground"
               )}
             >
               <CalendarIcon className="h-4 w-4 mr-1.5" />
-              {dataInicio ? format(dataInicio, "dd/MM/yyyy") : "Data início"}
+              {pendente.dataInicio ? format(pendente.dataInicio, "dd/MM/yyyy") : "Data início"}
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-auto p-0" align="start">
             <Calendar
               mode="single"
-              selected={dataInicio}
-              onSelect={setDataInicio}
+              selected={pendente.dataInicio}
+              onSelect={(d) => setPendente(p => ({ ...p, dataInicio: d }))}
               initialFocus
               locale={ptBR}
               className={cn("p-3 pointer-events-auto")}
@@ -156,18 +187,18 @@ export function AbaExtrato({ transacoes, onLancar }: AbaExtratoProps) {
               variant="outline"
               className={cn(
                 "w-[160px] justify-start text-left font-normal text-sm",
-                !dataFim && "text-muted-foreground"
+                !pendente.dataFim && "text-muted-foreground"
               )}
             >
               <CalendarIcon className="h-4 w-4 mr-1.5" />
-              {dataFim ? format(dataFim, "dd/MM/yyyy") : "Data fim"}
+              {pendente.dataFim ? format(pendente.dataFim, "dd/MM/yyyy") : "Data fim"}
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-auto p-0" align="start">
             <Calendar
               mode="single"
-              selected={dataFim}
-              onSelect={setDataFim}
+              selected={pendente.dataFim}
+              onSelect={(d) => setPendente(p => ({ ...p, dataFim: d }))}
               initialFocus
               locale={ptBR}
               className={cn("p-3 pointer-events-auto")}
@@ -175,14 +206,7 @@ export function AbaExtrato({ transacoes, onLancar }: AbaExtratoProps) {
           </PopoverContent>
         </Popover>
 
-        {(dataInicio || dataFim) && (
-          <Button variant="ghost" size="sm" onClick={limparFiltrosDatas} className="text-xs text-muted-foreground">
-            Limpar datas
-          </Button>
-        )}
-
-        {/* Filtro por caixa */}
-        <Select value={filtroCaixa} onValueChange={setFiltroCaixa}>
+        <Select value={pendente.caixa} onValueChange={(v) => setPendente(p => ({ ...p, caixa: v }))}>
           <SelectTrigger className="w-[200px]">
             <SelectValue placeholder="Caixa" />
           </SelectTrigger>
@@ -194,8 +218,7 @@ export function AbaExtrato({ transacoes, onLancar }: AbaExtratoProps) {
           </SelectContent>
         </Select>
 
-        {/* Filtros existentes */}
-        <Select value={filtroMetodo} onValueChange={setFiltroMetodo}>
+        <Select value={pendente.metodo} onValueChange={(v) => setPendente(p => ({ ...p, metodo: v }))}>
           <SelectTrigger className="w-36">
             <SelectValue placeholder="Método" />
           </SelectTrigger>
@@ -208,7 +231,7 @@ export function AbaExtrato({ transacoes, onLancar }: AbaExtratoProps) {
           </SelectContent>
         </Select>
 
-        <Select value={filtroTipo} onValueChange={setFiltroTipo}>
+        <Select value={pendente.tipo} onValueChange={(v) => setPendente(p => ({ ...p, tipo: v }))}>
           <SelectTrigger className="w-36">
             <SelectValue placeholder="Tipo" />
           </SelectTrigger>
@@ -218,6 +241,16 @@ export function AbaExtrato({ transacoes, onLancar }: AbaExtratoProps) {
             <SelectItem value="saida">Saída</SelectItem>
           </SelectContent>
         </Select>
+
+        <Button onClick={handleFiltrar}>
+          <Search className="h-4 w-4 mr-1" /> Filtrar
+        </Button>
+
+        {!isPadrao && (
+          <Button variant="ghost" size="sm" onClick={handleLimpar} className="text-muted-foreground">
+            <X className="h-4 w-4 mr-1" /> Limpar filtros
+          </Button>
+        )}
 
         <div className="flex-1" />
 
@@ -277,7 +310,7 @@ export function AbaExtrato({ transacoes, onLancar }: AbaExtratoProps) {
       {displayed.length < filtered.length && (
         <div className="flex justify-center">
           <Button variant="outline" onClick={() => setLimite(l => l + 20)}>
-            Carregar mais ({filtered.length - displayed.length} restantes)
+            Carregar mais 20 ({filtered.length - displayed.length} restantes)
           </Button>
         </div>
       )}
