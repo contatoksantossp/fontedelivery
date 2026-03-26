@@ -15,7 +15,7 @@ export function CategoriaCard({ categoria, selected, onSelect, onEdit, onDelete 
     <button
       onClick={() => onSelect(categoria.id)}
       className={`group relative flex w-[140px] flex-shrink-0 flex-col items-center gap-1 rounded-lg p-2 transition-all ${
-        selected ? "bg-primary/15 ring-1 ring-primary" : "hover:bg-secondary"
+        selected ? "bg-primary ring-1 ring-primary text-primary-foreground" : "hover:bg-secondary"
       }`}
     >
       <div className="relative aspect-square w-full overflow-hidden rounded-lg bg-muted">
@@ -25,7 +25,7 @@ export function CategoriaCard({ categoria, selected, onSelect, onEdit, onDelete 
         )}
       </div>
       <span className={`w-full truncate text-center text-xs font-medium ${
-        selected ? "text-primary" : "text-muted-foreground"
+        selected ? "text-primary-foreground" : "text-muted-foreground"
       }`}>
         {categoria.nome}
       </span>
