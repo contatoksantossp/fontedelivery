@@ -96,6 +96,7 @@ function ParadaAcertoItem({
   const [editando, setEditando] = useState(false);
   const [metodoSel, setMetodoSel] = useState("pix");
   const [valorInput, setValorInput] = useState("");
+  const [trocoInput, setTrocoInput] = useState("");
 
   const pagamentos = parada.pagamentos || [];
   const desconto = parada.desconto || 0;
@@ -107,18 +108,43 @@ function ParadaAcertoItem({
 
   const podeDarBaixa = parada.baixaRealizada || (pagamentos.length > 0 && falta <= 0.01);
 
+  const trocoRecebido = parseFloat(trocoInput || "0");
+  const valorNum = parseFloat(valorInput || "0");
+  const trocoCalculado = metodoSel === "dinheiro" ? Math.max(0, trocoRecebido - valorNum) : 0;
+
   const handleLancar = () => {
     const valor = parseFloat(valorInput);
     if (isNaN(valor) || valor <= 0) return;
 
+    const valorEfetivo = Math.min(valor, falta);
     const novoPag: PagamentoParada = {
       id: crypto.randomUUID(),
       metodo: metodoSel,
-      valor,
-      troco: metodoSel === "dinheiro" && valor > falta ? valor - falta : undefined,
+      valor: valorEfetivo,
+      troco: metodoSel === "dinheiro" && trocoCalculado > 0 ? trocoCalculado : undefined,
     };
     onAlterarPagamentos([...pagamentos, novoPag]);
     setValorInput("");
+    setTrocoInput("");
+  };
+
+  const handleMetodoClick = (id: string) => {
+    setMetodoSel(id);
+    if (id !== "dinheiro" && valorInput && parseFloat(valorInput) > 0) {
+      // Auto-launch for non-cash methods
+      const valor = parseFloat(valorInput);
+      if (!isNaN(valor) && valor > 0) {
+        const valorEfetivo = Math.min(valor, falta);
+        const novoPag: PagamentoParada = {
+          id: crypto.randomUUID(),
+          metodo: id,
+          valor: valorEfetivo,
+        };
+        onAlterarPagamentos([...pagamentos, novoPag]);
+        setValorInput("");
+      }
+    }
+    setTrocoInput("");
   };
 
   const handleRemoverPag = (id: string) => {
@@ -126,7 +152,12 @@ function ParadaAcertoItem({
   };
 
   const handleFracao = (frac: number) => {
-    setValorInput((total * frac).toFixed(2));
+    setValorInput((falta * frac).toFixed(2));
+  };
+
+  const handleAddTroco = (val: number) => {
+    const current = parseFloat(trocoInput || "0");
+    setTrocoInput((current + val).toString());
   };
 
   const handleDarBaixaClick = () => {
@@ -231,7 +262,7 @@ function ParadaAcertoItem({
             {desconto > 0 && (
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Desconto</span>
-                <span className="text-green-500">-R$ {desconto.toFixed(2)}</span>
+                <span className="text-accent-foreground">-R$ {desconto.toFixed(2)}</span>
               </div>
             )}
             {taxa > 0 && (
@@ -246,8 +277,8 @@ function ParadaAcertoItem({
             </div>
             {falta > 0.01 && (
               <div className="flex justify-between pt-0.5">
-                <span className="font-semibold text-orange-500">FALTA</span>
-                <span className="font-bold text-orange-500 text-xs">R$ {falta.toFixed(2)}</span>
+                <span className="font-semibold text-destructive">FALTA</span>
+                <span className="font-bold text-destructive text-xs">R$ {falta.toFixed(2)}</span>
               </div>
             )}
           </div>
@@ -274,7 +305,7 @@ function ParadaAcertoItem({
                 return (
                   <button
                     key={m.id}
-                    onClick={() => setMetodoSel(m.id)}
+                    onClick={() => handleMetodoClick(m.id)}
                     className={cn(
                       "flex flex-col items-center gap-0.5 rounded border p-1.5 text-[8px] transition-colors",
                       metodoSel === m.id
@@ -289,16 +320,31 @@ function ParadaAcertoItem({
               })}
             </div>
 
-            {/* Troco shortcuts for dinheiro */}
+            {/* Troco section for dinheiro */}
             {metodoSel === "dinheiro" && valorInput && (
-              <div className="flex gap-1 flex-wrap">
-                {[10, 20, 50, 100].map((v) => (
-                  <Button key={v} variant="outline" size="sm" className="text-[9px] h-5 px-2"
-                    onClick={() => setValorInput(String(v))}
-                  >
-                    R${v}
-                  </Button>
-                ))}
+              <div className="space-y-1">
+                <p className="text-[9px] font-semibold text-muted-foreground uppercase">Troco recebido</p>
+                <Input
+                  type="number"
+                  placeholder="Valor recebido R$"
+                  value={trocoInput}
+                  onChange={(e) => setTrocoInput(e.target.value)}
+                  className="h-7 text-[11px]"
+                />
+                <div className="flex gap-1">
+                  {[2, 5, 10, 20, 50].map((v) => (
+                    <Button key={v} variant="outline" size="sm" className="flex-1 text-[9px] h-5 px-1"
+                      onClick={() => handleAddTroco(v)}
+                    >
+                      +{v}
+                    </Button>
+                  ))}
+                </div>
+                {trocoCalculado > 0 && (
+                  <p className="text-[10px] font-semibold text-primary text-center">
+                    Troco: R$ {trocoCalculado.toFixed(2)}
+                  </p>
+                )}
               </div>
             )}
 
