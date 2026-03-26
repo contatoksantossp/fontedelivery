@@ -36,6 +36,8 @@ export interface Rota {
   tempoEstimado: number;
   kmTotal: number;
   bonificacao: number;
+  inicioRota?: string;
+  fimRota?: string;
 }
 
 export const rotasMock: Rota[] = [
@@ -52,6 +54,7 @@ export const rotasMock: Rota[] = [
     tempoEstimado: 35,
     kmTotal: 12.4,
     bonificacao: 5.0,
+    inicioRota: new Date(Date.now() - 22 * 60 * 1000).toISOString(),
     paradas: [
       {
         id: "p1",
@@ -129,6 +132,7 @@ export const rotasMock: Rota[] = [
     tempoEstimado: 25,
     kmTotal: 6.8,
     bonificacao: 3.0,
+    inicioRota: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
     paradas: [
       {
         id: "p4",
@@ -186,6 +190,8 @@ export const rotasMock: Rota[] = [
     tempoEstimado: 45,
     kmTotal: 18.5,
     bonificacao: 8.0,
+    inicioRota: new Date(Date.now() - 55 * 60 * 1000).toISOString(),
+    fimRota: new Date(Date.now() - 10 * 60 * 1000).toISOString(),
     paradas: [
       {
         id: "p6",
@@ -261,6 +267,8 @@ export const rotasMock: Rota[] = [
     tempoEstimado: 30,
     kmTotal: 9.2,
     bonificacao: 4.0,
+    inicioRota: new Date(Date.now() - 120 * 60 * 1000).toISOString(),
+    fimRota: new Date(Date.now() - 80 * 60 * 1000).toISOString(),
     paradas: [
       {
         id: "p9",

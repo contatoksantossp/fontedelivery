@@ -1,9 +1,10 @@
+import { useState, useEffect } from "react";
 import { Rota } from "./mockRotasData";
 import { RotaTimeline } from "./RotaTimeline";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Input } from "@/components/ui/input";
-import { MapPin, Clock, Navigation, DollarSign, Bike, Car, Truck, Gift } from "lucide-react";
+import { MapPin, Clock, Navigation, DollarSign, Bike, Car, Truck, Gift, Timer } from "lucide-react";
 
 const veiculoIcon: Record<string, React.ElementType> = {
   Moto: Truck,
@@ -18,6 +19,28 @@ interface RotaDetalhesProps {
 }
 
 export function RotaDetalhes({ rota, cor, onBonificacaoChange }: RotaDetalhesProps) {
+  const [elapsed, setElapsed] = useState("");
+
+  useEffect(() => {
+    if (!rota?.inicioRota) { setElapsed(""); return; }
+
+    const calcElapsed = () => {
+      const start = new Date(rota.inicioRota!).getTime();
+      const end = rota.fimRota ? new Date(rota.fimRota).getTime() : Date.now();
+      const diffMs = Math.max(0, end - start);
+      const h = Math.floor(diffMs / 3600000);
+      const m = Math.floor((diffMs % 3600000) / 60000);
+      const s = Math.floor((diffMs % 60000) / 1000);
+      setElapsed(h > 0 ? `${h}h ${String(m).padStart(2, "0")}m` : `${m}m ${String(s).padStart(2, "0")}s`);
+    };
+
+    calcElapsed();
+    if (!rota.fimRota) {
+      const interval = setInterval(calcElapsed, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [rota?.inicioRota, rota?.fimRota]);
+
   if (!rota) {
     return (
       <div className="flex-1 flex items-center justify-center text-muted-foreground p-4">
@@ -136,7 +159,13 @@ export function RotaDetalhes({ rota, cor, onBonificacaoChange }: RotaDetalhesPro
       </ScrollArea>
 
       {/* Footer metrics */}
-      <div className="p-3 border-t border-border grid grid-cols-2 gap-2 text-[10px]">
+      <div className="p-3 border-t border-border grid grid-cols-3 gap-2 text-[10px]">
+        {elapsed && (
+          <div className={`flex items-center gap-1 ${rota.fimRota ? "text-muted-foreground" : "text-primary font-semibold"}`}>
+            <Timer className="h-3 w-3" />
+            <span>{elapsed}{!rota.fimRota && " ⏱"}</span>
+          </div>
+        )}
         <div className="flex items-center gap-1 text-muted-foreground">
           <Clock className="h-3 w-3" />
           <span>~{rota.tempoEstimado} min</span>
