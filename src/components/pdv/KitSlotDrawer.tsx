@@ -132,24 +132,17 @@ export function KitSlotDrawer({
                         </div>
                         <div className="flex gap-2 overflow-x-auto pb-1">
                           {p.variantes.map((v) => (
-                            <div
+                            <button
                               key={v.id}
-                              className="flex-shrink-0 w-24 rounded-lg border border-border bg-card overflow-hidden"
+                              onClick={(e) => { e.stopPropagation(); onAddItem(p, v, quantidade); }}
+                              className="flex-shrink-0 w-24 rounded-lg border border-border bg-card overflow-hidden text-left cursor-pointer hover:bg-secondary transition-colors"
                             >
                               <img src={v.foto || "/placeholder.svg"} alt={v.nome} className="h-12 w-full object-cover" />
                               <div className="p-1">
                                 <p className="text-[9px] text-foreground truncate">{v.nome}</p>
-                                <div className="flex items-center justify-between mt-0.5">
-                                  <span className="text-[9px] text-primary font-semibold">R$ {v.preco.toFixed(2)}</span>
-                                  <Button
-                                    size="icon" variant="ghost" className="h-4 w-4"
-                                    onClick={(e) => { e.stopPropagation(); onAddItem(p, v, quantidade); }}
-                                  >
-                                    <Plus className="h-2.5 w-2.5" />
-                                  </Button>
-                                </div>
+                                <span className="text-[9px] text-primary font-semibold">R$ {v.preco.toFixed(2)}</span>
                               </div>
-                            </div>
+                            </button>
                           ))}
                         </div>
                       </div>

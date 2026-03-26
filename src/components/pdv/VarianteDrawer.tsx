@@ -1,6 +1,5 @@
 import { Produto, Variante } from "./mockPdvData";
-import { Button } from "@/components/ui/button";
-import { Plus, X } from "lucide-react";
+import { X } from "lucide-react";
 
 interface VarianteDrawerProps {
   produto: Produto;
@@ -22,9 +21,10 @@ export function VarianteDrawer({ produto, quantidade, onAddVariante, onClose }: 
       </div>
       <div className="flex gap-2 overflow-x-auto pb-1">
         {produto.variantes.map((v) => (
-          <div
+          <button
             key={v.id}
-            className="flex-shrink-0 w-28 rounded-lg border border-border bg-card overflow-hidden"
+            onClick={() => onAddVariante(produto, v, quantidade)}
+            className="flex-shrink-0 w-28 rounded-lg border border-border bg-card overflow-hidden text-left cursor-pointer hover:bg-secondary transition-colors"
           >
             <img
               src={v.foto || "/placeholder.svg"}
@@ -33,24 +33,11 @@ export function VarianteDrawer({ produto, quantidade, onAddVariante, onClose }: 
             />
             <div className="p-1.5">
               <p className="text-[10px] text-foreground truncate">{v.nome}</p>
-              <div className="flex items-center justify-between mt-1">
-                <span className="text-[10px] text-primary font-semibold">
-                  R$ {v.preco.toFixed(2)}
-                </span>
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  className="h-5 w-5"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onAddVariante(produto, v, quantidade);
-                  }}
-                >
-                  <Plus className="h-3 w-3" />
-                </Button>
-              </div>
+              <span className="text-[10px] text-primary font-semibold">
+                R$ {v.preco.toFixed(2)}
+              </span>
             </div>
-          </div>
+          </button>
         ))}
       </div>
     </div>
