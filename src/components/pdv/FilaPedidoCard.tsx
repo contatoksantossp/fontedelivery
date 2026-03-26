@@ -55,7 +55,7 @@ export function FilaPedidoCard({ pedido, selected, onSelect }: FilaPedidoCardPro
         <p className="text-muted-foreground truncate flex-1 text-base">{pedido.cliente}</p>
         <div className="flex items-center gap-0.5 text-muted-foreground ml-1">
           {pedido.modalidade === "entrega" ? (
-            <Truck className="h-3 w-3" />
+            <Truck className="w-[40px] h-[20px]" />
           ) : (
             <MapPin className="h-3 w-3" />
           )}
