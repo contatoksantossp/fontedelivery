@@ -174,7 +174,7 @@ export const variantesMock: CatalogVariante[] = [
 // ── Kits / Combos ───────────────────────────────────────────
 export const kitCombosMock: KitCombo[] = [
   {
-    id: "kc1", nome: "Kit Churrasco", imagem: "/placeholder.svg", ativo: true, tipo: "kit",
+    id: "kc1", nome: "Kit Churrasco", imagem: subcategoryImages.sub5a, ativo: true, tipo: "kit",
     tipoDesconto: "%", valorDesconto: 10, subcategoriaVinculo: "sub5a",
     slots: [
       { id: "s1", subcategoriaId: "sub5a", nome: "Carvão/Gelo" },
@@ -183,7 +183,7 @@ export const kitCombosMock: KitCombo[] = [
     ],
   },
   {
-    id: "kc2", nome: "Combo Happy Hour", imagem: "/placeholder.svg", ativo: true, tipo: "combo",
+    id: "kc2", nome: "Combo Happy Hour", imagem: subcategoryImages.sub2c, ativo: true, tipo: "combo",
     tipoDesconto: "R$", valorDesconto: 8, subcategoriaVinculo: "sub2c",
     slots: [
       { id: "s4", subcategoriaId: "sub2c", nome: "Destilado" },
