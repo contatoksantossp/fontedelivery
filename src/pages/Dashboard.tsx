@@ -77,6 +77,16 @@ export default function Dashboard() {
     );
   };
 
+  const parseDate = (d: string) => {
+    const [dd, mm, yyyy] = d.split("/");
+    return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+  };
+
+  const itemsVisiveis = useMemo(() =>
+    [...items].sort((a, b) => parseDate(a.lastCount).getTime() - parseDate(b.lastCount).getTime()).slice(0, 10),
+    [items]
+  );
+
   return (
     <PageContainer title="Página Inicial" subtitle="Resumo operacional do mês — Março 2026">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
