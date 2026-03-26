@@ -47,20 +47,20 @@ export function AbaIdentificacao({
         {/* Canal */}
         <div>
           <p className="text-xs font-semibold text-muted-foreground mb-2">Canal de Venda</p>
-          <div className="grid grid-cols-3 gap-1.5">
+          <div className="flex gap-1">
             {canais.map((c) => (
               <button
                 key={c.id}
                 onClick={() => setCanalVenda(c.id)}
+                title={c.label}
                 className={cn(
-                  "flex flex-col items-center gap-1 rounded-lg border p-2 text-[10px] transition-colors",
+                  "flex items-center justify-center rounded-lg border h-8 w-8 transition-colors",
                   canal === c.id
                     ? "border-primary bg-primary/10 text-primary"
                     : "border-border bg-card text-muted-foreground hover:text-foreground"
                 )}
               >
                 {c.icon}
-                {c.label}
               </button>
             ))}
           </div>

@@ -5,6 +5,7 @@ import { Vitrine } from "@/components/pdv/Vitrine";
 import { Carrinho } from "@/components/pdv/Carrinho";
 import {
   pedidosFilaMock,
+  clientesMock,
   PedidoFila,
   ItemCarrinho,
   Pagamento,
@@ -51,8 +52,12 @@ export default function PDV() {
     setItens([...pedido.itens]);
     setCanalVenda(pedido.canal);
     setModalidade(pedido.modalidade);
+    setPagamentos([...pedido.pagamentos]);
+    // Load cliente
+    const foundCliente = clientesMock.find((c) => c.id === pedido.clienteId) || null;
+    setCliente(foundCliente);
+    setEnderecoId(pedido.enderecoId || null);
     setActiveTab("carrinho");
-    setPagamentos([]);
   }, []);
 
   // Add item from vitrine
