@@ -1,21 +1,27 @@
 
 
-## Tornar cards clicáveis para adicionar ao carrinho (remover botão +)
+## Duas mudanças no PromocaoDialog
 
-Atualmente os cards de variante no `VarianteDrawer` e no `KitSlotDrawer` usam um botão `+` pequeno para adicionar. Vamos mover o gatilho para o card inteiro.
+### 1. Banner: trocar gradiente por upload de imagem
+- Substituir o `<div>` com gradiente (linha 107-109) pelo componente `BannerUpload` igual ao do `KitComboDialog` (botão clicável com preview da imagem, overlay de upload no hover)
+- Adicionar estado `imagem` ao dialog, inicializado com `"/placeholder.svg"`
+- Remover o array `gradientes` e o estado/select de `gradiente`
+- Atualizar `PromocaoBanner` no `mockCuponsData.ts`: trocar campo `gradiente: string` por `imagem: string`
+- Atualizar `AbaPromocoes.tsx`: trocar o `<div>` com gradiente pelo `<img>` usando `p.imagem`
+- Atualizar mock data com `/placeholder.svg`
+- Atualizar `handleSalvar` para enviar `imagem` em vez de `gradiente`
 
-### 1. `src/components/pdv/VarianteDrawer.tsx`
-- Transformar o `<div>` de cada variante em `<button>` clicável com `onClick={() => onAddVariante(produto, v, quantidade)}`
-- Adicionar `hover:bg-secondary cursor-pointer transition-colors`
-- Remover o `<Button>` com ícone `<Plus>` (linhas 40-50)
-- Manter preço e nome, layout fica mais limpo
-
-### 2. `src/components/pdv/KitSlotDrawer.tsx`
-- Mesmo padrão no sub-drawer de variantes (linhas 134-152): transformar `<div>` em `<button>` clicável
-- Remover o `<Button>` com `<Plus>` (linhas 144-149)
-- Adicionar `hover:bg-secondary cursor-pointer transition-colors`
+### 2. Vincular Produtos: trocar Select por busca com autocomplete
+- Remover o `<Select>` + botão `<Plus>` (linhas 153-165)
+- Adicionar estado `buscaProduto` (string) e lógica de filtragem
+- Colocar um `<Input>` com placeholder "Buscar produto..."
+- Ao digitar, filtrar `variantesDisponiveis` com `.filter()` + `.slice(0, 3)` para mostrar no máximo 3 resultados
+- Exibir resultados como lista clicável abaixo do input (div com border, rounded)
+- Ao clicar num resultado, adicionar o produto e limpar o input
+- Remover imports de `Select`, `SelectContent`, `SelectItem`, `SelectTrigger`, `SelectValue`
 
 ### Arquivos editados
-- `src/components/pdv/VarianteDrawer.tsx`
-- `src/components/pdv/KitSlotDrawer.tsx`
+- `src/components/cupons/mockCuponsData.ts` — tipo + mock
+- `src/components/cupons/PromocaoDialog.tsx` — banner upload + busca
+- `src/components/cupons/AbaPromocoes.tsx` — exibir imagem no card
 
