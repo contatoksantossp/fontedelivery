@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { rotasMock, Rota } from "@/components/rotas/mockRotasData";
+import { rotasMock, Rota, PagamentoParada } from "@/components/rotas/mockRotasData";
 import { RotaCard } from "@/components/rotas/RotaCard";
 import { RotaDetalhes } from "@/components/rotas/RotaDetalhes";
 import { RotaAcerto } from "@/components/rotas/RotaAcerto";
@@ -70,6 +70,17 @@ export default function Rotas() {
     );
   };
 
+  const handleAlterarPagamentos = (paradaId: string, pagamentos: PagamentoParada[]) => {
+    setRotas((prev) =>
+      prev.map((r) => ({
+        ...r,
+        paradas: r.paradas.map((p) =>
+          p.id === paradaId ? { ...p, pagamentos } : p
+        ),
+      }))
+    );
+  };
+
   const handleBonificacaoChange = (rotaId: string, valor: number) => {
     setRotas((prev) =>
       prev.map((r) =>
@@ -112,6 +123,7 @@ export default function Rotas() {
             onDarBaixa={handleDarBaixa}
             onConcluirRota={handleConcluirRota}
             onAlterarPagamento={handleAlterarPagamento}
+            onAlterarPagamentos={handleAlterarPagamentos}
           />
         ) : (
           <RotaMapaLeaflet
