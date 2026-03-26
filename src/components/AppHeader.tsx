@@ -2,7 +2,7 @@ import { useState } from "react";
 import { StatusBadge } from "./StatusBadge";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
-import { Wallet, Clock, Plus } from "lucide-react";
+import { Wallet, Clock, Plus, LayoutDashboard, Truck } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
@@ -38,10 +38,20 @@ export function AppHeader() {
             />
           </div>
 
-          <Button size="sm" className="gap-1.5" onClick={() => navigate("/pdv")}>
-            <Plus className="h-4 w-4" />
-            Novo Pedido
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="sm" className="gap-1.5 text-muted-foreground" onClick={() => navigate("/visao-geral")}>
+              <LayoutDashboard className="h-4 w-4" />
+              Visão Geral
+            </Button>
+            <Button variant="ghost" size="sm" className="gap-1.5 text-muted-foreground" onClick={() => navigate("/rotas")}>
+              <Truck className="h-4 w-4" />
+              Logística
+            </Button>
+            <Button size="sm" className="gap-1.5" onClick={() => navigate("/pdv")}>
+              <Plus className="h-4 w-4" />
+              Novo Pedido
+            </Button>
+          </div>
 
           <div className="flex items-center gap-6">
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
