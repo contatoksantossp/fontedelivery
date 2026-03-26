@@ -65,7 +65,7 @@ export function RotaCard({ rota, cor, selected, onSelect }: RotaCardProps) {
         <div className="flex items-center gap-2">
           <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: cor }} />
           <VeiculoIcon className="h-4 w-4 text-muted-foreground" />
-          <span className="text-sm font-semibold text-foreground">{rota.entregadorNome}</span>
+          <span className="font-semibold text-foreground text-lg">{rota.entregadorNome}</span>
         </div>
         <Badge variant="outline" className={cn("text-[10px] px-1.5 py-0", cfg.className)}>
           {cfg.label}
@@ -74,8 +74,8 @@ export function RotaCard({ rota, cor, selected, onSelect }: RotaCardProps) {
 
       {/* Ações */}
       <div className="text-[11px] text-muted-foreground mb-2 space-y-0.5">
-        <p><span className="text-foreground/60">Anterior:</span> {rota.acaoAnterior}</p>
-        <p><span className="text-foreground/60">Próxima:</span> {rota.proximaAcao}</p>
+        <p className="text-base"><span className="text-foreground/60 text-sm">Anterior:</span> {rota.acaoAnterior}</p>
+        <p className="text-base"><span className="text-foreground/60 text-sm">Próxima:</span> {rota.proximaAcao}</p>
       </div>
 
       {/* Mini-cards de pedidos */}
@@ -114,10 +114,10 @@ export function RotaCard({ rota, cor, selected, onSelect }: RotaCardProps) {
                 ) : (
                   <Clock className="h-3 w-3 text-yellow-400" />
                 )}
-                <span className="font-semibold">{p.pedidoCodigo}</span>
+                <span className="font-semibold text-sm">{p.pedidoCodigo}</span>
               </div>
               <div className="flex items-center justify-between">
-                <p className="truncate text-muted-foreground flex-1">{p.cliente}</p>
+                <p className="truncate text-muted-foreground flex-1 text-base">{p.cliente}</p>
                 <span className={cn(
                   "flex items-center gap-0.5 shrink-0 ml-1",
                   entregue ? "text-muted-foreground" : "text-primary"
@@ -132,7 +132,7 @@ export function RotaCard({ rota, cor, selected, onSelect }: RotaCardProps) {
       </div>
 
       {/* Footer */}
-      <div className="flex items-center justify-between mt-2 text-[10px] text-muted-foreground">
+      <div className="flex items-center justify-between mt-2 text-muted-foreground text-sm">
         <span>{rota.paradas.length} parada{rota.paradas.length !== 1 ? "s" : ""}</span>
         <span>{rota.kmTotal} km</span>
         <span>~{rota.tempoEstimado} min</span>
