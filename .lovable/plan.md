@@ -1,23 +1,21 @@
 
 
-## Adicionar modo editar para Entregadores
+## StatusBadge clicavel com confirmacao de abrir/fechar loja
 
 ### O que muda
-Botão "Editar" no card do entregador que abre um Dialog para editar o nome (do cliente vinculado), veículo e cor. A cor é selecionada via paleta de bolinhas coloridas.
+O StatusBadge no header vira um botao clicavel. Ao clicar, abre um AlertDialog perguntando se deseja fechar (quando online) ou abrir (quando offline) a loja. Ao confirmar, o status alterna.
 
 ### Arquivos
 
-**1. `src/components/parceiros/EntregadorEditDialog.tsx`** (novo)
-- Dialog com campos: Nome (input text), Veículo (select: Moto/Bicicleta/Carro), Cor (grid de bolinhas coloridas clicáveis com as 6 cores padrão do sistema)
-- Props: `entregador: Entregador | null`, `clienteNome: string`, `open: boolean`, `onOpenChange`, `onSave(id, dados: { veiculo, cor, clienteNome })`
+**1. `src/components/StatusBadge.tsx`** (editado)
+- Aceitar props `onClick` opcional e `clickable?: boolean`
+- Quando clickable, aplicar `cursor-pointer` e hover effect
+- Renderizar como `<button>` em vez de `<div>` quando clickable
 
-**2. `src/components/parceiros/AbaEntregadores.tsx`** (editado)
-- Adicionar prop `onEdit(id: string, dados: { veiculo: string; cor: string; clienteNome: string })` 
-- Adicionar state local para dialog (open + entregador selecionado)
-- Botão "Editar" (ícone Pencil) ao lado do botão de excluir no card
-- Renderizar `EntregadorEditDialog`
-
-**3. `src/pages/Parceiros.tsx`** (editado)
-- Adicionar handler `editEntregador` que atualiza veículo e cor no state de entregadores, e nome no state de clientes
-- Passar `onEdit` para `AbaEntregadores`
+**2. `src/components/AppHeader.tsx`** (editado)
+- Adicionar state `lojaAberta: boolean` (inicia `true`)
+- Adicionar state `confirmOpen: boolean` para o AlertDialog
+- Clicar no StatusBadge abre o AlertDialog
+- Confirmar alterna o estado e mostra toast
+- Importar AlertDialog do shadcn e toast do sonner
 
