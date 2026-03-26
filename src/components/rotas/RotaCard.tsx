@@ -81,7 +81,8 @@ export function RotaCard({ rota, cor, selected, onSelect }: RotaCardProps) {
       {/* Mini-cards de pedidos */}
       <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-thin">
         {rota.paradas.map((p, index) => {
-          const entregue = p.paradaStatus === "entregue";
+          const allDone = rota.status === "finalizada" || rota.status === "concluida";
+          const entregue = allDone || p.paradaStatus === "entregue";
           return (
             <div
               key={p.id}
