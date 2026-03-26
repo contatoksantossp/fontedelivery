@@ -34,9 +34,10 @@ export interface Rota {
   acaoAnterior: string;
   proximaAcao: string;
   tempoEstimado: number;
+  kmTotal: number;
   bonificacao: number;
-  inicioRota?: string; // ISO timestamp de quando recebeu a rota
-  fimRota?: string; // ISO timestamp de quando finalizou
+  inicioRota?: string;
+  fimRota?: string;
 }
 
 export const rotasMock: Rota[] = [
