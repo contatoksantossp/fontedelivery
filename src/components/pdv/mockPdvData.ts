@@ -71,11 +71,14 @@ export interface PedidoFila {
   id: string;
   codigo: string;
   cliente: string;
+  clienteId: string;
+  enderecoId?: string;
   total: number;
   modalidade: Modalidade;
   canal: CanalVenda;
   criadoEm: Date;
   itens: ItemCarrinho[];
+  pagamentos: Pagamento[];
 }
 
 // ── Categorias ──────────────────────────────────────────────
@@ -284,28 +287,82 @@ export const clientesMock: Cliente[] = [
 // ── Pedidos na Fila ─────────────────────────────────────────
 export const pedidosFilaMock: PedidoFila[] = [
   {
-    id: "pf1", codigo: "#1042", cliente: "Maria Silva", total: 67.50,
-    modalidade: "entrega", canal: "whatsapp", criadoEm: new Date(Date.now() - 15 * 60000),
+    id: "pf1", codigo: "#1042", cliente: "Maria Silva", clienteId: "c1", enderecoId: "end1",
+    total: 67.50, modalidade: "entrega", canal: "whatsapp", criadoEm: new Date(Date.now() - 15 * 60000),
     itens: [
       { id: "i1", produtoId: "p5", nome: "Skol Lata", varianteNome: "Lata 350ml", preco: 4.50, quantidade: 12 },
       { id: "i2", produtoId: "p17", varianteId: "v17a", nome: "Carvão Vegetal", varianteNome: "Saco 4kg", preco: 19.90, quantidade: 1 },
     ],
+    pagamentos: [{ id: "pg1", metodo: "pix", valor: 67.50 }],
   },
   {
-    id: "pf2", codigo: "#1043", cliente: "João Oliveira", total: 108.40,
-    modalidade: "entrega", canal: "ifood", criadoEm: new Date(Date.now() - 8 * 60000),
+    id: "pf2", codigo: "#1043", cliente: "João Oliveira", clienteId: "c2", enderecoId: "end3",
+    total: 108.40, modalidade: "entrega", canal: "ifood", criadoEm: new Date(Date.now() - 8 * 60000),
     itens: [
       { id: "i3", produtoId: "p6", varianteId: "v6a", nome: "Heineken", varianteNome: "Long Neck 330ml", preco: 8.50, quantidade: 6 },
       { id: "i4", produtoId: "p14", varianteId: "v14a", nome: "Doritos", varianteNome: "96g", preco: 7.50, quantidade: 2 },
       { id: "i5", produtoId: "p18", varianteId: "v18a", nome: "Gelo", varianteNome: "Saco 5kg", preco: 8.90, quantidade: 1 },
     ],
+    pagamentos: [{ id: "pg2", metodo: "cartao_credito", valor: 108.40 }],
   },
   {
-    id: "pf3", codigo: "#1044", cliente: "Ana Costa", total: 28.00,
-    modalidade: "retirada", canal: "balcao", criadoEm: new Date(Date.now() - 22 * 60000),
+    id: "pf3", codigo: "#1044", cliente: "Ana Costa", clienteId: "c3",
+    total: 28.00, modalidade: "retirada", canal: "balcao", criadoEm: new Date(Date.now() - 22 * 60000),
     itens: [
       { id: "i6", produtoId: "p10", varianteId: "v10", nome: "Marlboro Box", varianteNome: "Maço", preco: 12.00, quantidade: 2 },
       { id: "i7", produtoId: "p11", varianteId: "v11", nome: "Seda Smoking", varianteNome: "King Size", preco: 4.00, quantidade: 1 },
     ],
+    pagamentos: [{ id: "pg3", metodo: "dinheiro", valor: 30.00, troco: 2.00 }],
+  },
+  {
+    id: "pf4", codigo: "#1045", cliente: "Pedro Santos", clienteId: "c4", enderecoId: "end5",
+    total: 89.90, modalidade: "entrega", canal: "app", criadoEm: new Date(Date.now() - 5 * 60000),
+    itens: [
+      { id: "i8", produtoId: "p9", varianteId: "v9a", nome: "Absolut Vodka", varianteNome: "750ml", preco: 89.90, quantidade: 1 },
+    ],
+    pagamentos: [{ id: "pg4", metodo: "cartao_debito", valor: 89.90 }],
+  },
+  {
+    id: "pf5", codigo: "#1046", cliente: "Maria Silva", clienteId: "c1", enderecoId: "end2",
+    total: 35.50, modalidade: "entrega", canal: "whatsapp", criadoEm: new Date(Date.now() - 3 * 60000),
+    itens: [
+      { id: "i9", produtoId: "p1", varianteId: "v1b", nome: "Coca-Cola", varianteNome: "600ml", preco: 7.00, quantidade: 2 },
+      { id: "i10", produtoId: "p14", varianteId: "v14b", nome: "Doritos", varianteNome: "167g", preco: 12.00, quantidade: 1 },
+      { id: "i11", produtoId: "p15", varianteId: "v15", nome: "Trident", varianteNome: "8 unidades", preco: 3.50, quantidade: 1 },
+    ],
+    pagamentos: [
+      { id: "pg5a", metodo: "pix", valor: 20.00 },
+      { id: "pg5b", metodo: "dinheiro", valor: 15.50 },
+    ],
+  },
+  {
+    id: "pf6", codigo: "#1047", cliente: "João Oliveira", clienteId: "c2",
+    total: 24.00, modalidade: "retirada", canal: "99food", criadoEm: new Date(Date.now() - 12 * 60000),
+    itens: [
+      { id: "i12", produtoId: "p10", varianteId: "v10", nome: "Marlboro Box", varianteNome: "Maço", preco: 12.00, quantidade: 1 },
+      { id: "i13", produtoId: "p3", varianteId: "v3a", nome: "Red Bull", varianteNome: "250ml", preco: 12.00, quantidade: 1 },
+    ],
+    pagamentos: [{ id: "pg6", metodo: "cartao_credito", valor: 24.00 }],
+  },
+  {
+    id: "pf7", codigo: "#1048", cliente: "Ana Costa", clienteId: "c3", enderecoId: "end4",
+    total: 54.80, modalidade: "entrega", canal: "whatsapp", criadoEm: new Date(Date.now() - 30 * 60000),
+    itens: [
+      { id: "i14", produtoId: "p6", varianteId: "v6b", nome: "Heineken", varianteNome: "Lata 350ml", preco: 7.50, quantidade: 4 },
+      { id: "i15", produtoId: "p18", varianteId: "v18b", nome: "Gelo", varianteNome: "Saco 10kg", preco: 15.90, quantidade: 1 },
+      { id: "i16", produtoId: "p4", varianteId: "v4a", nome: "Água Mineral Crystal", varianteNome: "500ml", preco: 2.50, quantidade: 3 },
+    ],
+    pagamentos: [
+      { id: "pg7a", metodo: "pix", valor: 30.00 },
+      { id: "pg7b", metodo: "cartao_debito", valor: 24.80 },
+    ],
+  },
+  {
+    id: "pf8", codigo: "#1049", cliente: "Pedro Santos", clienteId: "c4",
+    total: 19.90, modalidade: "retirada", canal: "balcao", criadoEm: new Date(Date.now() - 45 * 60000),
+    itens: [
+      { id: "i17", produtoId: "p17", varianteId: "v17a", nome: "Carvão Vegetal", varianteNome: "Saco 4kg", preco: 19.90, quantidade: 1 },
+    ],
+    pagamentos: [{ id: "pg8", metodo: "qr", valor: 19.90 }],
   },
 ];
