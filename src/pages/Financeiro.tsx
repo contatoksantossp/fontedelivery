@@ -104,6 +104,7 @@ export default function Financeiro() {
           <AbaCaixa
             caixa={caixa}
             entregadores={entregadores}
+            recebimentosPorMetodo={recebimentosPorMetodo}
             onAbrirCaixa={handleAbrirCaixa}
             onFecharCaixa={handleFecharCaixa}
             onSangriaReforco={handleSangriaReforco}
