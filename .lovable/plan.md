@@ -1,21 +1,12 @@
 
 
-## StatusBadge clicavel com confirmacao de abrir/fechar loja
+## Adicionar color picker personalizado ao EntregadorEditDialog
 
 ### O que muda
-O StatusBadge no header vira um botao clicavel. Ao clicar, abre um AlertDialog perguntando se deseja fechar (quando online) ou abrir (quando offline) a loja. Ao confirmar, o status alterna.
+Alem das 6 bolinhas pre-definidas, adicionar um input `type="color"` nativo ao lado delas, permitindo escolher qualquer cor personalizada.
 
-### Arquivos
-
-**1. `src/components/StatusBadge.tsx`** (editado)
-- Aceitar props `onClick` opcional e `clickable?: boolean`
-- Quando clickable, aplicar `cursor-pointer` e hover effect
-- Renderizar como `<button>` em vez de `<div>` quando clickable
-
-**2. `src/components/AppHeader.tsx`** (editado)
-- Adicionar state `lojaAberta: boolean` (inicia `true`)
-- Adicionar state `confirmOpen: boolean` para o AlertDialog
-- Clicar no StatusBadge abre o AlertDialog
-- Confirmar alterna o estado e mostra toast
-- Importar AlertDialog do shadcn e toast do sonner
+### Arquivo: `src/components/parceiros/EntregadorEditDialog.tsx`
+- Adicionar um `<input type="color">` estilizado como uma bolinha (mesmo tamanho das outras) ao final da lista de cores
+- Quando o usuario escolher uma cor personalizada, ela se torna a cor selecionada
+- Se a cor atual nao estiver na lista CORES, o color picker mostra a cor atual e fica com borda de selecionado
 
