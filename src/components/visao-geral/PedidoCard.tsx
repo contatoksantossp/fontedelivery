@@ -1,5 +1,6 @@
 import { Pedido } from "./mockData";
-import { Clock, X, Check, Truck, MapPin, Route, Timer, CheckCircle2 } from "lucide-react";
+import { Clock, X, Check, Truck, MapPin, Route, Timer } from "lucide-react";
+import { PedidoRastreio, RastreioStatus } from "@/components/PedidoRastreio";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
@@ -146,32 +147,17 @@ export function PedidoCard({ pedido, selected, selectionMode, inRota, rotaColor,
       </div>
 
       {/* Rastreio */}
-      <div className="mt-3 pt-2 border-t border-border/50">
-        <div className="flex items-center gap-3 text-[10px]">
-          <div className="flex items-center gap-1 text-muted-foreground">
-            <Clock className="h-3 w-3 text-primary" />
-            <span>{format(pedido.criadoEm, "HH:mm")}</span>
-          </div>
-          <div className="flex-1 h-px bg-border relative">
-            {pedido.prontoEm && (
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-primary" />
-            )}
-          </div>
-          {pedido.prontoEm ? (
-            <div className="flex items-center gap-1 text-primary">
-              <CheckCircle2 className="h-3 w-3" />
-              <span>{format(pedido.prontoEm, "HH:mm")}</span>
-            </div>
-          ) : (
-            <div className="flex items-center gap-1 text-muted-foreground/50">
-              <CheckCircle2 className="h-3 w-3" />
-              <span>—</span>
-            </div>
-          )}
-          <div className="flex items-center gap-1 text-muted-foreground ml-1">
-            <Timer className="h-3 w-3" />
-            <span className="font-mono">{elapsed}</span>
-          </div>
+      <div className="mt-3 pt-2 border-t border-border/50 flex items-center gap-2">
+        <div className="flex-1">
+          <PedidoRastreio
+            status={pedido.status as RastreioStatus}
+            criadoEm={pedido.criadoEm}
+            prontoEm={pedido.prontoEm}
+          />
+        </div>
+        <div className="flex items-center gap-1 text-muted-foreground text-[10px] shrink-0">
+          <Timer className="h-3 w-3" />
+          <span className="font-mono">{elapsed}</span>
         </div>
       </div>
     </div>
