@@ -115,6 +115,7 @@
   }
   #cupom-print, #cupom-print * {
     visibility: visible !important;
+    color: black !important;
   }
   #cupom-print {
     position: absolute;
@@ -122,25 +123,29 @@
     top: 0;
     width: 100%;
     background: white !important;
-    color: black !important;
     padding: 12px !important;
-    font-size: 14pt !important;
     font-weight: 600 !important;
     line-height: 1.5 !important;
   }
-  #cupom-print p,
-  #cupom-print span,
-  #cupom-print div {
-    font-size: 12pt !important;
+  #cupom-print .text-5xl {
+    font-size: 3rem !important;
+    line-height: 1 !important;
+  }
+  #cupom-print .text-2xl {
+    font-size: 1.5rem !important;
+    line-height: 1.3 !important;
+  }
+  #cupom-print .font-extrabold {
+    font-weight: 800 !important;
   }
   #cupom-print .font-bold {
     font-weight: 800 !important;
   }
-  #cupom-print .text-lg {
-    font-size: 18pt !important;
-  }
   #cupom-print .text-sm {
-    font-size: 14pt !important;
+    font-size: 0.875rem !important;
+  }
+  #cupom-print .text-orange-600 {
+    color: black !important;
   }
 }
 
