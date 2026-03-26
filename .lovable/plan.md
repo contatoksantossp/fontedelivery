@@ -1,27 +1,22 @@
 
 
-## Cupom Fiscal + Botao Imprimir no PedidoDetalhes
+## Ajustar layout responsivo das colunas na Visao Geral
 
-### O que muda
+O layout atual usa larguras fixas em percentual (`w-[35%]`, `w-[25%]`, `w-[40%]`) que ficam apertadas em monitores menores. A solucao e usar `min-w` para garantir larguras minimas e `flex` para distribuir o espaco proporcionalmente.
 
-1. **Fundo branco e texto preto** — container com `bg-white text-black` fixo (independente do tema)
-2. **Layout estilo cupom/nota fiscal** — fonte mono, separadores tracejados (`- - -`), alinhamento centralizado no header, largura estreita
-3. **Botao Imprimir** — fixo no topo da coluna, cor laranja, icone `Printer`
-   - Ao clicar: usa `window.print()` com CSS `@media print` que esconde tudo exceto o conteudo do cupom
-   - Apos imprimir: botao fica "apagado" (opacidade reduzida, cor cinza) via state `printed`
-   - Pode clicar novamente (reseta o estado printed e imprime de novo)
-4. **State `printed`** — reseta quando o pedido selecionado muda
+### Alteracoes em `src/pages/VisaoGeral.tsx`
 
-### Arquivo editado
+Substituir as larguras fixas por flex com min-width:
 
-**`src/components/visao-geral/PedidoDetalhes.tsx`**
-- Adicionar `useRef` para referenciar o conteudo do cupom
-- Adicionar state `printed` (boolean)
-- Resetar `printed` quando `pedido.id` muda
-- Botao imprimir no topo: quando `printed=false` bg laranja, quando `printed=true` bg cinza/opaco
-- Ao clicar no botao: chamar funcao que injeta style de print temporario, chama `window.print()`, e no callback marca `printed=true`
-- Reformatar layout para estilo cupom: fonte `font-mono text-xs`, separadores tracejados, header centralizado com codigo e data
+| Coluna | Atual | Novo |
+|--------|-------|------|
+| Esquerda (Kanbans) | `w-[35%]` | `flex-[35] min-w-[320px]` |
+| Central (Detalhes) | `w-[25%]` | `flex-[25] min-w-[240px]` |
+| Direita (Mapa) | `w-[40%]` | `flex-[40] min-w-[350px]` |
 
-**`src/index.css`**
-- Adicionar regra `@media print` que esconde tudo exceto `#cupom-print` e garante fundo branco
+- As proporcoes se mantem em telas grandes (flex ratios 35:25:40)
+- Em telas menores, os min-widths impedem que as colunas fiquem ilegíveis
+- O container pai ja tem `overflow-hidden`, entao scroll horizontal nao aparece — as colunas comprimem proporcionalmente ate o min-w
+
+Tambem reduzir o padding interno das colunas de `p-3` para `p-2` para ganhar espaco em telas menores.
 
