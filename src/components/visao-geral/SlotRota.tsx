@@ -112,10 +112,18 @@ export function SlotRota({ slotIndex, rotaItens, expanded, onExpand, entregadorC
       </div>
       {hasItens ? (
         <div className="space-y-1">
-          {rotaItens.map((p) => (
-            <p key={p.id} className="text-xs text-muted-foreground truncate">
-              {p.codigo} — {p.cliente}
-            </p>
+          {rotaItens.map((p, idx) => (
+            <div key={p.id} className="flex items-center gap-1.5">
+              <span
+                className="w-4 h-4 rounded-full flex items-center justify-center text-white text-[9px] font-bold shrink-0"
+                style={{ backgroundColor: entregadorCor || "#9ca3af" }}
+              >
+                {idx + 1}
+              </span>
+              <p className="text-xs text-muted-foreground truncate">
+                {p.codigo} — {p.cliente}
+              </p>
+            </div>
           ))}
         </div>
       ) : (
@@ -216,7 +224,7 @@ export function SlotRotaExpanded({
             <SortableContext items={rotaItens.map((i) => i.id)} strategy={verticalListSortingStrategy}>
               <div className="space-y-1.5">
                 {rotaItens.map((p) => (
-                  <SortableItem key={p.id} pedido={p} onRemove={onRemove} />
+                  <SortableItem key={p.id} pedido={p} onRemove={onRemove} orderNum={idx + 1} color={entregadorCor || "#9ca3af"} />
                 ))}
               </div>
             </SortableContext>
