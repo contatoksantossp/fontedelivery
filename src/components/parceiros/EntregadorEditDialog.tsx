@@ -83,7 +83,7 @@ export function EntregadorEditDialog({ entregador, clienteNome, open, onOpenChan
                   onChange={(e) => setCor(e.target.value)}
                   className="absolute w-10 h-10 cursor-pointer opacity-0"
                 />
-                <span className="w-full h-full bg-gradient-conic from-red-500 via-green-500 to-blue-500 rounded-full" style={!CORES.includes(cor) ? { backgroundColor: cor } : undefined} />
+                <span className="w-full h-full rounded-full" style={{ background: !CORES.includes(cor) ? cor : "conic-gradient(red, yellow, lime, aqua, blue, magenta, red)" }} />
               </label>
             </div>
           </div>
