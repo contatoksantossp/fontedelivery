@@ -95,6 +95,16 @@ export default function PDV() {
     setActiveTab("carrinho");
   }, []);
 
+  const handleUpdateItemPrice = useCallback((produtoId: string, varianteId: string, novoPreco: number) => {
+    setItens((prev) =>
+      prev.map((i) =>
+        i.produtoId === produtoId && i.varianteId === varianteId
+          ? { ...i, preco: novoPreco }
+          : i
+      )
+    );
+  }, []);
+
   const handleUpdateQty = useCallback((itemId: string, delta: number) => {
     setItens((prev) =>
       prev
