@@ -122,7 +122,17 @@ export function PedidoCard({ pedido, selected, selectionMode, inRota, rotaColor,
               <X className="h-3 w-3 mr-0.5" />
               Cancelar
             </Button>
-            {isPendente ? null : pedido.tipo === "retirada" ? (
+            {isPendente ? (
+              <div
+                {...listeners}
+                {...attributes}
+                className="flex items-center gap-1 cursor-grab active:cursor-grabbing bg-primary/10 hover:bg-primary/20 text-primary px-2.5 py-1 rounded-md transition-colors select-none"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <GripHorizontal className="h-3.5 w-3.5" />
+                <span className="text-[10px] font-bold whitespace-nowrap">Arraste →</span>
+              </div>
+            ) : pedido.tipo === "retirada" ? (
               <Button
                 size="sm"
                 className="h-7 px-2.5 text-xs"
