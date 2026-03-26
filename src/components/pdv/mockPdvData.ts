@@ -8,11 +8,6 @@ export interface Variante {
   foto?: string;
 }
 
-export interface ComboConfig {
-  slots: number;
-  desconto: number;
-}
-
 export interface Produto {
   id: string;
   nome: string;
@@ -22,7 +17,22 @@ export interface Produto {
   codigoBarras?: string;
   foto?: string;
   variantes: Variante[];
-  comboConfig?: ComboConfig;
+}
+
+export interface KitComboSlot {
+  id: string;
+  subcategoriaId: string;
+  nome: string;
+}
+
+export interface KitCombo {
+  id: string;
+  nome: string;
+  tipo: "kit" | "combo";
+  tipoDesconto: "%" | "R$";
+  valorDesconto: number;
+  subcategoriaVinculo: string;
+  slots: KitComboSlot[];
 }
 
 export interface Subcategoria {
@@ -282,18 +292,27 @@ export const produtosMock: Produto[] = [
       { id: "v18b", nome: "Saco 10kg", preco: 15.90, foto: variantImages.v18b },
     ],
   },
-  // Kits
+];
+
+// ── Kits / Combos PDV ──────────────────────────────────────
+export const kitCombosPdv: KitCombo[] = [
   {
-    id: "p19", nome: "Kit Churrasco", preco: 39.90, categoriaId: "cat5", subcategoriaId: "sub5a",
-    foto: productImages.p17,
-    variantes: [{ id: "v19", nome: "Único", preco: 39.90, foto: variantImages.v17a }],
-    comboConfig: { slots: 3, desconto: 10 },
+    id: "kc1", nome: "Kit Churrasco", tipo: "kit",
+    tipoDesconto: "%", valorDesconto: 10, subcategoriaVinculo: "sub5a",
+    slots: [
+      { id: "s1", subcategoriaId: "sub5a", nome: "Carvão/Gelo" },
+      { id: "s2", subcategoriaId: "sub2a", nome: "Cerveja" },
+      { id: "s3", subcategoriaId: "sub1a", nome: "Refrigerante" },
+    ],
   },
   {
-    id: "p20", nome: "Combo Happy Hour", preco: 99.90, categoriaId: "cat2", subcategoriaId: "sub2c",
-    foto: productImages.p9,
-    variantes: [{ id: "v20", nome: "Único", preco: 99.90, foto: variantImages.v9a }],
-    comboConfig: { slots: 3, desconto: 8 },
+    id: "kc2", nome: "Combo Happy Hour", tipo: "combo",
+    tipoDesconto: "R$", valorDesconto: 8, subcategoriaVinculo: "sub2c",
+    slots: [
+      { id: "s4", subcategoriaId: "sub2c", nome: "Destilado" },
+      { id: "s5", subcategoriaId: "sub1c", nome: "Energético" },
+      { id: "s6", subcategoriaId: "sub5a", nome: "Gelo" },
+    ],
   },
 ];
 
