@@ -64,9 +64,9 @@ export function RotaDetalhes({ rota, cor, onBonificacaoChange }: RotaDetalhesPro
         <div className="flex items-center gap-2 mb-1">
           <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ background: cor }} />
           <VeiculoIcon className="h-4 w-4" style={{ color: cor }} />
-          <h3 className="text-sm font-bold text-foreground">{rota.entregadorNome}</h3>
+          <h3 className="font-bold text-foreground text-lg">{rota.entregadorNome}</h3>
         </div>
-        <p className="text-[10px] text-muted-foreground">{rota.entregadorVeiculo} · {rota.paradas.length} parada{rota.paradas.length !== 1 ? "s" : ""}</p>
+        <p className="text-muted-foreground text-sm">{rota.entregadorVeiculo} · {rota.paradas.length} parada{rota.paradas.length !== 1 ? "s" : ""}</p>
       </div>
 
       {/* Timeline - top half */}
@@ -80,7 +80,7 @@ export function RotaDetalhes({ rota, cor, onBonificacaoChange }: RotaDetalhesPro
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
             <Gift className="h-3.5 w-3.5" />
-            <span className="font-medium">Bonificação</span>
+            <span className="font-medium text-base">Bonificação</span>
           </div>
           {canEditBonus ? (
             <div className="flex items-center gap-1">
@@ -109,8 +109,8 @@ export function RotaDetalhes({ rota, cor, onBonificacaoChange }: RotaDetalhesPro
               <AccordionItem key={parada.id} value={parada.id} className="border rounded-md border-border px-2">
                 <AccordionTrigger className="py-2 hover:no-underline">
                   <div className="flex flex-col items-start text-left">
-                    <span className="text-xs font-semibold">{parada.pedidoCodigo} — {parada.cliente}</span>
-                    <span className="text-[10px] text-muted-foreground flex items-center gap-1">
+                    <span className="font-semibold text-base">{parada.pedidoCodigo} — {parada.cliente}</span>
+                    <span className="text-muted-foreground flex items-center gap-1 text-sm">
                       <MapPin className="h-3 w-3" /> {parada.endereco}
                     </span>
                   </div>
@@ -164,24 +164,24 @@ export function RotaDetalhes({ rota, cor, onBonificacaoChange }: RotaDetalhesPro
       {/* Footer metrics */}
       <div className="p-3 border-t border-border grid grid-cols-3 gap-2 text-[10px]">
         {elapsed && (
-          <div className={`flex items-center gap-1 ${rota.fimRota ? "text-muted-foreground" : "text-primary font-semibold"}`}>
+          <div className={`flex items-center gap-1 text-sm ${rota.fimRota ? "text-muted-foreground" : "text-primary font-semibold"}`}>
             <Timer className="h-3 w-3" />
             <span>{elapsed}{!rota.fimRota && " ⏱"}</span>
           </div>
         )}
-        <div className="flex items-center gap-1 text-muted-foreground">
+        <div className="flex items-center gap-1 text-muted-foreground text-sm">
           <Clock className="h-3 w-3" />
           <span>~{rota.tempoEstimado} min</span>
         </div>
-        <div className="flex items-center gap-1 text-muted-foreground">
+        <div className="flex items-center gap-1 text-muted-foreground text-sm">
           <Navigation className="h-3 w-3" />
           <span>{rota.kmTotal} km</span>
         </div>
-        <div className="flex items-center gap-1 text-muted-foreground">
+        <div className="flex items-center gap-1 text-muted-foreground text-sm">
           <DollarSign className="h-3 w-3" />
           <span>Taxas: R$ {totalTaxas.toFixed(2)}</span>
         </div>
-        <div className="flex items-center gap-1 text-foreground font-semibold">
+        <div className="flex items-center gap-1 text-foreground font-semibold text-sm">
           <DollarSign className="h-3 w-3" />
           <span>Total: R$ {totalPedidos.toFixed(2)}</span>
         </div>

@@ -53,10 +53,10 @@ export function RotaTimeline({ paradas, cor }: RotaTimelineProps) {
                   {entregue ? "Entregue" : "Pendente"}
                 </span>
               </div>
-              <p className="text-[11px] text-muted-foreground">{parada.cliente}</p>
+              <p className="text-muted-foreground text-base">{parada.cliente}</p>
               <div className="flex items-center gap-1 text-[10px] text-muted-foreground mt-0.5">
                 <MapPin className="h-3 w-3" />
-                <span>{parada.endereco}, {parada.bairro}</span>
+                <span className="text-xs">{parada.endereco}, {parada.bairro}</span>
               </div>
             </div>
           </div>
