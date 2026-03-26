@@ -20,6 +20,7 @@ export interface Parada {
   observacoes?: string;
   paradaStatus: ParadaStatus;
   origem: string;
+  criadoEm: string;
   baixaRealizada?: boolean;
 }
 
