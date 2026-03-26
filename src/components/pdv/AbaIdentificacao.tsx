@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
-import { Search, Truck, MapPin, Store, MessageCircle, Smartphone, UserPlus, Plus, Loader2, Star } from "lucide-react";
+import { Search, Truck, MapPin, UserPlus, Plus, Loader2, Star } from "lucide-react";
+import { CanalVendaSelector } from "./CanalVendaSelector";
 
 interface AbaIdentificacaoProps {
   canal: CanalVenda;
@@ -18,13 +19,6 @@ interface AbaIdentificacaoProps {
   onProximo: () => void;
 }
 
-const canais: { id: CanalVenda; label: string; icon: React.ReactNode }[] = [
-  { id: "balcao", label: "Balcão", icon: <Store className="h-4 w-4" /> },
-  { id: "whatsapp", label: "WhatsApp", icon: <MessageCircle className="h-4 w-4" /> },
-  { id: "99food", label: "99Food", icon: <Smartphone className="h-4 w-4" /> },
-  { id: "ifood", label: "iFood", icon: <Smartphone className="h-4 w-4" /> },
-  { id: "app", label: "App", icon: <Smartphone className="h-4 w-4" /> },
-];
 
 export function AbaIdentificacao({
   canal, setCanalVenda, modalidade, setModalidade,
@@ -139,23 +133,7 @@ export function AbaIdentificacao({
         {/* Canal */}
         <div>
           <p className="text-xs font-semibold text-muted-foreground mb-2">Canal de Venda</p>
-          <div className="flex gap-1 w-full">
-            {canais.map((c) => (
-              <button
-                key={c.id}
-                onClick={() => setCanalVenda(c.id)}
-                className={cn(
-                  "flex-1 flex flex-col items-center justify-center gap-0.5 rounded-lg border py-1.5 transition-colors min-w-0",
-                  canal === c.id
-                    ? "border-primary bg-primary/10 text-primary"
-                    : "border-border bg-card text-muted-foreground hover:text-foreground"
-                )}
-              >
-                {c.icon}
-                <span className="text-[9px] font-medium truncate w-full text-center">{c.label}</span>
-              </button>
-            ))}
-          </div>
+          <CanalVendaSelector value={canal} onChange={(v) => setCanalVenda(v as CanalVenda)} />
         </div>
 
         {/* Localizador */}
