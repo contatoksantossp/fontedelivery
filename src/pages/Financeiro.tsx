@@ -22,8 +22,17 @@ export default function Financeiro() {
   const [caixa, setCaixa] = useState<CaixaState>(caixaStateMock);
   const [entregadores, setEntregadores] = useState<EntregadorTurno[]>(entregadoresTurnoMock);
   const [transacoes, setTransacoes] = useState<Transacao[]>(transacoesMock);
+  const [contas, setContas] = useState<ContaPagar[]>(contasMock);
 
   useEffect(() => { setOpen(false); }, [setOpen]);
+
+  const handleAdicionarConta = useCallback((dados: Omit<ContaPagar, "id" | "paga" | "dataPagamento">) => {
+    setContas(prev => [...prev, { ...dados, id: `c-${Date.now()}`, paga: false }]);
+  }, []);
+
+  const handleDarBaixa = useCallback((id: string) => {
+    setContas(prev => prev.map(c => c.id === id ? { ...c, paga: true, dataPagamento: new Date().toISOString() } : c));
+  }, []);
 
   const handleAbrirCaixa = useCallback((fundo: number) => {
     setCaixa(prev => ({ ...prev, status: "aberto", fundoInicial: fundo, entradas: 0, saidas: 0, saldoEsperado: fundo }));
