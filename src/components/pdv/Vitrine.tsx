@@ -233,7 +233,7 @@ export function Vitrine({ onAddItem }: VitrineProps) {
 
       {/* Product grid */}
       <ScrollArea className="flex-1 p-3">
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-4 gap-2">
           {produtosFiltrados.map((p) => (
             <Fragment key={p.id}>
               <ProdutoCard

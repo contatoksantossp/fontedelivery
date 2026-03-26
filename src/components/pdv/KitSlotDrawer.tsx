@@ -85,7 +85,7 @@ export function KitSlotDrawer({
 
           {/* Product grid */}
           <ScrollArea className="max-h-[200px]">
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-4 gap-2">
               {produtos.map((p) => {
                 const hasMultiple = p.variantes.length > 1;
                 const minPrice = Math.min(...p.variantes.map((v) => v.preco));
