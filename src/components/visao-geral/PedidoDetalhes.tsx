@@ -57,7 +57,7 @@ export function PedidoDetalhes({ pedido }: PedidoDetalhesProps) {
         {/* Header */}
         <div className="text-center space-y-0.5 mb-1">
           <p className="font-bold text-sm">PEDIDO</p>
-          <p className="font-bold text-lg">{pedido.codigo}</p>
+          <p className="font-bold text-5xl">{pedido.codigo}</p>
           <p className="text-[10px] text-gray-500 uppercase">{pedido.tipo === "entrega" ? "Entrega" : "Retirada"}</p>
         </div>
 
@@ -65,7 +65,7 @@ export function PedidoDetalhes({ pedido }: PedidoDetalhesProps) {
 
         {/* Cliente */}
         <div className="my-2 space-y-0.5">
-          <p className="font-bold">{pedido.cliente}</p>
+          <p className="text-2xl font-extrabold text-center">{pedido.cliente}</p>
           <p className="text-gray-600">{pedido.telefone}</p>
           {pedido.tipo === "entrega" && (
             <p className="text-gray-600">{pedido.endereco}, {pedido.bairro}</p>
@@ -129,9 +129,9 @@ export function PedidoDetalhes({ pedido }: PedidoDetalhesProps) {
         <div className="my-2">
           <div className="flex justify-between font-bold text-sm">
             <span>TOTAL</span>
-            <span>R$ {pedido.total.toFixed(2)}</span>
+            <span className="text-2xl">R$ {pedido.total.toFixed(2)}</span>
           </div>
-          <p className="text-gray-500 mt-0.5">Pagamento: {pedido.formaPagamento}</p>
+          <p className="mt-0.5 text-inherit text-2xl">Pagamento: {pedido.formaPagamento}</p>
         </div>
 
         <p className="text-center text-gray-400 text-[10px]">{separator}</p>
