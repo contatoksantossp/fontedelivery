@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
-import { Search, Truck, MapPin, Store, MessageCircle, Smartphone, UserPlus, Plus, Loader2 } from "lucide-react";
+import { Search, Truck, MapPin, Store, MessageCircle, Smartphone, UserPlus, Plus, Loader2, Star } from "lucide-react";
 
 interface AbaIdentificacaoProps {
   canal: CanalVenda;
@@ -341,20 +341,46 @@ export function AbaIdentificacao({
             <div className="space-y-1.5">
               {cliente.enderecos.length > 0 ? (
                 <>
-                  {cliente.enderecos.map((end) => (
-                    <button
-                      key={end.id}
-                      onClick={() => setEnderecoId(end.id)}
-                      className={cn(
-                        "w-full text-left rounded-lg border p-2 text-xs transition-colors",
-                        enderecoId === end.id
-                          ? "border-primary bg-primary/5"
-                          : "border-border hover:bg-secondary"
+                  {[...cliente.enderecos]
+                    .sort((a, b) => (b.principal ? 1 : 0) - (a.principal ? 1 : 0))
+                    .map((end) => (
+                    <div key={end.id} className="relative">
+                      <button
+                        onClick={() => setEnderecoId(end.id)}
+                        className={cn(
+                          "w-full text-left rounded-lg border p-2 text-xs transition-colors",
+                          end.principal && "ring-1 ring-primary/30",
+                          enderecoId === end.id
+                            ? "border-primary bg-primary/5"
+                            : end.principal
+                            ? "border-primary/40 bg-primary/5 hover:bg-primary/10"
+                            : "border-border hover:bg-secondary"
+                        )}
+                      >
+                        <div className="flex items-center gap-1">
+                          {end.principal && <Star className="h-3 w-3 text-primary fill-primary" />}
+                          <p className="text-foreground">{end.rua}</p>
+                        </div>
+                        <p className="text-[10px] text-muted-foreground">
+                          {end.bairro}{end.complemento ? ` • ${end.complemento}` : ""}
+                          {end.principal && <span className="ml-1 text-primary font-medium">• Principal</span>}
+                        </p>
+                      </button>
+                      {!end.principal && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            cliente.enderecos.forEach(e => e.principal = false);
+                            end.principal = true;
+                            setEnderecoId(end.id);
+                          }}
+                          className="absolute top-1.5 right-1.5 p-1 rounded hover:bg-secondary text-muted-foreground hover:text-primary transition-colors"
+                          title="Definir como principal"
+                        >
+                          <Star className="h-3 w-3" />
+                        </button>
                       )}
-                    >
-                      <p className="text-foreground">{end.rua}</p>
-                      <p className="text-[10px] text-muted-foreground">{end.bairro}{end.complemento ? ` • ${end.complemento}` : ""}</p>
-                    </button>
+                    </div>
                   ))}
                   <button
                     onClick={() => setNovoEnderecoMode(true)}
