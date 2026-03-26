@@ -52,7 +52,7 @@ export function PedidoCard({ pedido, selected, selectionMode, inRota, rotaColor,
   return (
     <div
       ref={setNodeRef}
-      {...(isDraggable ? { ...listeners, ...attributes } : {})}
+      
       onClick={() => {
         if (inRota || isDragging) return;
         onSelect(pedido);
