@@ -59,7 +59,7 @@ export function RotaCard({ rota, cor, selected, onSelect }: RotaCardProps) {
 
       {/* Mini-cards de pedidos */}
       <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-thin">
-        {rota.paradas.map((p) => {
+        {rota.paradas.map((p, index) => {
           const entregue = p.paradaStatus === "entregue";
           return (
             <div
@@ -76,6 +76,17 @@ export function RotaCard({ rota, cor, selected, onSelect }: RotaCardProps) {
                 style={{ background: entregue ? "hsl(var(--muted-foreground))" : cor }}
               />
               <div className="flex items-center gap-1.5 mb-0.5">
+                <span
+                  className={cn(
+                    "inline-flex items-center justify-center h-4 w-4 rounded-full text-[9px] font-bold shrink-0",
+                    entregue
+                      ? "bg-muted-foreground/20 text-muted-foreground"
+                      : "text-primary-foreground"
+                  )}
+                  style={!entregue ? { background: cor } : undefined}
+                >
+                  {index + 1}
+                </span>
                 {entregue ? (
                   <Check className="h-3 w-3 text-muted-foreground" />
                 ) : (
