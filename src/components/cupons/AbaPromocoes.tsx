@@ -53,9 +53,9 @@ export function AbaPromocoes({ promocoes, setPromocoes }: AbaPromocoesProps) {
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className="flex overflow-x-auto gap-4 pb-2">
         {promocoes.map(p => (
-          <Card key={p.id} className={`overflow-hidden ${!p.ativo ? "opacity-60" : ""}`}>
+          <Card key={p.id} className={`w-[380px] flex-shrink-0 overflow-hidden ${!p.ativo ? "opacity-60" : ""}`}>
             {/* Banner image */}
             <div className="h-28 bg-muted relative overflow-hidden">
               <img src={p.imagem} alt={p.nome} className="w-full h-full object-cover" />
