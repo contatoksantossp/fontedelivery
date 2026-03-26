@@ -61,7 +61,7 @@ export function EntregadorEditDialog({ entregador, clienteNome, open, onOpenChan
           </div>
           <div className="space-y-2">
             <Label>Cor</Label>
-            <div className="flex gap-3">
+            <div className="flex gap-3 items-center">
               {CORES.map((c) => (
                 <button
                   key={c}
@@ -73,6 +73,18 @@ export function EntregadorEditDialog({ entregador, clienteNome, open, onOpenChan
                   {cor === c && <Check className="h-4 w-4 text-white" />}
                 </button>
               ))}
+              <label
+                className="w-8 h-8 rounded-full border-2 flex items-center justify-center transition-transform hover:scale-110 cursor-pointer overflow-hidden"
+                style={{ borderColor: !CORES.includes(cor) ? "white" : "transparent" }}
+              >
+                <input
+                  type="color"
+                  value={cor || "#000000"}
+                  onChange={(e) => setCor(e.target.value)}
+                  className="absolute w-10 h-10 cursor-pointer opacity-0"
+                />
+                <span className="w-full h-full rounded-full" style={{ background: !CORES.includes(cor) ? cor : "conic-gradient(red, yellow, lime, aqua, blue, magenta, red)" }} />
+              </label>
             </div>
           </div>
         </div>
