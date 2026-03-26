@@ -1,39 +1,26 @@
 
 
-## Altura máxima 100% da tela — sem esticamento
+## Filtros da Fila de Pedidos — mesmo estilo do Canal de Venda
 
-### Problema
-Atualmente o layout usa `min-h-screen` no container principal, permitindo que o conteúdo estique além da viewport. As colunas não têm restrição de altura, causando scroll na página inteira em vez de scroll interno nos componentes.
+### Mudança
 
-### Solução
+Trocar os filtros atuais (chips horizontais com `flex-wrap`) pelo mesmo padrão visual usado na `AbaIdentificacao` para seleção de canal: botões com ícone em cima + texto embaixo, `flex-col`, bordas, ocupando largura igual (`flex-1`).
 
-**1. `src/layouts/AppLayout.tsx`** — Container principal
-- Trocar `min-h-screen` por `h-screen` + `overflow-hidden` no wrapper raiz
-- Adicionar `overflow-hidden` no container do conteúdo para que o Outlet nunca ultrapasse o espaço disponível
+- Linha 1: botões dos 5 canais (Balcão, WhatsApp, iFood, 99Food, App) lado a lado com `flex-1`
+- Linha 2: botão "Todos" mais largo (`w-full`) abaixo
 
-```tsx
-<div className="h-screen flex w-full overflow-hidden">
-  <AppSidebar />
-  <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-    <AppHeader />
-    <Outlet /> {/* já usa flex-1 nas páginas */}
-  </div>
-</div>
-```
+### Arquivo: `src/components/pdv/FilaPedidos.tsx`
 
-**2. `src/components/PageContainer.tsx`** — Páginas com scroll interno
-- Adicionar `overflow-auto` para que páginas como Dashboard, Catálogo etc. tenham scroll interno quando o conteúdo exceder o espaço
-
-```tsx
-<div className={cn("flex-1 p-6 space-y-6 overflow-auto", className)}>
-```
-
-**3. Páginas multi-coluna** (já usam `flex-1 flex overflow-hidden`)
-- PDV, VisaoGeral, Rotas já estão corretas com `flex-1 flex overflow-hidden`
-- Nenhuma mudança necessária nessas páginas
-
-### Resultado
-- Toda a aplicação fica contida em 100vh
-- Scroll apenas interno nos componentes/colunas que precisam
-- 2 arquivos editados
+- Separar `filtrosCanal` em dois grupos: canais individuais (sem "todos") e o item "todos"
+- Canais individuais renderizados numa `div className="flex gap-1 w-full"` com cada botão usando:
+  ```tsx
+  className={cn(
+    "flex-1 flex flex-col items-center justify-center gap-0.5 rounded-lg border py-1.5 transition-colors min-w-0",
+    filtroCanal === f.id
+      ? "border-primary bg-primary/10 text-primary"
+      : "border-border bg-card text-muted-foreground hover:text-foreground"
+  )}
+  ```
+  Com ícone `h-3.5 w-3.5` e label `text-[9px]`
+- Botão "Todos" renderizado separadamente abaixo com `w-full`, mesmo estilo mas layout horizontal (ícone + texto na mesma linha)
 
