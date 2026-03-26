@@ -277,8 +277,8 @@ function ParadaAcertoItem({
             </div>
             {falta > 0.01 && (
               <div className="flex justify-between pt-0.5">
-                <span className="font-semibold text-orange-500">FALTA</span>
-                <span className="font-bold text-orange-500 text-xs">R$ {falta.toFixed(2)}</span>
+                <span className="font-semibold text-destructive">FALTA</span>
+                <span className="font-bold text-destructive text-xs">R$ {falta.toFixed(2)}</span>
               </div>
             )}
           </div>
