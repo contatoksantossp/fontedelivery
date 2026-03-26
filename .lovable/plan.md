@@ -1,44 +1,33 @@
 
 
-## Melhorias no Dialog de Cadastro de Produto
+## Ajustes no ProdutoDialog
 
-### Problemas atuais
-- Foto do produto pai: campo de texto "URL da Foto" sem preview visual
-- Foto das variantes: campo nem existe no formulario
-- Formulario basico demais para um cadastro completo
+### Mudancas
 
-### Plano de melhorias
+**1. Mover EAN do produto pai para a variante**
+- Remover campo EAN da secao do produto pai
+- Remover `ean` do state do dialog e do `CatalogProduto`
+- Adicionar campo `ean` ao `VarianteForm` e ao tipo `CatalogVariante` (substituindo `sku`)
+- No grid da variante, trocar o campo "SKU" por "EAN / Codigo de Barras" com icone Barcode
+- Atualizar `mockCatalogoData.ts`: remover `ean` de `CatalogProduto`, adicionar `ean` a `CatalogVariante` (mover os valores de SKU para EAN ou manter ambos conforme necessario)
 
-#### 1. Preview de foto do produto pai
-- Substituir o campo "URL da Foto" por um bloco visual: thumbnail da imagem atual (64x64) + input de URL ao lado
-- Mostra placeholder quando vazio
+**2. Upload de foto ao clicar na imagem**
+- Transformar `FotoPreview` em elemento clicavel com `cursor-pointer` e hover overlay
+- Ao clicar, abrir um `<input type="file" accept="image/*">` hidden via ref
+- Ao selecionar arquivo, usar `URL.createObjectURL()` para preview instantaneo
+- Aplicar tanto na foto do produto pai (80px) quanto nas fotos das variantes (48px)
+- Remover os campos de texto "URL da Foto" e "URL Foto" (a foto agora e alterada pelo clique)
 
-#### 2. Foto em cada variante
-- Adicionar campo de URL de foto + thumbnail pequeno (40x40) na linha de cada variante
-- Por padrao herda a foto do produto pai
+**3. Melhorar campo de Tags**
+- Renomear label de "Tags (virgula)" para "Tags de busca (virgula)"
+- Adicionar placeholder explicativo: "Ex: cereja, cherry, ziggy"
+- Manter comportamento atual de separacao por virgula
 
-#### 3. Campos adicionais sugeridos
-
-**Produto pai:**
-- **Ativo (Switch)** - ligar/desligar produto no catalogo
-- **Destaque (Switch)** - marcar como destaque (ja existe no modelo mas nao no dialog)
-- **Codigo de barras / EAN** - campo texto opcional
-
-**Variante:**
-- **Descricao** - campo ja existe no modelo mas nao aparece no form
-- **Margem calculada** - exibir automaticamente (valorVenda - custo) como texto readonly
-- **Unidade de medida** - select (un, kg, L, ml, g, pct)
-
-#### 4. Layout reorganizado
-- Seção produto pai: foto preview + nome + descrição + switches (ativo/destaque) em grid organizado
-- Seção variantes: cada card com thumbnail + campos em layout mais compacto e completo
+**4. Renomear SKU para EAN na variante**
+- Campo SKU vira EAN com icone de Barcode
+- Atualizar `emptyVariante()` para ter `ean: ""` ao inves de `sku: ""`
 
 ### Arquivos editados
-- `src/components/catalogo/ProdutoDialog.tsx` - reformular layout completo
-- `src/components/catalogo/mockCatalogoData.ts` - adicionar campos `ativo`, `ean` ao tipo `CatalogProduto` e `unidade` ao tipo `CatalogVariante` (se aprovado)
-
-### Resultado
-- Dialog visualmente mais rico com previews de imagem
-- Todos os campos do modelo representados no formulario
-- Informacoes uteis como margem calculada e status ativo/destaque
+- `src/components/catalogo/ProdutoDialog.tsx` - todas as mudancas de UI
+- `src/components/catalogo/mockCatalogoData.ts` - ajustar tipos e dados mock
 
