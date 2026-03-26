@@ -11,7 +11,7 @@ interface VarianteDrawerProps {
 
 export function VarianteDrawer({ produto, quantidade, onAddVariante, onClose }: VarianteDrawerProps) {
   return (
-    <div className="col-span-3 border border-primary/30 bg-secondary/50 rounded-lg p-3 mb-1">
+    <div className="col-span-4 border border-primary/30 bg-secondary/50 rounded-lg p-2 mb-1">
       <div className="flex items-center justify-between mb-2">
         <span className="text-xs font-semibold text-foreground">
           Variantes de {produto.nome}
