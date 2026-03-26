@@ -1,26 +1,32 @@
 
 
-## Detalhamento por forma de pagamento no Caixa
+## Reestruturar AbaResumo: Diário = Caixa, Semanal/Mensal = Gráfico + Top10 + Recebimentos
 
-### O que muda
-Abaixo do grid de 4 cards (Fundo Inicial / Entradas / Saídas / Saldo Esperado), adicionar um botão colapsável "Detalhamento por forma de pagamento" que, ao expandir, mostra 4 mini-cards com os valores acumulados em Dinheiro, PIX, Cartão e QR Code.
+### Mudanças
 
-### Dados
-O `recebimentosPorMetodo` já existe no mock (`mockFinanceiroData.ts`) com `dinheiro`, `pix`, `cartao`, `qrcode`. Basta passá-lo como nova prop para `AbaCaixa`.
+**1. Aba Diário — dados do caixa atual (ou último)**
+- Remover os 4 cards duplicados de Vendas Bruto / Receita Real / Despesas / Resultado (linhas 70-87)
+- Receber `caixa: CaixaState` como nova prop
+- Se caixa aberto: mostrar os MetricCards operacionais (Pedidos, Ticket Médio, Receita, Despesas) referentes ao caixa atual
+- Se caixa fechado: mostrar os mesmos dados mas do último fechamento, com indicação "Último caixa — {data}"
+- Manter Top 10 e Recebimentos por Método abaixo
 
-### Implementação
+**2. Aba Semanal — gráfico por caixa/dia + cards + Top10 + Recebimentos**
+- Manter os 4 cards de totais (Vendas Bruto, Receita Real, Despesas, Resultado)
+- Manter o gráfico de barras (últimos 7 dias)
+- Adicionar abaixo do gráfico: Top 10 Produtos + Recebimentos por Método (mesmo layout do diário, grid 2 colunas)
 
-**`src/components/financeiro/AbaCaixa.tsx`**
-- Adicionar prop `recebimentosPorMetodo: { dinheiro: number; pix: number; cartao: number; qrcode: number }`
-- Adicionar estado `detalhesAberto` (boolean)
-- Entre o grid de cards e os botões Sangria/Reforço, inserir um `Collapsible`:
-  - Trigger: botão ghost com ChevronDown que rotaciona — texto "Detalhamento por forma de pagamento"
-  - Content: grid 2x2 ou 4 colunas com cards para cada método (Dinheiro, PIX, Cartão, QR Code) usando `ValorOculto`
+**3. Aba Mensal — mesma estrutura do semanal**
+- Cards de totais + gráfico 30 dias + Top 10 + Recebimentos abaixo
 
-**`src/pages/Financeiro.tsx`**
-- Passar `recebimentosPorMetodo` como prop para `AbaCaixa`
+**4. Refatorar o loop semanal/mensal**
+- O loop `["semanal", "mensal"].map(...)` já renderiza cards + gráfico; adicionar o bloco de Top 10 + Recebimentos dentro dele (extrair como componente interno ou duplicar o JSX)
+
+### Props
+- Adicionar `caixa: CaixaState` na interface `AbaResumoProps`
+- Atualizar `Financeiro.tsx` para passar `caixa` ao `AbaResumo`
 
 ### Arquivos editados
-- `src/components/financeiro/AbaCaixa.tsx`
+- `src/components/financeiro/AbaResumo.tsx`
 - `src/pages/Financeiro.tsx`
 
