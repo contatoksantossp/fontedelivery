@@ -5,17 +5,24 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { MetricCard } from "@/components/MetricCard";
 import { ValorOculto } from "./ValorOculto";
-import type { CaixaState, VendaDiaria, TopProduto } from "./mockFinanceiroData";
+import type { CaixaState, VendaDiaria, TopProduto, VendaPorHora } from "./mockFinanceiroData";
 import { format } from "date-fns";
+
+type Recebimentos = { dinheiro: number; pix: number; cartao: number; qrcode: number };
 
 interface AbaResumoProps {
   caixa: CaixaState;
   vendasDiarias: VendaDiaria[];
   topProdutos: TopProduto[];
-  recebimentos: { dinheiro: number; pix: number; cartao: number; qrcode: number };
+  recebimentos: Recebimentos;
+  vendasPorHora: VendaPorHora[];
+  topProdutosSemanal: TopProduto[];
+  topProdutosMensal: TopProduto[];
+  recebimentosSemanal: Recebimentos;
+  recebimentosMensal: Recebimentos;
 }
 
-function TopProdutosRecebimentos({ topProdutos, recebimentos }: { topProdutos: TopProduto[]; recebimentos: AbaResumoProps["recebimentos"] }) {
+function TopProdutosRecebimentos({ topProdutos, recebimentos }: { topProdutos: TopProduto[]; recebimentos: Recebimentos }) {
   const totalRecebimentos = recebimentos.dinheiro + recebimentos.pix + recebimentos.cartao + recebimentos.qrcode;
 
   return (
@@ -73,7 +80,10 @@ function TopProdutosRecebimentos({ topProdutos, recebimentos }: { topProdutos: T
   );
 }
 
-export function AbaResumo({ caixa, vendasDiarias, topProdutos, recebimentos }: AbaResumoProps) {
+export function AbaResumo({
+  caixa, vendasDiarias, topProdutos, recebimentos, vendasPorHora,
+  topProdutosSemanal, topProdutosMensal, recebimentosSemanal, recebimentosMensal,
+}: AbaResumoProps) {
   const [periodo, setPeriodo] = useState("diario");
 
   const hoje = vendasDiarias[0];
@@ -107,7 +117,7 @@ export function AbaResumo({ caixa, vendasDiarias, topProdutos, recebimentos }: A
           <TabsTrigger value="mensal">Mensal</TabsTrigger>
         </TabsList>
 
-        {/* Diário — dados do caixa atual ou último */}
+        {/* Diário */}
         <TabsContent value="diario" className="space-y-6 mt-4">
           {!caixaAberto && (
             <div className="flex items-center gap-2 rounded-lg border bg-muted/50 p-3 text-sm text-muted-foreground">
@@ -115,6 +125,28 @@ export function AbaResumo({ caixa, vendasDiarias, topProdutos, recebimentos }: A
               <span>Último caixa — {format(new Date(caixa.ultimoFechamento.data), "dd/MM/yyyy HH:mm")}</span>
             </div>
           )}
+
+          {/* Gráfico por hora ACIMA dos cards */}
+          <div className="rounded-lg border bg-card p-4">
+            <h4 className="font-semibold text-foreground mb-4">Vendas por Hora</h4>
+            <ResponsiveContainer width="100%" height={250}>
+              <BarChart data={vendasPorHora}>
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                <XAxis dataKey="hora" stroke="hsl(var(--muted-foreground))" fontSize={12} />
+                <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "hsl(var(--card))",
+                    border: "1px solid hsl(var(--border))",
+                    borderRadius: "8px",
+                    color: "hsl(var(--foreground))",
+                  }}
+                  formatter={(value: number) => [`R$ ${value.toFixed(2)}`, "Vendas"]}
+                />
+                <Bar dataKey="valor" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} name="Vendas" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <MetricCard icon={ShoppingCart} label="Pedidos" value={String(hoje?.pedidos || 0)} />
@@ -127,9 +159,11 @@ export function AbaResumo({ caixa, vendasDiarias, topProdutos, recebimentos }: A
         </TabsContent>
 
         {/* Semanal & Mensal */}
-        {["semanal", "mensal"].map(p => {
+        {(["semanal", "mensal"] as const).map(p => {
           const totals = p === "semanal" ? semanalTotals : mensalTotals;
           const dados = p === "semanal" ? semanal : mensal;
+          const periodTopProdutos = p === "semanal" ? topProdutosSemanal : topProdutosMensal;
+          const periodRecebimentos = p === "semanal" ? recebimentosSemanal : recebimentosMensal;
           const chartData = dados
             .map(v => ({
               data: v.data.slice(5),
@@ -140,25 +174,7 @@ export function AbaResumo({ caixa, vendasDiarias, topProdutos, recebimentos }: A
 
           return (
             <TabsContent key={p} value={p} className="space-y-6 mt-4">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="rounded-lg border bg-card p-4">
-                  <p className="text-sm text-muted-foreground">Vendas Bruto</p>
-                  <ValorOculto valor={`R$ ${totals.vendasBruto.toFixed(2)}`} className="text-xl" />
-                </div>
-                <div className="rounded-lg border bg-card p-4">
-                  <p className="text-sm text-muted-foreground">Receita Real</p>
-                  <ValorOculto valor={`R$ ${totals.receitaReal.toFixed(2)}`} className="text-xl text-success" />
-                </div>
-                <div className="rounded-lg border bg-card p-4">
-                  <p className="text-sm text-muted-foreground">Despesas</p>
-                  <ValorOculto valor={`R$ ${totals.despesas.toFixed(2)}`} className="text-xl text-destructive" />
-                </div>
-                <div className="rounded-lg border bg-card p-4">
-                  <p className="text-sm text-muted-foreground">Resultado</p>
-                  <ValorOculto valor={`R$ ${totals.resultado.toFixed(2)}`} className="text-xl" />
-                </div>
-              </div>
-
+              {/* Gráfico PRIMEIRO */}
               <div className="rounded-lg border bg-card p-4">
                 <h4 className="font-semibold text-foreground mb-4">
                   {p === "semanal" ? "Últimos 7 dias" : "Últimos 30 dias"}
@@ -182,7 +198,27 @@ export function AbaResumo({ caixa, vendasDiarias, topProdutos, recebimentos }: A
                 </ResponsiveContainer>
               </div>
 
-              <TopProdutosRecebimentos topProdutos={topProdutos} recebimentos={recebimentos} />
+              {/* Cards ABAIXO do gráfico */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="rounded-lg border bg-card p-4">
+                  <p className="text-sm text-muted-foreground">Vendas Bruto</p>
+                  <ValorOculto valor={`R$ ${totals.vendasBruto.toFixed(2)}`} className="text-xl" />
+                </div>
+                <div className="rounded-lg border bg-card p-4">
+                  <p className="text-sm text-muted-foreground">Receita Real</p>
+                  <ValorOculto valor={`R$ ${totals.receitaReal.toFixed(2)}`} className="text-xl text-success" />
+                </div>
+                <div className="rounded-lg border bg-card p-4">
+                  <p className="text-sm text-muted-foreground">Despesas</p>
+                  <ValorOculto valor={`R$ ${totals.despesas.toFixed(2)}`} className="text-xl text-destructive" />
+                </div>
+                <div className="rounded-lg border bg-card p-4">
+                  <p className="text-sm text-muted-foreground">Resultado</p>
+                  <ValorOculto valor={`R$ ${totals.resultado.toFixed(2)}`} className="text-xl" />
+                </div>
+              </div>
+
+              <TopProdutosRecebimentos topProdutos={periodTopProdutos} recebimentos={periodRecebimentos} />
             </TabsContent>
           );
         })}

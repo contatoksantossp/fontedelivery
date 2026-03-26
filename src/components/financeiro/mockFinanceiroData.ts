@@ -180,3 +180,73 @@ export const recebimentosPorMetodo = {
   cartao: 2456.8,
   qrcode: 420.0,
 };
+
+// ---- Vendas por hora (diário) ----
+
+export interface VendaPorHora {
+  hora: string;
+  valor: number;
+}
+
+export const vendasPorHoraMock: VendaPorHora[] = [
+  { hora: "06h", valor: 0 },
+  { hora: "07h", valor: 45 },
+  { hora: "08h", valor: 120 },
+  { hora: "09h", valor: 85 },
+  { hora: "10h", valor: 210 },
+  { hora: "11h", valor: 340 },
+  { hora: "12h", valor: 520 },
+  { hora: "13h", valor: 410 },
+  { hora: "14h", valor: 280 },
+  { hora: "15h", valor: 190 },
+  { hora: "16h", valor: 310 },
+  { hora: "17h", valor: 480 },
+  { hora: "18h", valor: 620 },
+  { hora: "19h", valor: 750 },
+  { hora: "20h", valor: 890 },
+  { hora: "21h", valor: 680 },
+  { hora: "22h", valor: 420 },
+  { hora: "23h", valor: 250 },
+];
+
+// ---- Mocks diferenciados por período ----
+
+export const topProdutosSemanalMock: TopProduto[] = [
+  { nome: "Heineken Lata 350ml", unidades: 312, valorTotal: 2340.0, lucro: 936.0 },
+  { nome: "Brahma Litrão 1L", unidades: 245, valorTotal: 2205.0, lucro: 735.0 },
+  { nome: "Red Bull 473ml", unidades: 156, valorTotal: 2652.0, lucro: 936.0 },
+  { nome: "Absolut Vodka 750ml", unidades: 68, valorTotal: 6119.2, lucro: 2040.0 },
+  { nome: "Coca-Cola 2L", unidades: 198, valorTotal: 2178.0, lucro: 594.0 },
+  { nome: "Gelo 5kg", unidades: 280, valorTotal: 2492.0, lucro: 1400.0 },
+  { nome: "Jack Daniels 1L", unidades: 42, valorTotal: 7982.2, lucro: 1680.0 },
+  { nome: "Smirnoff Ice 275ml", unidades: 134, valorTotal: 1206.0, lucro: 402.0 },
+  { nome: "Carvão Vegetal 8kg", unidades: 89, valorTotal: 3105.1, lucro: 890.0 },
+  { nome: "Doritos 167g", unidades: 102, valorTotal: 1224.0, lucro: 408.0 },
+];
+
+export const topProdutosMensalMock: TopProduto[] = [
+  { nome: "Heineken Lata 350ml", unidades: 1240, valorTotal: 9300.0, lucro: 3720.0 },
+  { nome: "Brahma Litrão 1L", unidades: 980, valorTotal: 8820.0, lucro: 2940.0 },
+  { nome: "Absolut Vodka 750ml", unidades: 285, valorTotal: 25636.5, lucro: 8550.0 },
+  { nome: "Red Bull 473ml", unidades: 620, valorTotal: 10540.0, lucro: 3720.0 },
+  { nome: "Jack Daniels 1L", unidades: 165, valorTotal: 31363.5, lucro: 6600.0 },
+  { nome: "Coca-Cola 2L", unidades: 810, valorTotal: 8910.0, lucro: 2430.0 },
+  { nome: "Gelo 5kg", unidades: 1150, valorTotal: 10235.0, lucro: 5750.0 },
+  { nome: "Smirnoff Ice 275ml", unidades: 540, valorTotal: 4860.0, lucro: 1620.0 },
+  { nome: "Carvão Vegetal 8kg", unidades: 350, valorTotal: 12215.0, lucro: 3500.0 },
+  { nome: "Doritos 167g", unidades: 420, valorTotal: 5040.0, lucro: 1680.0 },
+];
+
+export const recebimentosSemanalMock = {
+  dinheiro: 4820.3,
+  pix: 7560.9,
+  cartao: 9840.5,
+  qrcode: 1680.0,
+};
+
+export const recebimentosMensalMock = {
+  dinheiro: 18950.8,
+  pix: 29840.2,
+  cartao: 38720.6,
+  qrcode: 6520.0,
+};
