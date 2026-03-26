@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
-import { Search, Truck, MapPin, Store, MessageCircle, Smartphone } from "lucide-react";
+import { Search, Truck, MapPin, Store, MessageCircle, Smartphone, UserPlus, Plus } from "lucide-react";
 
 interface AbaIdentificacaoProps {
   canal: CanalVenda;
@@ -31,15 +31,47 @@ export function AbaIdentificacao({
   cliente, setCliente, enderecoId, setEnderecoId, onProximo,
 }: AbaIdentificacaoProps) {
   const [buscaCliente, setBuscaCliente] = useState("");
+  const [novoEnderecoMode, setNovoEnderecoMode] = useState(false);
+  const [novoEndereco, setNovoEndereco] = useState({ rua: "", bairro: "", complemento: "" });
   const showLocalizador = canal === "99food" || canal === "ifood";
 
   const clientesFiltrados = buscaCliente.trim()
-    ? clientesMock.filter(
-        (c) =>
-          c.nome.toLowerCase().includes(buscaCliente.toLowerCase()) ||
-          c.telefone.includes(buscaCliente)
-      )
+    ? clientesMock
+        .filter(
+          (c) =>
+            c.nome.toLowerCase().includes(buscaCliente.toLowerCase()) ||
+            c.telefone.includes(buscaCliente)
+        )
+        .slice(0, 3)
     : [];
+
+  const handleCriarNovoCliente = () => {
+    const nome = buscaCliente.trim() || "Novo Cliente";
+    const novoCliente: Cliente = {
+      id: `c_new_${Date.now()}`,
+      nome,
+      telefone: "",
+      enderecos: [],
+    };
+    clientesMock.push(novoCliente);
+    setCliente(novoCliente);
+    setBuscaCliente("");
+    setNovoEnderecoMode(true);
+  };
+
+  const handleSalvarNovoEndereco = () => {
+    if (!cliente || !novoEndereco.rua.trim()) return;
+    const end: EnderecoCliente = {
+      id: `end_new_${Date.now()}`,
+      rua: novoEndereco.rua.trim(),
+      bairro: novoEndereco.bairro.trim(),
+      complemento: novoEndereco.complemento.trim() || undefined,
+    };
+    cliente.enderecos.push(end);
+    setEnderecoId(end.id);
+    setNovoEnderecoMode(false);
+    setNovoEndereco({ rua: "", bairro: "", complemento: "" });
+  };
 
   return (
     <ScrollArea className="flex-1">
@@ -82,9 +114,9 @@ export function AbaIdentificacao({
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-foreground">{cliente.nome}</p>
-                  <p className="text-[10px] text-muted-foreground">{cliente.telefone}</p>
+                  <p className="text-[10px] text-muted-foreground">{cliente.telefone || "Sem telefone"}</p>
                 </div>
-                <Button variant="ghost" size="sm" className="text-xs h-7" onClick={() => { setCliente(null); setEnderecoId(null); }}>
+                <Button variant="ghost" size="sm" className="text-xs h-7" onClick={() => { setCliente(null); setEnderecoId(null); setNovoEnderecoMode(false); }}>
                   Trocar
                 </Button>
               </div>
@@ -100,23 +132,61 @@ export function AbaIdentificacao({
                   className="pl-7 h-8 text-xs"
                 />
               </div>
-              {clientesFiltrados.length > 0 && (
+              {buscaCliente.trim() && (
                 <div className="mt-1 border border-border rounded-lg overflow-hidden">
                   {clientesFiltrados.map((c) => (
                     <button
                       key={c.id}
                       onClick={() => { setCliente(c); setBuscaCliente(""); }}
-                      className="w-full text-left px-3 py-2 text-xs hover:bg-secondary border-b border-border last:border-b-0"
+                      className="w-full text-left px-3 py-2 text-xs hover:bg-secondary border-b border-border"
                     >
                       <span className="text-foreground">{c.nome}</span>
                       <span className="text-muted-foreground ml-2">{c.telefone}</span>
                     </button>
                   ))}
+                  {/* Criar novo */}
+                  <button
+                    onClick={handleCriarNovoCliente}
+                    className="w-full text-left px-3 py-2 text-xs hover:bg-primary/5 flex items-center gap-1.5 text-primary font-medium"
+                  >
+                    <UserPlus className="h-3.5 w-3.5" />
+                    Criar novo "{buscaCliente.trim()}"
+                  </button>
                 </div>
               )}
             </>
           )}
         </div>
+
+        {/* Novo endereço (após criar cliente sem endereços) */}
+        {novoEnderecoMode && cliente && (
+          <div>
+            <p className="text-xs font-semibold text-muted-foreground mb-1">Cadastrar Endereço</p>
+            <div className="space-y-1.5">
+              <Input
+                placeholder="Rua, número..."
+                value={novoEndereco.rua}
+                onChange={(e) => setNovoEndereco((p) => ({ ...p, rua: e.target.value }))}
+                className="h-8 text-xs"
+              />
+              <Input
+                placeholder="Bairro"
+                value={novoEndereco.bairro}
+                onChange={(e) => setNovoEndereco((p) => ({ ...p, bairro: e.target.value }))}
+                className="h-8 text-xs"
+              />
+              <Input
+                placeholder="Complemento (opcional)"
+                value={novoEndereco.complemento}
+                onChange={(e) => setNovoEndereco((p) => ({ ...p, complemento: e.target.value }))}
+                className="h-8 text-xs"
+              />
+              <Button size="sm" className="w-full h-8 text-xs" onClick={handleSalvarNovoEndereco} disabled={!novoEndereco.rua.trim()}>
+                Salvar Endereço
+              </Button>
+            </div>
+          </div>
+        )}
 
         {/* Modalidade */}
         <div>
@@ -148,25 +218,42 @@ export function AbaIdentificacao({
         </div>
 
         {/* Enderecos */}
-        {modalidade === "entrega" && cliente && cliente.enderecos.length > 0 && (
+        {modalidade === "entrega" && cliente && !novoEnderecoMode && (
           <div>
             <p className="text-xs font-semibold text-muted-foreground mb-1">Endereço</p>
             <div className="space-y-1.5">
-              {cliente.enderecos.map((end) => (
+              {cliente.enderecos.length > 0 ? (
+                <>
+                  {cliente.enderecos.map((end) => (
+                    <button
+                      key={end.id}
+                      onClick={() => setEnderecoId(end.id)}
+                      className={cn(
+                        "w-full text-left rounded-lg border p-2 text-xs transition-colors",
+                        enderecoId === end.id
+                          ? "border-primary bg-primary/5"
+                          : "border-border hover:bg-secondary"
+                      )}
+                    >
+                      <p className="text-foreground">{end.rua}</p>
+                      <p className="text-[10px] text-muted-foreground">{end.bairro}{end.complemento ? ` • ${end.complemento}` : ""}</p>
+                    </button>
+                  ))}
+                  <button
+                    onClick={() => setNovoEnderecoMode(true)}
+                    className="w-full flex items-center justify-center gap-1 rounded-lg border border-dashed border-border p-2 text-xs text-muted-foreground hover:text-foreground hover:border-primary transition-colors"
+                  >
+                    <Plus className="h-3 w-3" /> Novo endereço
+                  </button>
+                </>
+              ) : (
                 <button
-                  key={end.id}
-                  onClick={() => setEnderecoId(end.id)}
-                  className={cn(
-                    "w-full text-left rounded-lg border p-2 text-xs transition-colors",
-                    enderecoId === end.id
-                      ? "border-primary bg-primary/5"
-                      : "border-border hover:bg-secondary"
-                  )}
+                  onClick={() => setNovoEnderecoMode(true)}
+                  className="w-full flex items-center justify-center gap-1 rounded-lg border border-dashed border-border p-2 text-xs text-muted-foreground hover:text-foreground hover:border-primary transition-colors"
                 >
-                  <p className="text-foreground">{end.rua}</p>
-                  <p className="text-[10px] text-muted-foreground">{end.bairro}{end.complemento ? ` • ${end.complemento}` : ""}</p>
+                  <Plus className="h-3 w-3" /> Cadastrar endereço
                 </button>
-              ))}
+              )}
             </div>
           </div>
         )}
