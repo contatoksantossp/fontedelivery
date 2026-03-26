@@ -1,67 +1,53 @@
-import { Produto, Variante } from "./mockPdvData";
+import { Produto } from "./mockPdvData";
 import { cn } from "@/lib/utils";
-import { ChevronDown } from "lucide-react";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { useState } from "react";
+import { Badge } from "@/components/ui/badge";
 
 interface ProdutoCardProps {
   produto: Produto;
   quantidade: number;
-  onAddVariante: (produto: Produto, variante: Variante, qty: number) => void;
+  expanded: boolean;
+  onAddVariante: (produto: Produto, variante: typeof produto.variantes[0], qty: number) => void;
+  onExpand: (produtoId: string) => void;
 }
 
-export function ProdutoCard({ produto, quantidade, onAddVariante }: ProdutoCardProps) {
-  const [open, setOpen] = useState(false);
+export function ProdutoCard({ produto, quantidade, expanded, onAddVariante, onExpand }: ProdutoCardProps) {
   const hasMultipleVariants = produto.variantes.length > 1;
+  const minPrice = Math.min(...produto.variantes.map((v) => v.preco));
 
   const handleClick = () => {
     if (hasMultipleVariants) {
-      setOpen(!open);
+      onExpand(produto.id);
     } else {
       onAddVariante(produto, produto.variantes[0], quantidade);
     }
   };
 
   return (
-    <Collapsible open={open} onOpenChange={setOpen}>
-      <CollapsibleTrigger asChild>
-        <button
-          onClick={handleClick}
-          className={cn(
-            "w-full text-left rounded-lg border border-border bg-card p-3 transition-colors hover:bg-secondary",
-            open && "border-primary"
-          )}
-        >
-          <p className="text-sm font-medium text-foreground truncate">{produto.nome}</p>
-          <div className="flex items-center justify-between mt-1">
-            <span className="text-xs text-primary font-semibold">
-              R$ {produto.preco.toFixed(2)}
-            </span>
-            {hasMultipleVariants && (
-              <ChevronDown className={cn("h-3 w-3 text-muted-foreground transition-transform", open && "rotate-180")} />
-            )}
-          </div>
-          {produto.comboConfig && (
-            <span className="text-[10px] text-warning mt-1 block">
-              Combo {produto.comboConfig.slots} itens • -{produto.comboConfig.desconto}%
-            </span>
-          )}
-        </button>
-      </CollapsibleTrigger>
-      {hasMultipleVariants && (
-        <CollapsibleContent className="mt-1 space-y-1">
-          {produto.variantes.map((v) => (
-            <button
-              key={v.id}
-              onClick={() => onAddVariante(produto, v, quantidade)}
-              className="w-full text-left rounded-md border border-border bg-secondary/50 px-3 py-2 text-xs hover:bg-secondary transition-colors"
-            >
-              <span className="text-foreground">{v.nome}</span>
-              <span className="float-right text-primary font-semibold">R$ {v.preco.toFixed(2)}</span>
-            </button>
-          ))}
-        </CollapsibleContent>
+    <button
+      onClick={handleClick}
+      className={cn(
+        "w-full text-left rounded-lg border border-border bg-card overflow-hidden transition-colors hover:bg-secondary",
+        expanded && "border-primary ring-1 ring-primary/30"
       )}
-    </Collapsible>
+    >
+      <img
+        src={produto.foto || "/placeholder.svg"}
+        alt={produto.nome}
+        className="h-24 w-full object-cover"
+      />
+      <div className="p-2">
+        <p className="text-xs font-medium text-foreground truncate">{produto.nome}</p>
+        <div className="flex items-center justify-between mt-1">
+          <span className="text-[11px] text-primary font-semibold">
+            {hasMultipleVariants ? `a partir de R$ ${minPrice.toFixed(2)}` : `R$ ${minPrice.toFixed(2)}`}
+          </span>
+        </div>
+        {produto.comboConfig && (
+          <Badge variant="outline" className="text-[9px] mt-1 border-warning text-warning px-1 py-0">
+            Combo {produto.comboConfig.slots}x • -{produto.comboConfig.desconto}%
+          </Badge>
+        )}
+      </div>
+    </button>
   );
 }

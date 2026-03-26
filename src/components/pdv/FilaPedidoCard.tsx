@@ -1,7 +1,7 @@
 import { PedidoFila } from "./mockPdvData";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { Clock, Truck, MapPin } from "lucide-react";
+import { Truck, MapPin, Banknote, QrCode, CreditCard } from "lucide-react";
 
 interface FilaPedidoCardProps {
   pedido: PedidoFila;
@@ -9,51 +9,76 @@ interface FilaPedidoCardProps {
   onSelect: (pedido: PedidoFila) => void;
 }
 
-export function FilaPedidoCard({ pedido, selected, onSelect }: FilaPedidoCardProps) {
-  const minutosAtras = Math.floor((Date.now() - pedido.criadoEm.getTime()) / 60000);
+const metodoIconMap: Record<string, typeof Banknote> = {
+  dinheiro: Banknote,
+  pix: QrCode,
+  qr: QrCode,
+  cartao_credito: CreditCard,
+  cartao_debito: CreditCard,
+};
 
-  const canalLabel: Record<string, string> = {
-    balcao: "Balcão",
-    whatsapp: "WhatsApp",
-    "99food": "99Food",
-    ifood: "iFood",
-    app: "App",
-  };
+const canalLabel: Record<string, string> = {
+  balcao: "Balcão",
+  whatsapp: "WhatsApp",
+  "99food": "99Food",
+  ifood: "iFood",
+  app: "App",
+};
+
+export function FilaPedidoCard({ pedido, selected, onSelect }: FilaPedidoCardProps) {
+  // Deduplicate payment icons
+  const paymentIcons = Array.from(
+    new Set(pedido.pagamentos.map((p) => p.metodo))
+  ).map((metodo) => metodoIconMap[metodo]).filter(Boolean);
 
   return (
     <button
       onClick={() => onSelect(pedido)}
       className={cn(
-        "w-full text-left rounded-lg border p-3 transition-colors",
+        "w-full text-left rounded-lg border p-2 transition-colors",
         selected
           ? "border-primary bg-primary/10"
           : "border-border bg-card hover:bg-secondary"
       )}
     >
-      <div className="flex items-center justify-between mb-1">
-        <span className="text-sm font-semibold text-foreground">{pedido.codigo}</span>
+      {/* L1: Código + Canal */}
+      <div className="flex items-center justify-between">
+        <span className="text-xs font-semibold text-foreground">{pedido.codigo}</span>
         <Badge variant="outline" className="text-[10px] px-1.5 py-0">
           {canalLabel[pedido.canal]}
         </Badge>
       </div>
-      <p className="text-xs text-muted-foreground truncate">{pedido.cliente}</p>
-      <div className="flex items-center justify-between mt-2">
-        <div className="flex items-center gap-1 text-muted-foreground">
+
+      {/* L2: Cliente + Modalidade */}
+      <div className="flex items-center justify-between mt-1">
+        <p className="text-[11px] text-muted-foreground truncate flex-1">{pedido.cliente}</p>
+        <div className="flex items-center gap-0.5 text-muted-foreground ml-1">
           {pedido.modalidade === "entrega" ? (
             <Truck className="h-3 w-3" />
           ) : (
             <MapPin className="h-3 w-3" />
           )}
-          <span className="text-[10px]">{pedido.modalidade === "entrega" ? "Entrega" : "Retirada"}</span>
-        </div>
-        <div className="flex items-center gap-1 text-muted-foreground">
-          <Clock className="h-3 w-3" />
-          <span className="text-[10px]">{minutosAtras}min</span>
         </div>
       </div>
-      <p className="text-sm font-bold text-foreground mt-1">
-        R$ {pedido.total.toFixed(2)}
-      </p>
+
+      {/* L3: Endereço (somente entrega) */}
+      {pedido.modalidade === "entrega" && pedido.endereco && (
+        <p className="text-[10px] text-muted-foreground/70 truncate mt-0.5">
+          {pedido.endereco}
+        </p>
+      )}
+
+      {/* L4: Valor + Ícones pagamento */}
+      <div className="flex items-center justify-between mt-1">
+        <span className="text-xs font-bold text-foreground">
+          R$ {pedido.total.toFixed(2)}
+        </span>
+        <div className="flex items-center gap-1">
+          {paymentIcons.map((Icon, idx) => (
+            <Icon key={idx} className="h-3 w-3 text-muted-foreground" />
+          ))}
+        </div>
+      </div>
     </button>
   );
 }
