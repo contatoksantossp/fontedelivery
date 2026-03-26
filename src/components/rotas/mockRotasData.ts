@@ -19,6 +19,7 @@ export interface Parada {
   formaPagamento: string;
   observacoes?: string;
   paradaStatus: ParadaStatus;
+  origem: string;
   baixaRealizada?: boolean;
 }
 
@@ -74,6 +75,7 @@ export const rotasMock: Rota[] = [
           { nome: "Gelo 5kg", qtd: 1, preco: 8.9 },
         ],
         formaPagamento: "PIX",
+        origem: "WhatsApp",
         observacoes: "Ligar ao chegar",
         paradaStatus: "pendente",
       },
@@ -95,6 +97,7 @@ export const rotasMock: Rota[] = [
           { nome: "Gelo 5kg", qtd: 1, preco: 8.9 },
         ],
         formaPagamento: "Cartão Crédito",
+        origem: "iFood",
         paradaStatus: "pendente",
       },
       {
