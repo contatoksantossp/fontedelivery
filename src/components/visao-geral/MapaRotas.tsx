@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useMemo } from "react";
 import L from "leaflet";
 import { Pedido } from "./mockData";
 import { SlotRota } from "./SlotRota";
@@ -20,12 +20,19 @@ interface MapaRotasProps {
   onDespachar: (slotIndex: number) => void;
 }
 
-function createPinIcon(color: string, eligible: boolean) {
+const UNASSIGNED_COLOR = "#9ca3af";
+
+function createPinIcon(color: string, eligible: boolean, orderNum?: number) {
+  const size = orderNum != null ? 22 : 14;
+  const content = orderNum != null
+    ? `<div class="map-pin-numbered ${eligible ? "map-pin-eligible" : ""}" style="background:${color};width:${size}px;height:${size}px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid rgba(255,255,255,0.9);box-shadow:0 1px 4px rgba(0,0,0,0.4);"><span style="color:#fff;font-size:11px;font-weight:700;line-height:1;">${orderNum}</span></div>`
+    : `<div class="map-pin ${eligible ? "map-pin-eligible" : ""}" style="background:${color};color:${color};"></div>`;
+
   return L.divIcon({
     className: "",
-    iconSize: [14, 14],
-    iconAnchor: [7, 7],
-    html: `<div class="map-pin ${eligible ? "map-pin-eligible" : ""}" style="background:${color};color:${color};"></div>`,
+    iconSize: [size, size],
+    iconAnchor: [size / 2, size / 2],
+    html: content,
   });
 }
 
@@ -49,6 +56,18 @@ export function MapaRotas({
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<L.Map | null>(null);
   const markersLayerRef = useRef<L.LayerGroup | null>(null);
+
+  // Build a map: pedidoId -> { orderNum, color }
+  const pedidoOrderMap = useMemo(() => {
+    const map = new Map<string, { orderNum: number; color: string }>();
+    [0, 1].forEach((i) => {
+      const color = entregadorCorPorRota[i] || UNASSIGNED_COLOR;
+      rotasItens[i].forEach((p, idx) => {
+        map.set(p.id, { orderNum: idx + 1, color });
+      });
+    });
+    return map;
+  }, [rotasItens, entregadorCorPorRota]);
 
   useEffect(() => {
     if (!mapContainerRef.current || mapRef.current) return;
@@ -89,12 +108,12 @@ export function MapaRotas({
 
     entregas.forEach((pedido) => {
       const inRota = pedidosNaRota.has(pedido.id);
-      const rotaColor = pedidoCorMap.get(pedido.id);
+      const orderInfo = pedidoOrderMap.get(pedido.id);
       const isEligible = selectionMode && !inRota;
-      const color = rotaColor || (inRota ? "#6b7280" : "#9ca3af");
+      const color = orderInfo?.color || (inRota ? UNASSIGNED_COLOR : "#9ca3af");
 
       const marker = L.marker([pedido.lat, pedido.lng], {
-        icon: createPinIcon(color, isEligible),
+        icon: createPinIcon(color, isEligible, orderInfo?.orderNum),
       });
 
       marker.on("click", () => onMarkerClick(pedido));
@@ -116,7 +135,7 @@ export function MapaRotas({
       const bounds = L.latLngBounds(entregas.map((pedido) => [pedido.lat, pedido.lng] as [number, number]));
       mapRef.current.fitBounds(bounds.pad(0.2));
     }
-  }, [pedidosProntos, pedidosNaRota, pedidoCorMap, selectionMode, onMarkerClick]);
+  }, [pedidosProntos, pedidosNaRota, pedidoOrderMap, selectionMode, onMarkerClick]);
 
   return (
     <div className="flex flex-col h-full gap-3">
