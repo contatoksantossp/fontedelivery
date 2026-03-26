@@ -1,6 +1,6 @@
 import {
   Home, LayoutDashboard, ShoppingCart, Truck, BookOpen, Package,
-  DollarSign, Tag, Users, Settings, LogOut, Flame
+  DollarSign, Tag, Users, Settings, LogOut
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
@@ -30,7 +30,7 @@ export function AppSidebar() {
   return (
     <Sidebar collapsible="icon" className="border-r border-sidebar-border">
       <div className="flex h-14 items-center gap-2 border-b border-sidebar-border px-4">
-        <Flame className="h-6 w-6 text-primary shrink-0" />
+        <span className="h-6 w-6 flex items-center justify-center text-primary font-extrabold text-xl leading-none shrink-0">F</span>
         {!collapsed && (
           <span className="font-display font-bold text-foreground text-sm whitespace-nowrap">
             A Fonte Delivery
