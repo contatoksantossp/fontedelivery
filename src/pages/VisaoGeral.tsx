@@ -7,7 +7,9 @@ import { MapaRotas } from "@/components/visao-geral/MapaRotas";
 import { SlotRotaExpanded } from "@/components/visao-geral/SlotRota";
 import { useSidebar } from "@/components/ui/sidebar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Truck, MapPin } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Truck, MapPin, Plus } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function VisaoGeral() {
   const [pedidos, setPedidos] = useState<Pedido[]>(pedidosMock);
@@ -16,6 +18,7 @@ export default function VisaoGeral() {
   const [rotasItens, setRotasItens] = useState<[Pedido[], Pedido[]]>([[], []]);
   const [entregadorPorRota, setEntregadorPorRota] = useState<[string | null, string | null]>([null, null]);
   const { setOpen } = useSidebar();
+  const navigate = useNavigate();
 
   useEffect(() => {
     setOpen(false);
@@ -127,6 +130,18 @@ export default function VisaoGeral() {
           count={pendentes.length}
           className="w-1/2 h-full"
         >
+          {pendentes.length === 0 && (
+            <p className="text-xs text-muted-foreground text-center py-4">Nenhum pedido pendente</p>
+          )}
+          <Button
+            variant="outline"
+            size="sm"
+            className="w-full gap-1.5 border-dashed"
+            onClick={() => navigate("/pdv")}
+          >
+            <Plus className="h-3.5 w-3.5" />
+            Novo Pedido
+          </Button>
           {pendentes.map((p) => (
             <PedidoCard
               key={p.id}
