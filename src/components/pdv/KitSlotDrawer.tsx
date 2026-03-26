@@ -84,7 +84,7 @@ export function KitSlotDrawer({
           )}
 
           {/* Product grid */}
-          <ScrollArea className="max-h-[200px]">
+          <ScrollArea className="max-h-[400px]">
             <div className="grid grid-cols-4 gap-2">
               {produtos.map((p) => {
                 const hasMultiple = p.variantes.length > 1;
@@ -121,7 +121,7 @@ export function KitSlotDrawer({
 
                     {/* Inline variante sub-drawer */}
                     {isExpanded && (
-                      <div className="col-span-3 border border-primary/30 bg-secondary/50 rounded-lg p-2 mb-1">
+                      <div className="col-span-4 border border-primary/30 bg-secondary/50 rounded-lg p-2 mb-1">
                         <div className="flex items-center justify-between mb-1.5">
                           <span className="text-[10px] font-semibold text-foreground">
                             Variantes de {p.nome}
