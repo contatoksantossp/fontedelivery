@@ -32,6 +32,7 @@ interface SlotRotaProps {
   entregadorCor?: string | null;
   selectedEntregadorId?: string | null;
   onSelectEntregador?: (entregadorId: string) => void;
+  onDespachar?: (slotIndex: number) => void;
 }
 
 function SortableItem({ pedido, onRemove }: { pedido: Pedido; onRemove: (id: string) => void }) {
@@ -64,8 +65,11 @@ const veiculoIcon = (v: string) => {
   return <Bike className="h-3 w-3" />;
 };
 
-export function SlotRota({ slotIndex, rotaItens, expanded, onExpand, entregadorCor }: SlotRotaProps) {
+export function SlotRota({ slotIndex, rotaItens, expanded, onExpand, entregadorCor, selectedEntregadorId, onDespachar }: SlotRotaProps) {
   if (expanded) return null;
+
+  const hasItens = rotaItens.length > 0;
+  const canDespachar = hasItens && !!selectedEntregadorId;
 
   return (
     <div
@@ -75,15 +79,32 @@ export function SlotRota({ slotIndex, rotaItens, expanded, onExpand, entregadorC
     >
       <div className="flex items-center justify-between mb-2">
         <h4 className="text-xs font-display font-semibold text-foreground uppercase tracking-wider">
-          Rota {slotIndex + 1}
+          {selectedEntregadorId
+            ? `Rota do ${entregadoresMock.find((e) => e.id === selectedEntregadorId)?.nome ?? "Entregador"}`
+            : `Rota ${slotIndex + 1}`}
         </h4>
-        {rotaItens.length > 0 && (
-          <span className="text-[10px] font-bold bg-primary/15 text-primary px-1.5 py-0.5 rounded-full">
-            {rotaItens.length}
-          </span>
-        )}
+        <div className="flex items-center gap-1.5">
+          {hasItens && (
+            <span className="text-[10px] font-bold bg-primary/15 text-primary px-1.5 py-0.5 rounded-full">
+              {rotaItens.length}
+            </span>
+          )}
+          {canDespachar && (
+            <Button
+              size="sm"
+              className="h-6 px-2 text-[10px] gap-1"
+              onClick={(e) => {
+                e.stopPropagation();
+                onDespachar?.(slotIndex);
+              }}
+            >
+              <Send className="h-3 w-3" />
+              Despachar
+            </Button>
+          )}
+        </div>
       </div>
-      {rotaItens.length > 0 ? (
+      {hasItens ? (
         <div className="space-y-1">
           {rotaItens.map((p) => (
             <p key={p.id} className="text-xs text-muted-foreground truncate">
