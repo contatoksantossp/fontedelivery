@@ -24,7 +24,7 @@ export function FilaPedidos({ pedidos, selectedId, onSelect }: FilaPedidosProps)
       <div className="p-3 border-b border-border space-y-2">
         <div className="flex items-center gap-2">
           <ClipboardList className="h-4 w-4 text-primary" />
-          <h2 className="text-sm font-semibold text-foreground">Fila de Pedidos</h2>
+          <h2 className="text-sm font-semibold text-foreground">Pedidos em Rascunho</h2>
           <span className="ml-auto text-xs text-muted-foreground">{pedidosFiltrados.length}</span>
         </div>
         <Button size="sm" className="w-full gap-1.5 text-xs">
