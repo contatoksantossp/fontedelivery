@@ -13,10 +13,11 @@ function createPinIcon(color: string, index: number, clientName: string) {
   return L.divIcon({
     className: "",
     iconSize: [0, 0],
-    iconAnchor: [12, 12],
-    html: `<div style="display:flex;align-items:center;gap:4px;white-space:nowrap;">
-      <div style="width:24px;height:24px;border-radius:50%;background:${color};border:2px solid white;box-shadow:0 2px 6px rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;">${index}</div>
-      <span style="font-size:10px;font-weight:600;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,0.8);max-width:100px;overflow:hidden;text-overflow:ellipsis;">${clientName}</span>
+    iconAnchor: [14, 52],
+    html: `<div style="display:flex;flex-direction:column;align-items:center;gap:0;pointer-events:auto;">
+      <div style="background:rgba(0,0,0,0.75);color:#fff;font-size:9px;font-weight:600;padding:2px 6px;border-radius:4px;white-space:nowrap;max-width:110px;overflow:hidden;text-overflow:ellipsis;line-height:1.3;margin-bottom:2px;">${clientName}</div>
+      <div style="width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-top:4px solid rgba(0,0,0,0.75);margin-bottom:2px;"></div>
+      <div style="width:28px;height:28px;border-radius:50%;background:${color};border:2.5px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;">${index}</div>
     </div>`,
   });
 }
