@@ -1,6 +1,5 @@
 import { Produto } from "./mockPdvData";
 import { cn } from "@/lib/utils";
-import { Badge } from "@/components/ui/badge";
 
 interface ProdutoCardProps {
   produto: Produto;
