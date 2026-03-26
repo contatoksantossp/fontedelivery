@@ -43,6 +43,7 @@ export function MapaRotas({
   entregadorCorPorRota,
   selectedEntregador,
   onSelectEntregador,
+  onDespachar,
 }: MapaRotasProps) {
   const pedidosNaRota = new Set(rotasItens.flat().map((p) => p.id));
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
@@ -137,6 +138,7 @@ export function MapaRotas({
             entregadorCor={entregadorCorPorRota[i]}
             selectedEntregadorId={selectedEntregador[i]}
             onSelectEntregador={(id) => onSelectEntregador(i, id)}
+            onDespachar={onDespachar}
           />
         ))}
       </div>
