@@ -136,7 +136,9 @@ export function SlotRotaExpanded({
             <div className="w-3 h-3 rounded-full" style={{ backgroundColor: entregadorCor }} />
           )}
           <h3 className="text-sm font-display font-bold text-foreground">
-            Montar Rota {slotIndex + 1}
+            {selectedEntregadorId
+              ? `Rota do ${entregadoresMock.find((e) => e.id === selectedEntregadorId)?.nome ?? "Entregador"}`
+              : `Montar Rota ${slotIndex + 1}`}
           </h3>
         </div>
         <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onCollapse}>
