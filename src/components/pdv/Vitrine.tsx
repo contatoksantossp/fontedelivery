@@ -1,6 +1,7 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, Fragment } from "react";
 import { categoriasMock, produtosMock, Produto, Variante } from "./mockPdvData";
 import { ProdutoCard } from "./ProdutoCard";
+import { VarianteDrawer } from "./VarianteDrawer";
 import { ComboSlots } from "./ComboSlots";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -17,6 +18,7 @@ export function Vitrine({ onAddItem }: VitrineProps) {
   const [quantidade, setQuantidade] = useState(1);
   const [categoriaId, setCategoriaId] = useState<string | null>(null);
   const [subcategoriaId, setSubcategoriaId] = useState<string | null>(null);
+  const [expandedProductId, setExpandedProductId] = useState<string | null>(null);
   const [comboSlots, setComboSlots] = useState<Array<{ produto: Produto; variante: Variante } | null>>([]);
   const [activeCombo, setActiveCombo] = useState<{ slots: number; desconto: number } | null>(null);
 
@@ -35,7 +37,14 @@ export function Vitrine({ onAddItem }: VitrineProps) {
     return lista;
   }, [categoriaId, subcategoriaId, busca]);
 
+  const handleExpand = (produtoId: string) => {
+    setExpandedProductId((prev) => (prev === produtoId ? null : produtoId));
+  };
+
   const handleAddVariante = (produto: Produto, variante: Variante, qty: number) => {
+    // Close drawer after adding
+    setExpandedProductId(null);
+
     // Check if we're filling combo slots
     if (activeCombo) {
       const emptyIdx = comboSlots.findIndex((s) => s === null);
@@ -44,7 +53,6 @@ export function Vitrine({ onAddItem }: VitrineProps) {
         newSlots[emptyIdx] = { produto, variante };
         setComboSlots(newSlots);
 
-        // If all slots filled, add all as combo items
         if (newSlots.every(Boolean)) {
           newSlots.forEach((slot) => {
             if (slot) onAddItem(slot.produto, slot.variante, 1);
@@ -78,6 +86,22 @@ export function Vitrine({ onAddItem }: VitrineProps) {
     }
   };
 
+  // Build grid items with inline drawers
+  const gridItems: Array<{ type: "product"; produto: Produto } | { type: "drawer"; produto: Produto }> = [];
+  const cols = 3;
+  for (let i = 0; i < produtosFiltrados.length; i++) {
+    const p = produtosFiltrados[i];
+    gridItems.push({ type: "product", produto: p });
+
+    // If this product is expanded, insert drawer after current row
+    if (expandedProductId === p.id) {
+      // Fill remaining cols in this row with nothing — drawer goes next
+      const posInRow = gridItems.filter((g) => g.type === "product").length;
+      // We just need to insert the drawer; CSS col-span-3 handles positioning
+      gridItems.push({ type: "drawer", produto: p });
+    }
+  }
+
   return (
     <div className="flex flex-col h-full">
       {/* Search + qty */}
@@ -110,68 +134,84 @@ export function Vitrine({ onAddItem }: VitrineProps) {
         </div>
       </div>
 
-      {/* Category pills */}
+      {/* Category cards */}
       <div className="px-3 pt-2 flex gap-2 overflow-x-auto">
         <button
-          onClick={() => { setCategoriaId(null); setSubcategoriaId(null); }}
+          onClick={() => { setCategoriaId(null); setSubcategoriaId(null); setExpandedProductId(null); }}
           className={cn(
-            "rounded-full px-3 py-1 text-xs whitespace-nowrap transition-colors",
-            !categoriaId ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:text-foreground"
+            "flex-shrink-0 flex flex-col items-center w-16 rounded-lg border p-1.5 transition-colors",
+            !categoriaId ? "border-primary bg-primary/10" : "border-border bg-card hover:bg-secondary"
           )}
         >
-          Todos
+          <div className="h-10 w-full rounded bg-muted flex items-center justify-center">
+            <span className="text-[10px] text-muted-foreground">✦</span>
+          </div>
+          <span className="text-[10px] font-medium text-foreground mt-1 truncate w-full text-center">Todos</span>
         </button>
         {categoriasMock.map((cat) => (
           <button
             key={cat.id}
-            onClick={() => { setCategoriaId(cat.id); setSubcategoriaId(null); }}
+            onClick={() => { setCategoriaId(cat.id); setSubcategoriaId(null); setExpandedProductId(null); }}
             className={cn(
-              "rounded-full px-3 py-1 text-xs whitespace-nowrap transition-colors",
-              categoriaId === cat.id ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:text-foreground"
+              "flex-shrink-0 flex flex-col items-center w-16 rounded-lg border p-1.5 transition-colors",
+              categoriaId === cat.id ? "border-primary bg-primary/10" : "border-border bg-card hover:bg-secondary"
             )}
           >
-            {cat.nome}
+            <img src={cat.foto || "/placeholder.svg"} alt={cat.nome} className="h-10 w-full rounded object-cover" />
+            <span className="text-[10px] font-medium text-foreground mt-1 truncate w-full text-center">{cat.nome}</span>
           </button>
         ))}
       </div>
 
-      {/* Subcategory pills */}
+      {/* Subcategory pills with photo */}
       {categoriaSelecionada && (
         <div className="px-3 pt-1.5 flex gap-2 overflow-x-auto">
           <button
-            onClick={() => setSubcategoriaId(null)}
+            onClick={() => { setSubcategoriaId(null); setExpandedProductId(null); }}
             className={cn(
-              "rounded-full px-2.5 py-0.5 text-[10px] whitespace-nowrap border transition-colors",
-              !subcategoriaId ? "border-primary text-primary" : "border-border text-muted-foreground hover:text-foreground"
+              "flex-shrink-0 flex items-center gap-1.5 rounded-full px-3 py-1 border transition-colors",
+              !subcategoriaId ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground hover:text-foreground"
             )}
           >
-            Todos
+            <span className="text-[11px] font-medium">Todos</span>
           </button>
           {categoriaSelecionada.subcategorias.map((sub) => (
             <button
               key={sub.id}
-              onClick={() => setSubcategoriaId(sub.id)}
+              onClick={() => { setSubcategoriaId(sub.id); setExpandedProductId(null); }}
               className={cn(
-                "rounded-full px-2.5 py-0.5 text-[10px] whitespace-nowrap border transition-colors",
-                subcategoriaId === sub.id ? "border-primary text-primary" : "border-border text-muted-foreground hover:text-foreground"
+                "flex-shrink-0 flex items-center gap-1.5 rounded-full px-2 py-0.5 border transition-colors",
+                subcategoriaId === sub.id ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground hover:text-foreground"
               )}
             >
-              {sub.nome}
+              <img src={sub.foto || "/placeholder.svg"} alt={sub.nome} className="h-6 w-6 rounded-full object-cover" />
+              <span className="text-[11px] font-medium whitespace-nowrap">{sub.nome}</span>
             </button>
           ))}
         </div>
       )}
 
-      {/* Product grid */}
+      {/* Product grid with inline variant drawers */}
       <ScrollArea className="flex-1 p-3">
         <div className="grid grid-cols-3 gap-2">
           {produtosFiltrados.map((p) => (
-            <ProdutoCard
-              key={p.id}
-              produto={p}
-              quantidade={quantidade}
-              onAddVariante={handleAddVariante}
-            />
+            <Fragment key={p.id}>
+              <ProdutoCard
+                produto={p}
+                quantidade={quantidade}
+                expanded={expandedProductId === p.id}
+                onAddVariante={handleAddVariante}
+                onExpand={handleExpand}
+              />
+              {expandedProductId === p.id && (
+                <VarianteDrawer
+                  produto={p}
+                  quantidade={quantidade}
+                  onAddVariante={handleAddVariante}
+                  onClose={() => setExpandedProductId(null)}
+                />
+              )}
+            </Fragment>
           ))}
         </div>
         {produtosFiltrados.length === 0 && (
