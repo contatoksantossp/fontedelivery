@@ -1,41 +1,38 @@
 
 
-## Redesign do Catalogo para visual estilo PDV
+## Redesign da visualizacao de produtos no Catalogo
 
-### Objetivo
-Reduzir os cards de categoria/subcategoria, exibir produtos em grid com cards compactos (como o PDV), e adicionar barra de busca no topo. Fluxo visual: Categoria > Subcategoria > Produtos em grid.
+### O que muda
 
-### Mudancas
+**1. Cards de Categoria maiores** (`CategoriaCard.tsx`)
+- Container: `w-20` → `w-24`
+- Imagem: `h-14 w-14` → `h-16 w-16`
+- Texto: `text-[10px]` → `text-[11px]`
+- Botoes de hover tambem ligeiramente maiores
 
-**1. Barra de busca no topo (como Vitrine.tsx)**
-- Adicionar estado `busca` no `Catalogo.tsx`
-- Renderizar input com icone Search acima das categorias
-- Filtrar produtos pelo nome, descricao ou tags das variantes
+**2. Produto em lista vertical** (`ProdutoPaiCard.tsx`)
+- Redesign completo: de card com imagem aspect-square para linha horizontal compacta
+- Linha fechada: imagem 48x48 a esquerda + nome + preco minimo a direita + chevron
+- Estrela de destaque visivel na linha fechada (ao lado do nome)
+- Ao expandir: area abaixo com descricao, botoes de acao (estrela toggle, editar, excluir), e variantes em scroll horizontal
+- Toda funcionalidade CRUD mantida
 
-**2. CategoriaCard compacto (estilo PDV: w-20, imagem 10x10, texto 10px)**
-- Reduzir de `min-w-[200px]` com imagem h-24 para `w-20` com imagem `h-10`
-- Layout: coluna vertical, imagem pequena + nome truncado abaixo
-- Botoes edit/delete: mostrar apenas no hover com overlay ou dropdown
-- Badge "Inativo" vira um dot/indicador sutil
+```text
+┌──────────────────────────────────────────────┐
+│ [img48] Nome do Produto    ★   R$ X,XX    ▼ │
+├──────────────────────────────────────────────┤
+│ Descricao do produto...    [★] [✎] [🗑]     │
+│ Variantes (3):                                │
+│ [var1] [var2] [var3] ──────────────────────>  │
+└──────────────────────────────────────────────┘
+```
 
-**3. SubcategoriaCard compacto (estilo pilulas do PDV)**
-- Reduzir de `min-w-[160px]` com gap-3 para pilula compacta: `px-2 py-0.5`
-- Imagem `h-6 w-6` rounded-full + texto `text-[11px]`
-- Botoes edit/delete: aparecem no hover
-
-**4. ProdutoPaiCard em grid (estilo ProdutoCard do PDV)**
-- Trocar layout de lista vertical (imagem 80x80 + texto ao lado) para grid de cards
-- Card: imagem aspect-square no topo + nome + preco minimo abaixo
-- Grid de 4-5 colunas
-- Ao clicar no card, expande inline mostrando variantes + botoes edit/delete/destaque
-- Manter funcionalidade CRUD existente
-
-**5. Botoes "Nova Categoria/Subcategoria/Produto"**
-- Manter como botoes pequenos ao lado dos titulos de secao
+**3. Layout no Catalogo.tsx**
+- Trocar `grid grid-cols-2 sm:grid-cols-3...gap-3` por `flex flex-col gap-2`
+- Produtos agora empilham verticalmente como uma lista
 
 ### Arquivos editados
-- `src/components/catalogo/CategoriaCard.tsx` - redesign compacto
-- `src/components/catalogo/SubcategoriaCard.tsx` - redesign pilula
-- `src/components/catalogo/ProdutoPaiCard.tsx` - redesign grid card com expansao
-- `src/pages/Catalogo.tsx` - adicionar busca, mudar layout para grid nos produtos
+- `src/components/catalogo/CategoriaCard.tsx` — dimensoes maiores
+- `src/components/catalogo/ProdutoPaiCard.tsx` — redesign para linha horizontal com expansao
+- `src/pages/Catalogo.tsx` — grid → lista vertical (linha 212)
 
