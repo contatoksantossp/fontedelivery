@@ -33,7 +33,7 @@ export function AppSidebar() {
         <span className="h-6 w-6 flex items-center justify-center text-primary font-extrabold text-xl leading-none shrink-0">F</span>
         {!collapsed && (
           <span className="font-display font-bold text-foreground text-sm whitespace-nowrap">
-            A Fonte Delivery
+            Fonte Delivery
           </span>
         )}
       </div>
