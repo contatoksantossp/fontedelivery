@@ -262,7 +262,7 @@ function ParadaAcertoItem({
             {desconto > 0 && (
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Desconto</span>
-                <span className="text-green-500">-R$ {desconto.toFixed(2)}</span>
+                <span className="text-accent-foreground">-R$ {desconto.toFixed(2)}</span>
               </div>
             )}
             {taxa > 0 && (
