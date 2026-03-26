@@ -32,10 +32,17 @@ export interface Entregador {
   cor: string;
 }
 
+export interface ItemCompra {
+  nome: string;
+  qtd: number;
+  valorUnit: number;
+}
+
 export interface HistoricoCompra {
   data: string;
   descricao: string;
   valor: number;
+  itens: ItemCompra[];
 }
 
 export interface Fornecedor {
@@ -173,9 +180,20 @@ export const fornecedoresMock: Fornecedor[] = [
     telefone: "(11) 3456-7890",
     endereco: "Av. Industrial, 3000 — Santo André/SP",
     historico: [
-      { data: "2025-03-10", descricao: "Cervejas — lote mensal", valor: 12500.0 },
-      { data: "2025-02-08", descricao: "Cervejas + destilados", valor: 18200.0 },
-      { data: "2025-01-12", descricao: "Cervejas — lote mensal", valor: 11800.0 },
+      { data: "2025-03-10", descricao: "Cervejas — lote mensal", valor: 12500.0, itens: [
+        { nome: "Cerveja Pilsen 600ml", qtd: 200, valorUnit: 4.5 },
+        { nome: "Cerveja IPA 355ml", qtd: 100, valorUnit: 8.5 },
+        { nome: "Cerveja Weiss 500ml", qtd: 80, valorUnit: 7.0 },
+      ]},
+      { data: "2025-02-08", descricao: "Cervejas + destilados", valor: 18200.0, itens: [
+        { nome: "Cerveja Pilsen 600ml", qtd: 300, valorUnit: 4.5 },
+        { nome: "Vodka 1L", qtd: 50, valorUnit: 35.0 },
+        { nome: "Whisky 750ml", qtd: 30, valorUnit: 89.0 },
+      ]},
+      { data: "2025-01-12", descricao: "Cervejas — lote mensal", valor: 11800.0, itens: [
+        { nome: "Cerveja Pilsen 600ml", qtd: 250, valorUnit: 4.5 },
+        { nome: "Cerveja Lager 350ml", qtd: 150, valorUnit: 3.8 },
+      ]},
     ],
   },
   {
@@ -187,8 +205,13 @@ export const fornecedoresMock: Fornecedor[] = [
     telefone: "(11) 2345-6789",
     endereco: "Rua do Gelo, 55 — Osasco/SP",
     historico: [
-      { data: "2025-03-15", descricao: "Gelo em sacos 5kg e 10kg", valor: 3200.0 },
-      { data: "2025-02-14", descricao: "Gelo em sacos 5kg", valor: 2100.0 },
+      { data: "2025-03-15", descricao: "Gelo em sacos 5kg e 10kg", valor: 3200.0, itens: [
+        { nome: "Gelo saco 5kg", qtd: 200, valorUnit: 8.0 },
+        { nome: "Gelo saco 10kg", qtd: 80, valorUnit: 20.0 },
+      ]},
+      { data: "2025-02-14", descricao: "Gelo em sacos 5kg", valor: 2100.0, itens: [
+        { nome: "Gelo saco 5kg", qtd: 260, valorUnit: 8.0 },
+      ]},
     ],
   },
   {
@@ -200,9 +223,18 @@ export const fornecedoresMock: Fornecedor[] = [
     telefone: "(31) 3456-1234",
     endereco: "Rod. BR-040, km 52 — Sete Lagoas/MG",
     historico: [
-      { data: "2025-03-01", descricao: "Carvão vegetal 4kg e 8kg", valor: 5600.0 },
-      { data: "2025-01-20", descricao: "Carvão vegetal 4kg", valor: 3400.0 },
-      { data: "2024-12-05", descricao: "Carvão vegetal — lote grande", valor: 8900.0 },
+      { data: "2025-03-01", descricao: "Carvão vegetal 4kg e 8kg", valor: 5600.0, itens: [
+        { nome: "Carvão vegetal 4kg", qtd: 300, valorUnit: 12.0 },
+        { nome: "Carvão vegetal 8kg", qtd: 100, valorUnit: 20.0 },
+      ]},
+      { data: "2025-01-20", descricao: "Carvão vegetal 4kg", valor: 3400.0, itens: [
+        { nome: "Carvão vegetal 4kg", qtd: 280, valorUnit: 12.0 },
+      ]},
+      { data: "2024-12-05", descricao: "Carvão vegetal — lote grande", valor: 8900.0, itens: [
+        { nome: "Carvão vegetal 4kg", qtd: 400, valorUnit: 12.0 },
+        { nome: "Carvão vegetal 8kg", qtd: 200, valorUnit: 20.0 },
+        { nome: "Acendedor 500ml", qtd: 50, valorUnit: 6.0 },
+      ]},
     ],
   },
   {
@@ -214,7 +246,11 @@ export const fornecedoresMock: Fornecedor[] = [
     telefone: "(11) 4567-8901",
     endereco: "Rua dos Alimentos, 800 — Guarulhos/SP",
     historico: [
-      { data: "2025-03-18", descricao: "Salgadinhos e petiscos diversos", valor: 4200.0 },
+      { data: "2025-03-18", descricao: "Salgadinhos e petiscos diversos", valor: 4200.0, itens: [
+        { nome: "Batata chips 100g", qtd: 200, valorUnit: 5.0 },
+        { nome: "Amendoim 500g", qtd: 100, valorUnit: 8.0 },
+        { nome: "Salaminho 250g", qtd: 80, valorUnit: 15.0 },
+      ]},
     ],
   },
 ];
