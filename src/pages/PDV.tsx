@@ -155,7 +155,7 @@ export default function PDV() {
 
       {/* Col 2 — Vitrine (50%) */}
       <div className="w-[50%] border-r border-border flex flex-col overflow-hidden">
-        <Vitrine onAddItem={handleAddItem} />
+        <Vitrine onAddItem={handleAddItem} onUpdateItemPrice={handleUpdateItemPrice} />
       </div>
 
       {/* Col 3 — Carrinho (30%) */}
