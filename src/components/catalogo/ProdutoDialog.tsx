@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Trash2, Plus, ImageIcon, Star, Barcode } from "lucide-react";
+import { Trash2, Plus, ImageIcon, Star, Barcode, Upload } from "lucide-react";
 import type { CatalogProduto, CatalogVariante, UnidadeMedida } from "./mockCatalogoData";
 
 interface Props {
@@ -24,7 +24,7 @@ interface VarianteForm {
   descricao: string;
   foto: string;
   tags: string;
-  sku: string;
+  ean: string;
   custo: number;
   valorVenda: number;
   estoqueMinimo: number;
@@ -33,7 +33,7 @@ interface VarianteForm {
 
 const emptyVariante = (): VarianteForm => ({
   id: crypto.randomUUID(), nome: "", descricao: "", foto: "",
-  tags: "", sku: "", custo: 0, valorVenda: 0, estoqueMinimo: 0, unidade: "un",
+  tags: "", ean: "", custo: 0, valorVenda: 0, estoqueMinimo: 0, unidade: "un",
 });
 
 const unidades: { value: UnidadeMedida; label: string }[] = [
@@ -45,28 +45,44 @@ const unidades: { value: UnidadeMedida; label: string }[] = [
   { value: "pct", label: "Pacote" },
 ];
 
-function FotoPreview({ src, size = 64 }: { src: string; size?: number }) {
+function ClickablePhoto({ src, size = 64, onFileSelect }: { src: string; size?: number; onFileSelect: (url: string) => void }) {
   const [error, setError] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
   useEffect(() => { setError(false); }, [src]);
 
-  if (!src || error) {
-    return (
-      <div
-        className="rounded-lg border border-dashed border-border bg-muted flex items-center justify-center shrink-0"
+  const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const url = URL.createObjectURL(file);
+      onFileSelect(url);
+    }
+    e.target.value = "";
+  };
+
+  return (
+    <>
+      <input ref={inputRef} type="file" accept="image/*" className="hidden" onChange={handleFile} />
+      <button
+        type="button"
+        onClick={() => inputRef.current?.click()}
+        className="rounded-lg border border-border bg-muted flex items-center justify-center shrink-0 relative group cursor-pointer overflow-hidden hover:ring-2 hover:ring-primary/40 transition-all"
         style={{ width: size, height: size }}
       >
-        <ImageIcon className="h-5 w-5 text-muted-foreground" />
-      </div>
-    );
-  }
-  return (
-    <img
-      src={src}
-      alt="Preview"
-      className="rounded-lg border border-border object-cover shrink-0 bg-muted"
-      style={{ width: size, height: size }}
-      onError={() => setError(true)}
-    />
+        {!src || error ? (
+          <ImageIcon className="h-5 w-5 text-muted-foreground" />
+        ) : (
+          <img
+            src={src}
+            alt="Preview"
+            className="w-full h-full object-cover"
+            onError={() => setError(true)}
+          />
+        )}
+        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+          <Upload className="h-4 w-4 text-white" />
+        </div>
+      </button>
+    </>
   );
 }
 
@@ -76,7 +92,6 @@ export function ProdutoDialog({ open, onClose, onSave, editProduto, editVariante
   const [foto, setFoto] = useState("/placeholder.svg");
   const [ativo, setAtivo] = useState(true);
   const [destaque, setDestaque] = useState(false);
-  const [ean, setEan] = useState("");
   const [variantes, setVariantes] = useState<VarianteForm[]>([emptyVariante()]);
 
   useEffect(() => {
@@ -86,7 +101,6 @@ export function ProdutoDialog({ open, onClose, onSave, editProduto, editVariante
       setFoto(editProduto.foto);
       setAtivo(editProduto.ativo);
       setDestaque(editProduto.destaque);
-      setEan(editProduto.ean);
       setVariantes(
         (editVariantes || []).map((v) => ({
           ...v, tags: v.tags.join(", "),
@@ -94,7 +108,7 @@ export function ProdutoDialog({ open, onClose, onSave, editProduto, editVariante
       );
     } else {
       setNome(""); setDescricao(""); setFoto("/placeholder.svg");
-      setAtivo(true); setDestaque(false); setEan("");
+      setAtivo(true); setDestaque(false);
       setVariantes([emptyVariante()]);
     }
   }, [editProduto, editVariantes, open]);
@@ -106,7 +120,7 @@ export function ProdutoDialog({ open, onClose, onSave, editProduto, editVariante
   const handleSave = () => {
     const produto: CatalogProduto = {
       id: editProduto?.id || crypto.randomUUID(),
-      nome, descricao, foto, destaque, ativo, ean,
+      nome, descricao, foto, destaque, ativo,
       subcategoriaId: editProduto?.subcategoriaId || subcategoriaId,
       categoriaId: editProduto?.categoriaId || categoriaId,
     };
@@ -114,7 +128,7 @@ export function ProdutoDialog({ open, onClose, onSave, editProduto, editVariante
       id: v.id, nome: v.nome, descricao: v.descricao,
       foto: v.foto || foto,
       tags: v.tags.split(",").map(t => t.trim()).filter(Boolean),
-      sku: v.sku, custo: v.custo, valorVenda: v.valorVenda,
+      ean: v.ean, custo: v.custo, valorVenda: v.valorVenda,
       estoqueMinimo: v.estoqueMinimo, unidade: v.unidade, produtoId: produto.id,
     }));
     onSave(produto, vars);
@@ -132,45 +146,29 @@ export function ProdutoDialog({ open, onClose, onSave, editProduto, editVariante
         <div className="space-y-5">
           {/* === Produto Pai === */}
           <div className="space-y-4">
-            {/* Foto + Nome */}
             <div className="flex gap-4">
-              <FotoPreview src={foto} size={80} />
+              <ClickablePhoto src={foto} size={80} onFileSelect={setFoto} />
               <div className="flex-1 space-y-2">
                 <div>
                   <Label>Nome do Produto</Label>
                   <Input value={nome} onChange={(e) => setNome(e.target.value)} placeholder="Ex: Coca-Cola" />
                 </div>
                 <div>
-                  <Label className="text-xs text-muted-foreground">URL da Foto</Label>
-                  <Input className="h-8 text-xs" value={foto} onChange={(e) => setFoto(e.target.value)} placeholder="https://..." />
+                  <Label>Descrição</Label>
+                  <Input value={descricao} onChange={(e) => setDescricao(e.target.value)} placeholder="Descrição do produto" />
                 </div>
               </div>
             </div>
 
-            {/* Descrição */}
-            <div>
-              <Label>Descrição</Label>
-              <Input value={descricao} onChange={(e) => setDescricao(e.target.value)} placeholder="Descrição do produto" />
-            </div>
-
-            {/* EAN + Switches */}
-            <div className="flex items-end gap-4">
-              <div className="flex-1">
-                <Label className="flex items-center gap-1.5">
-                  <Barcode className="h-3.5 w-3.5" /> EAN / Código de Barras
-                </Label>
-                <Input value={ean} onChange={(e) => setEan(e.target.value)} placeholder="Opcional" />
-              </div>
-              <div className="flex items-center gap-6 pb-2">
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <Switch checked={ativo} onCheckedChange={setAtivo} />
-                  <span className="text-sm">Ativo</span>
-                </label>
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <Switch checked={destaque} onCheckedChange={setDestaque} />
-                  <span className="text-sm flex items-center gap-1"><Star className="h-3 w-3" /> Destaque</span>
-                </label>
-              </div>
+            <div className="flex items-center gap-6">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <Switch checked={ativo} onCheckedChange={setAtivo} />
+                <span className="text-sm">Ativo</span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <Switch checked={destaque} onCheckedChange={setDestaque} />
+                <span className="text-sm flex items-center gap-1"><Star className="h-3 w-3" /> Destaque</span>
+              </label>
             </div>
           </div>
 
@@ -188,7 +186,7 @@ export function ProdutoDialog({ open, onClose, onSave, editProduto, editVariante
               return (
                 <div key={v.id} className="mb-3 rounded-lg border border-border p-3 space-y-2">
                   <div className="flex items-start gap-3">
-                    <FotoPreview src={v.foto || foto} size={48} />
+                    <ClickablePhoto src={v.foto || foto} size={48} onFileSelect={(url) => updateVariante(i, "foto", url)} />
                     <div className="flex-1 space-y-2">
                       <div className="flex items-center justify-between">
                         <span className="text-xs font-medium text-muted-foreground">Variante {i + 1}</span>
@@ -200,7 +198,10 @@ export function ProdutoDialog({ open, onClose, onSave, editProduto, editVariante
                       </div>
                       <div className="grid grid-cols-3 gap-2">
                         <div><Label className="text-xs">Nome</Label><Input className="h-8 text-sm" value={v.nome} onChange={(e) => updateVariante(i, "nome", e.target.value)} /></div>
-                        <div><Label className="text-xs">SKU</Label><Input className="h-8 text-sm" value={v.sku} onChange={(e) => updateVariante(i, "sku", e.target.value)} /></div>
+                        <div>
+                          <Label className="text-xs flex items-center gap-1"><Barcode className="h-3 w-3" /> EAN</Label>
+                          <Input className="h-8 text-sm" value={v.ean} onChange={(e) => updateVariante(i, "ean", e.target.value)} placeholder="Código de barras" />
+                        </div>
                         <div><Label className="text-xs">Descrição</Label><Input className="h-8 text-sm" value={v.descricao} onChange={(e) => updateVariante(i, "descricao", e.target.value)} /></div>
                       </div>
                     </div>
@@ -218,8 +219,11 @@ export function ProdutoDialog({ open, onClose, onSave, editProduto, editVariante
                     <div><Label className="text-xs">Estoque Mín.</Label><Input type="number" className="h-8 text-sm" value={v.estoqueMinimo} onChange={(e) => updateVariante(i, "estoqueMinimo", +e.target.value)} /></div>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-2">
-                    <div><Label className="text-xs">Tags (vírgula)</Label><Input className="h-8 text-sm" value={v.tags} onChange={(e) => updateVariante(i, "tags", e.target.value)} /></div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <Label className="text-xs">Tags de busca (vírgula)</Label>
+                      <Input className="h-8 text-sm" value={v.tags} onChange={(e) => updateVariante(i, "tags", e.target.value)} placeholder="Ex: cereja, cherry, ziggy" />
+                    </div>
                     <div>
                       <Label className="text-xs">Unidade</Label>
                       <Select value={v.unidade} onValueChange={(val) => updateVariante(i, "unidade", val)}>
@@ -230,10 +234,6 @@ export function ProdutoDialog({ open, onClose, onSave, editProduto, editVariante
                           ))}
                         </SelectContent>
                       </Select>
-                    </div>
-                    <div>
-                      <Label className="text-xs text-muted-foreground">URL Foto</Label>
-                      <Input className="h-8 text-xs" value={v.foto} onChange={(e) => updateVariante(i, "foto", e.target.value)} placeholder="Herda do produto" />
                     </div>
                   </div>
                 </div>

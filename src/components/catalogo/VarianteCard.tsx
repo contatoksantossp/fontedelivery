@@ -14,7 +14,7 @@ export function VarianteCard({ variante, onEdit, onDelete }: Props) {
     <div className="min-w-[180px] rounded-lg border border-border bg-card p-3">
       <img src={variante.foto} alt={variante.nome} className="mb-2 h-16 w-full rounded object-cover bg-muted" />
       <p className="text-sm font-medium text-card-foreground">{variante.nome}</p>
-      <p className="text-xs text-muted-foreground">SKU: {variante.sku}</p>
+      <p className="text-xs text-muted-foreground">EAN: {variante.ean}</p>
       <p className="mt-1 text-sm font-semibold text-primary">
         R$ {variante.valorVenda.toFixed(2).replace(".", ",")}
       </p>
