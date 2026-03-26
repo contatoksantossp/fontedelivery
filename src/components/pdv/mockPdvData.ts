@@ -35,10 +35,22 @@ export interface Categoria {
   subcategorias: Subcategoria[];
 }
 
+export interface EnderecoCache {
+  id: string;
+  rua: string;
+  numero?: string;
+  bairro: string;
+  cep: string;
+  cidade: string;
+}
+
 export interface EnderecoCliente {
   id: string;
   rua: string;
+  numero?: string;
   bairro: string;
+  cep?: string;
+  cidade?: string;
   complemento?: string;
 }
 
