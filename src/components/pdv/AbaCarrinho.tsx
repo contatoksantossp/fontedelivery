@@ -27,11 +27,11 @@ export function AbaCarrinho({ itens, onUpdateQty, onRemove, onProximo }: AbaCarr
             itens.map((item) => (
               <div key={item.id} className="flex items-center gap-2 rounded-lg border border-border bg-card p-2">
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs font-medium text-foreground truncate">{item.nome}</p>
+                  <p className="font-medium text-foreground truncate text-base">{item.nome}</p>
                   {item.varianteNome && (
-                    <p className="text-[10px] text-muted-foreground">{item.varianteNome}</p>
+                    <p className="text-muted-foreground text-sm">{item.varianteNome}</p>
                   )}
-                  <p className="text-xs text-primary font-semibold mt-0.5">
+                  <p className="text-primary font-semibold mt-0.5 text-base">
                     R$ {(item.preco * item.quantidade).toFixed(2)}
                   </p>
                 </div>
@@ -41,22 +41,22 @@ export function AbaCarrinho({ itens, onUpdateQty, onRemove, onProximo }: AbaCarr
                     className="h-7 w-7"
                     onClick={() => onUpdateQty(item.id, -1)}
                   >
-                    <Minus className="h-3 w-3" />
+                    <Minus className="w-[20px] h-[20px]" />
                   </Button>
-                  <span className="text-xs font-medium w-5 text-center text-foreground">{item.quantidade}</span>
+                  <span className="font-medium w-5 text-center text-foreground text-base">{item.quantidade}</span>
                   <Button
                     variant="ghost" size="icon"
                     className="h-7 w-7"
                     onClick={() => onUpdateQty(item.id, 1)}
                   >
-                    <Plus className="h-3 w-3" />
+                    <Plus className="w-[20px] h-[20px]" />
                   </Button>
                   <Button
                     variant="ghost" size="icon"
                     className="h-7 w-7 text-destructive hover:text-destructive"
                     onClick={() => onRemove(item.id)}
                   >
-                    <Trash2 className="h-3 w-3" />
+                    <Trash2 className="w-[20px] h-[20px]" />
                   </Button>
                 </div>
               </div>
@@ -66,8 +66,8 @@ export function AbaCarrinho({ itens, onUpdateQty, onRemove, onProximo }: AbaCarr
       </ScrollArea>
       <div className="border-t border-border p-3">
         <div className="flex justify-between text-sm mb-2">
-          <span className="text-muted-foreground">Total</span>
-          <span className="font-bold text-foreground">R$ {total.toFixed(2)}</span>
+          <span className="text-muted-foreground text-3xl">Total</span>
+          <span className="font-bold text-foreground text-3xl">R$ {total.toFixed(2)}</span>
         </div>
         <Button onClick={onProximo} className="w-full" disabled={itens.length === 0}>
           Próximo
