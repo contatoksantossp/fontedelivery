@@ -80,6 +80,18 @@ export default function Parceiros() {
     setEntregadores((prev) => prev.filter((e) => e.id !== id));
   };
 
+  const editEntregador = (id: string, dados: { veiculo: string; cor: string; clienteNome: string }) => {
+    setEntregadores((prev) =>
+      prev.map((e) => (e.id === id ? { ...e, veiculo: dados.veiculo, cor: dados.cor } : e))
+    );
+    const ent = entregadores.find((e) => e.id === id);
+    if (ent) {
+      setClientes((prev) =>
+        prev.map((c) => (c.id === ent.clienteId ? { ...c, nome: dados.clienteNome } : c))
+      );
+    }
+  };
+
   // Fornecedores
   const addFornecedor = (data: Omit<Fornecedor, "id" | "historico">) => {
     setFornecedores((prev) => [...prev, { ...data, id: `fo${Date.now()}`, historico: [] }]);
