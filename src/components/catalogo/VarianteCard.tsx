@@ -19,7 +19,7 @@ export function VarianteCard({ variante, onEdit, onDelete }: Props) {
       <p className="mt-0.5 text-sm font-semibold text-primary">
         R$ {variante.valorVenda.toFixed(2).replace(".", ",")}
       </p>
-      <div className="mt-1 hidden group-hover:flex items-center justify-center gap-1">
+      <div className="mt-1 flex items-center justify-center gap-1">
         <Button size="icon" variant="ghost" className="h-6 w-6" onClick={() => onEdit(variante)}>
           <Edit className="h-3 w-3" />
         </Button>
