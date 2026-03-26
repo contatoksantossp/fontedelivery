@@ -33,7 +33,9 @@ export function EntregadorAcerto({ entregador, onRegistrar }: EntregadorAcertoPr
           </div>
           <div>
             <p className="font-semibold text-foreground">{entregador.nome}</p>
-            <p className="text-xs text-muted-foreground">{entregador.veiculo} · {entregador.entregas} entregas</p>
+            <p className="text-xs text-muted-foreground">
+              R$ {entregador.totalTaxas.toFixed(2)} em taxas · R$ {entregador.totalBonificacoes.toFixed(2)} bonif. · {entregador.entregas} entregas
+            </p>
           </div>
         </div>
         <div className="flex items-center gap-3">
@@ -45,46 +47,34 @@ export function EntregadorAcerto({ entregador, onRegistrar }: EntregadorAcertoPr
 
       {expanded && (
         <div className="mt-4 space-y-4 border-t pt-4">
-          <div className="grid grid-cols-3 gap-4 text-sm">
-            <div>
-              <p className="text-muted-foreground">Taxas</p>
-              <p className="font-semibold text-foreground">R$ {entregador.totalTaxas.toFixed(2)}</p>
-            </div>
-            <div>
-              <p className="text-muted-foreground">Bonificações</p>
-              <p className="font-semibold text-foreground">R$ {entregador.totalBonificacoes.toFixed(2)}</p>
-            </div>
-            <div>
-              <p className="text-muted-foreground">Entregas</p>
-              <p className="font-semibold text-foreground">{entregador.entregas}</p>
-            </div>
-          </div>
-
           <div className="space-y-2">
-            <label className="text-sm text-muted-foreground">Diária</label>
+            <label className="text-sm font-medium text-muted-foreground">Diária</label>
             <Input
               type="number"
               value={diaria}
               onChange={e => setDiaria(Number(e.target.value))}
               className="w-40"
+              disabled={entregador.pago}
             />
           </div>
 
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <label className="text-sm text-muted-foreground">Extras</label>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setExtras([...extras, { valor: 0, descricao: "" }])}
-              >
-                <Plus className="h-3 w-3 mr-1" /> Adicionar
-              </Button>
+              <label className="text-sm font-medium text-muted-foreground">Adicionais</label>
+              {!entregador.pago && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setExtras([...extras, { valor: 0, descricao: "" }])}
+                >
+                  <Plus className="h-3 w-3 mr-1" /> Adicionar
+                </Button>
+              )}
             </div>
             {extras.map((extra, i) => (
               <div key={i} className="flex gap-2">
                 <Input
-                  placeholder="Descrição"
+                  placeholder="Ex: Adicional chuva"
                   value={extra.descricao}
                   onChange={e => {
                     const newExtras = [...extras];
@@ -92,6 +82,7 @@ export function EntregadorAcerto({ entregador, onRegistrar }: EntregadorAcertoPr
                     setExtras(newExtras);
                   }}
                   className="flex-1"
+                  disabled={entregador.pago}
                 />
                 <Input
                   type="number"
@@ -103,10 +94,13 @@ export function EntregadorAcerto({ entregador, onRegistrar }: EntregadorAcertoPr
                     setExtras(newExtras);
                   }}
                   className="w-28"
+                  disabled={entregador.pago}
                 />
-                <Button variant="ghost" size="icon" onClick={() => setExtras(extras.filter((_, idx) => idx !== i))}>
-                  <Trash2 className="h-4 w-4 text-destructive" />
-                </Button>
+                {!entregador.pago && (
+                  <Button variant="ghost" size="icon" onClick={() => setExtras(extras.filter((_, idx) => idx !== i))}>
+                    <Trash2 className="h-4 w-4 text-destructive" />
+                  </Button>
+                )}
               </div>
             ))}
           </div>
