@@ -1,23 +1,26 @@
 
 
-## Botão "Novo Pedido" CTA no cabeçalho
+## Componente compartilhado `CanalVendaSelector`
 
-### Arquivo: `src/components/AppHeader.tsx`
+### Objetivo
+Extrair os botões de seleção de canal de venda (usados em `FilaPedidos.tsx` e `AbaIdentificacao.tsx`) para um componente reutilizável.
 
-- Importar `Button`, `Plus` (lucide-react), `useNavigate` (react-router-dom)
-- Adicionar botão CTA primário entre o bloco esquerdo (nome/status) e o bloco direito (caixa/fundo)
+### Novo arquivo: `src/components/pdv/CanalVendaSelector.tsx`
 
-```tsx
-<Button size="sm" className="gap-1.5" onClick={() => navigate("/pdv")}>
-  <Plus className="h-4 w-4" />
-  Novo Pedido
-</Button>
-```
+- Props: `value` (canal selecionado), `onChange` (callback), `showTodos` (boolean, default false), `iconSize` (opcional)
+- Renderiza a linha de 5 botões (Balcão, WhatsApp, iFood, 99Food, App) com ícone + label
+- Se `showTodos=true`, renderiza o botão "Todos" abaixo (usado na FilaPedidos)
+- O `value` aceita `CanalVenda | "todos"` quando `showTodos` está ativo
 
-- O layout `justify-between` existente já posiciona os 3 blocos naturalmente
+### Editar: `src/components/pdv/FilaPedidos.tsx`
+- Remover array `canaisIndividuais` e markup dos botões de filtro
+- Usar `<CanalVendaSelector value={filtroCanal} onChange={setFiltroCanal} showTodos />`
+
+### Editar: `src/components/pdv/AbaIdentificacao.tsx`
+- Remover array `canais` e markup dos botões de canal
+- Usar `<CanalVendaSelector value={canal} onChange={setCanalVenda} />`
 
 ### Resultado
-- Botão visível em qualquer módulo
-- Clique navega para `/pdv` com estado inicial (carrinho vazio)
-- 1 arquivo editado
+- Mesmo visual e comportamento em ambos os locais
+- Uma única fonte de verdade para os canais de venda
 
