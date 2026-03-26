@@ -122,7 +122,7 @@ export default function VisaoGeral() {
     }
   }, [selectionMode, pedidosNaRota, expandedSlot, addToRota]);
 
-  const handleDragEnd = useCallback(() => {}, []);
+  
 
   const handleDespachar = useCallback((slotIndex: number) => {
     const entId = entregadorPorRota[slotIndex];
