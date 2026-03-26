@@ -1,28 +1,41 @@
 
 
-## Alteracao no fluxo de pagamento do AbaPagamentos (PDV)
+## Rastreio padrao para cards de pedido (PDV + Visao Geral)
 
-Aplicar as mesmas melhorias ja feitas no RotaAcerto ao componente do PDV.
+Criar um componente reutilizavel `PedidoRastreio` que exibe uma mini-timeline horizontal com 3 etapas: **Rascunho → Pendente → Pronto**. O status atual determina qual bolinha fica em foco (primary) e quais ficam cinza ou mostram horario.
 
-### Mudancas em `src/components/pdv/AbaPagamentos.tsx`
+### Logica visual
 
-**1. Fracoes baseadas no "falta"**
-- Linha 49: `handleFracao` usa `falta` em vez de `total`
+```text
+PDV (rascunho):
+  ● Rascunho ─── ○ Pendente ─── ○ Pronto
+  (foco)         (cinza)        (cinza)
 
-**2. Metodos nao-dinheiro auto-lancam**
-- Ao clicar num botao de metodo (PIX, Credito, Debito, QR), se ja tem valor no input, lanca o pagamento automaticamente e limpa o input
-- Dinheiro apenas seleciona o metodo sem lancar
+Visao Geral (pendente):
+  10:32 ─── ● Pendente ─── ○ Pronto
+  (hora)    (foco)         (cinza)
 
-**3. Troco com input separado e botoes incrementais**
-- Substituir `trocoExtra` (numero) por `trocoInput` (string) — um input de texto para "Valor recebido R$"
-- Substituir atalhos `[10, 20, 50, 100]` por `[2, 5, 10, 20, 50]` que **somam** ao `trocoInput`
-- Troco calculado = `max(0, parseFloat(trocoInput) - valorNumerico)`
-- Mostrar o input de troco + botoes apenas quando dinheiro selecionado e valor inserido
+Visao Geral (pronto):
+  10:32 ─── 10:45 ─── ● Pronto
+  (hora)    (hora)     (foco)
+```
 
-**4. Lancar valor com dinheiro**
-- Registra `valor = min(valorInput, falta)` e `troco = trocoCalculado`
-- Reseta `valorInput` e `trocoInput`
+### Arquivos
 
-### Arquivo editado
-- `src/components/pdv/AbaPagamentos.tsx`
+**1. Criar `src/components/PedidoRastreio.tsx`**
+- Props: `status: "rascunho" | "pendente" | "pronto"`, `criadoEm: Date`, `prontoEm?: Date`
+- 3 bolinhas conectadas por linhas, em uma unica linha compacta (text-[10px])
+- Etapa atual: bolinha primary com leve pulse/ring
+- Etapas passadas: mostram `format(date, "HH:mm")` com bolinha primary solida
+- Etapas futuras: bolinha cinza (muted-foreground/30)
+- Linhas entre bolinhas: primary se ja passou, cinza se futuro
+
+**2. Editar `src/components/pdv/FilaPedidoCard.tsx`**
+- Importar e adicionar `<PedidoRastreio status="rascunho" criadoEm={pedido.criadoEm} />` abaixo do L4 (valor)
+- Separado por `border-t border-border/50 mt-1.5 pt-1.5`
+
+**3. Editar `src/components/visao-geral/PedidoCard.tsx`**
+- Substituir o bloco de rastreio existente (linhas 148-176) pelo novo `<PedidoRastreio>`
+- Passar `status={pedido.status}`, `criadoEm={pedido.criadoEm}`, `prontoEm={pedido.prontoEm}`
+- Manter o timer `elapsed` separado ao lado
 
