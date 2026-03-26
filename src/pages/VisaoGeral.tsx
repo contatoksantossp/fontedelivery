@@ -107,8 +107,26 @@ export default function VisaoGeral() {
       if (selectedId === pedidoId) setSelectedId(null);
     } else if (action === "pronto") {
       setPedidos((prev) =>
-        prev.map((p) => (p.id === pedidoId ? { ...p, status: "pronto" as const } : p))
+        prev.map((p) => (p.id === pedidoId ? { ...p, status: "pronto" as const, prontoEm: new Date() } : p))
       );
+    } else if (action === "voltar") {
+      setPedidos((prev) =>
+        prev.map((p) => (p.id === pedidoId ? { ...p, status: "pendente" as const, prontoEm: undefined } : p))
+      );
+      // Remove from any rota if present
+      setRotasItens((prev) => {
+        const copy: [Pedido[], Pedido[]] = [
+          prev[0].filter((p) => p.id !== pedidoId),
+          prev[1].filter((p) => p.id !== pedidoId),
+        ];
+        return copy;
+      });
+    } else if (action === "editar") {
+      // Remove pedido and navigate to PDV for editing
+      setPedidos((prev) => prev.filter((p) => p.id !== pedidoId));
+      if (selectedId === pedidoId) setSelectedId(null);
+      toast.info("Pedido enviado de volta ao PDV para edição.");
+      navigate("/pdv");
     }
   };
 
