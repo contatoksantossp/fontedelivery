@@ -16,6 +16,43 @@ interface Props {
   subcategorias: CatalogSubcategoria[];
 }
 
+function BannerUpload({ src, onFileSelect }: { src: string; onFileSelect: (url: string) => void }) {
+  const [error, setError] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+  useEffect(() => { setError(false); }, [src]);
+
+  const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      onFileSelect(URL.createObjectURL(file));
+    }
+    e.target.value = "";
+  };
+
+  return (
+    <>
+      <input ref={inputRef} type="file" accept="image/*" className="hidden" onChange={handleFile} />
+      <button
+        type="button"
+        onClick={() => inputRef.current?.click()}
+        className="mt-1 w-full h-24 rounded-lg border border-border bg-muted flex items-center justify-center relative group cursor-pointer overflow-hidden hover:ring-2 hover:ring-primary/40 transition-all"
+      >
+        {!src || src === "/placeholder.svg" || error ? (
+          <div className="flex flex-col items-center gap-1 text-muted-foreground">
+            <ImageIcon className="h-6 w-6" />
+            <span className="text-[10px]">Clique para enviar</span>
+          </div>
+        ) : (
+          <img src={src} alt="Banner" className="w-full h-full object-cover" onError={() => setError(true)} />
+        )}
+        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+          <Upload className="h-5 w-5 text-white" />
+        </div>
+      </button>
+    </>
+  );
+}
+
 export function KitComboDialog({ open, onClose, onSave, editItem, subcategorias }: Props) {
   const [nome, setNome] = useState("");
   const [imagem, setImagem] = useState("/placeholder.svg");
