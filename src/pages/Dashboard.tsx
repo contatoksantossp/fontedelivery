@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { PageContainer } from "@/components/PageContainer";
 import { MetricCard } from "@/components/MetricCard";
 import { Input } from "@/components/ui/input";
@@ -97,7 +97,7 @@ export default function Dashboard() {
             <p className="text-xs text-muted-foreground mt-0.5">Produtos ordenados pela última contagem</p>
           </div>
           <div className="space-y-3">
-            {items.map((item) => (
+            {itemsVisiveis.map((item) => (
               <div
                 key={item.id}
                 className="flex items-center gap-2 rounded-md border border-border bg-secondary/50 px-3 py-2.5"
