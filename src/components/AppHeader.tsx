@@ -2,8 +2,9 @@ import { useState } from "react";
 import { StatusBadge } from "./StatusBadge";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
-import { Wallet, Clock, Plus, LayoutDashboard, Truck } from "lucide-react";
+import { Wallet, Clock, Plus, LayoutDashboard, Truck, LogOut } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
@@ -13,8 +14,14 @@ import { toast } from "sonner";
 export function AppHeader() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user, signOut } = useAuth();
   const [lojaAberta, setLojaAberta] = useState(true);
   const [confirmOpen, setConfirmOpen] = useState(false);
+
+  const handleLogout = async () => {
+    await signOut();
+    navigate("/", { replace: true });
+  };
 
   const toggleLoja = () => {
     setLojaAberta(prev => !prev);
@@ -30,7 +37,7 @@ export function AppHeader() {
         <div className="flex flex-1 items-center justify-between">
           <div className="flex items-center gap-4">
             <div>
-              <p className="text-sm font-semibold text-foreground">Carlos Souza</p>
+              <p className="text-sm font-semibold text-foreground">{user?.email ?? "Operador"}</p>
               <p className="text-xs text-muted-foreground">A Fonte Delivery — Unidade Centro</p>
             </div>
             <StatusBadge
@@ -63,6 +70,9 @@ export function AppHeader() {
               <Wallet className="h-3.5 w-3.5 text-primary" />
               <span>Fundo: R$ 200,00</span>
             </div>
+            <Button variant="ghost" size="icon" onClick={handleLogout} title="Sair" className="text-muted-foreground hover:text-foreground">
+              <LogOut className="h-4 w-4" />
+            </Button>
           </div>
         </div>
       </header>

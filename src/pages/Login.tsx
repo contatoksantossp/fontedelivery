@@ -1,31 +1,40 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Flame, Eye, EyeOff } from "lucide-react";
+import { Flame, Eye, EyeOff, Loader2 } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function Login() {
   const navigate = useNavigate();
+  const { signIn, user, loading } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    if (!loading && user) navigate("/dashboard", { replace: true });
+  }, [user, loading, navigate]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (email === "admin@admin.com" && password === "admin") {
-      setError(false);
-      navigate("/dashboard");
+    setSubmitting(true);
+    setError(null);
+    const { error } = await signIn(email, password);
+    setSubmitting(false);
+    if (error) {
+      setError("Acesso negado. Verifique suas credenciais.");
     } else {
-      setError(true);
+      navigate("/dashboard", { replace: true });
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <div className="w-full max-w-sm space-y-8">
-        {/* Logo */}
         <div className="flex flex-col items-center gap-3">
           <div className="rounded-2xl bg-primary/10 p-4">
             <Flame className="h-10 w-10 text-primary" />
@@ -36,7 +45,6 @@ export default function Login() {
           </div>
         </div>
 
-        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-5">
           <div className="space-y-2">
             <Label htmlFor="email" className="text-muted-foreground">E-mail</Label>
@@ -48,6 +56,7 @@ export default function Login() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              autoComplete="email"
             />
           </div>
 
@@ -62,6 +71,7 @@ export default function Login() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                autoComplete="current-password"
               />
               <button
                 type="button"
@@ -75,17 +85,17 @@ export default function Login() {
 
           {error && (
             <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive">
-              Acesso negado. Verifique suas credenciais ou nível de permissão.
+              {error}
             </div>
           )}
 
-          <Button type="submit" className="w-full font-display font-semibold text-sm">
-            Entrar
+          <Button type="submit" disabled={submitting} className="w-full font-display font-semibold text-sm">
+            {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : "Entrar"}
           </Button>
         </form>
 
         <p className="text-center text-xs text-muted-foreground">
-          Apenas operadores com Nível &gt; 20 podem acessar o Gestor.
+          Apenas operadores cadastrados podem acessar o Gestor.
         </p>
       </div>
     </div>
