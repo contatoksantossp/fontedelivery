@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import type { EnderecoCache } from "@/components/pdv/mockPdvData";
+import type { EnderecoCache } from "@/hooks/data/useConfiguracoes";
 
 interface Props {
   open: boolean;

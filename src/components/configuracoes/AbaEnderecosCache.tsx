@@ -5,33 +5,32 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Search, Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { EnderecoCacheDialog } from "./EnderecoCacheDialog";
-import type { EnderecoCache } from "@/components/pdv/mockPdvData";
+import {
+  useEnderecosCache,
+  useUpsertEnderecoCache,
+  useDeleteEnderecoCache,
+  type EnderecoCache,
+} from "@/hooks/data/useConfiguracoes";
 
-interface Props {
-  enderecos: EnderecoCache[];
-  setEnderecos: React.Dispatch<React.SetStateAction<EnderecoCache[]>>;
-}
-
-export function AbaEnderecosCache({ enderecos, setEnderecos }: Props) {
+export function AbaEnderecosCache() {
+  const { data: enderecos = [] } = useEnderecosCache();
+  const upsert = useUpsertEnderecoCache();
+  const del = useDeleteEnderecoCache();
   const [busca, setBusca] = useState("");
   const [editando, setEditando] = useState<EnderecoCache | null>(null);
 
   const filtrados = enderecos.filter((e) => {
-    const termo = busca.toLowerCase();
-    return (
-      e.rua.toLowerCase().includes(termo) ||
-      e.bairro.toLowerCase().includes(termo) ||
-      e.cep.toLowerCase().includes(termo)
-    );
+    const t = busca.toLowerCase();
+    return e.rua.toLowerCase().includes(t) || e.bairro.toLowerCase().includes(t) || e.cep.toLowerCase().includes(t);
   });
 
-  const handleSave = (updated: EnderecoCache) => {
-    setEnderecos((prev) => prev.map((e) => (e.id === updated.id ? updated : e)));
+  const handleSave = async (updated: EnderecoCache) => {
+    await upsert.mutateAsync(updated);
     toast.success("Endereço atualizado");
   };
 
-  const handleDelete = (id: string) => {
-    setEnderecos((prev) => prev.filter((e) => e.id !== id));
+  const handleDelete = async (id: string) => {
+    await del.mutateAsync(id);
     toast.success("Endereço removido");
   };
 

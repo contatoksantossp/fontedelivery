@@ -5,44 +5,28 @@ import { Switch } from "@/components/ui/switch";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Plus, Pencil } from "lucide-react";
 import { CupomDialog } from "./CupomDialog";
-import type { Cupom } from "./mockCuponsData";
+import { useCupons, useUpsertCupom, useToggleCupom, type Cupom } from "@/hooks/data/useCupons";
 
-interface AbaCuponsProps {
-  cupons: Cupom[];
-  setCupons: React.Dispatch<React.SetStateAction<Cupom[]>>;
-}
-
-export function AbaCupons({ cupons, setCupons }: AbaCuponsProps) {
+export function AbaCupons() {
+  const { data: cupons = [] } = useCupons();
+  const upsert = useUpsertCupom();
+  const toggle = useToggleCupom();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editando, setEditando] = useState<Cupom | null>(null);
 
-  const toggleAtivo = (id: string) => {
-    setCupons(prev => prev.map(c => c.id === id ? { ...c, ativo: !c.ativo } : c));
-  };
-
   const handleSalvar = (dados: Omit<Cupom, "id" | "totalUsos">) => {
     if (editando) {
-      setCupons(prev => prev.map(c => c.id === editando.id ? { ...c, ...dados } : c));
+      upsert.mutate({ ...editando, ...dados });
     } else {
-      setCupons(prev => [...prev, { ...dados, id: `c-${Date.now()}`, totalUsos: 0 }]);
+      upsert.mutate({ ...dados, totalUsos: 0 });
     }
     setEditando(null);
-  };
-
-  const abrirEdicao = (cupom: Cupom) => {
-    setEditando(cupom);
-    setDialogOpen(true);
-  };
-
-  const abrirNovo = () => {
-    setEditando(null);
-    setDialogOpen(true);
   };
 
   return (
     <div className="space-y-4">
       <div className="flex justify-end">
-        <Button onClick={abrirNovo}>
+        <Button onClick={() => { setEditando(null); setDialogOpen(true); }}>
           <Plus className="h-4 w-4 mr-1" /> Novo Cupom
         </Button>
       </div>
@@ -62,7 +46,7 @@ export function AbaCupons({ cupons, setCupons }: AbaCuponsProps) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {cupons.map(c => (
+            {cupons.map((c) => (
               <TableRow key={c.id}>
                 <TableCell className="font-mono font-bold">{c.codigo}</TableCell>
                 <TableCell>
@@ -70,19 +54,15 @@ export function AbaCupons({ cupons, setCupons }: AbaCuponsProps) {
                     {c.tipo === "percentual" ? "%" : "R$"}
                   </Badge>
                 </TableCell>
-                <TableCell>
-                  {c.tipo === "percentual" ? `${c.valor}%` : `R$ ${c.valor.toFixed(2)}`}
-                </TableCell>
-                <TableCell>
-                  {c.pedidoMinimo > 0 ? `R$ ${c.pedidoMinimo.toFixed(2)}` : "—"}
-                </TableCell>
+                <TableCell>{c.tipo === "percentual" ? `${c.valor}%` : `R$ ${c.valor.toFixed(2)}`}</TableCell>
+                <TableCell>{c.pedidoMinimo > 0 ? `R$ ${c.pedidoMinimo.toFixed(2)}` : "—"}</TableCell>
                 <TableCell>{c.totalUsos}</TableCell>
-                <TableCell>{new Date(c.expiracao).toLocaleDateString("pt-BR")}</TableCell>
+                <TableCell>{c.expiracao ? new Date(c.expiracao).toLocaleDateString("pt-BR") : "—"}</TableCell>
                 <TableCell>
-                  <Switch checked={c.ativo} onCheckedChange={() => toggleAtivo(c.id)} />
+                  <Switch checked={c.ativo} onCheckedChange={(v) => toggle.mutate({ id: c.id, ativo: v })} />
                 </TableCell>
                 <TableCell>
-                  <Button size="icon" variant="ghost" onClick={() => abrirEdicao(c)}>
+                  <Button size="icon" variant="ghost" onClick={() => { setEditando(c); setDialogOpen(true); }}>
                     <Pencil className="h-4 w-4" />
                   </Button>
                 </TableCell>
@@ -92,12 +72,7 @@ export function AbaCupons({ cupons, setCupons }: AbaCuponsProps) {
         </Table>
       </div>
 
-      <CupomDialog
-        open={dialogOpen}
-        onOpenChange={setDialogOpen}
-        cupom={editando}
-        onSalvar={handleSalvar}
-      />
+      <CupomDialog open={dialogOpen} onOpenChange={setDialogOpen} cupom={editando} onSalvar={handleSalvar} />
     </div>
   );
 }

@@ -1,17 +1,12 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useSidebar } from "@/components/ui/sidebar";
 import { PageContainer } from "@/components/PageContainer";
 import { AbaCupons } from "@/components/cupons/AbaCupons";
 import { AbaPromocoes } from "@/components/cupons/AbaPromocoes";
-import { cuponsMock, promocoesMock } from "@/components/cupons/mockCuponsData";
-import type { Cupom, PromocaoBanner } from "@/components/cupons/mockCuponsData";
 
 export default function CuponsPromocoes() {
   const { setOpen } = useSidebar();
-  const [cupons, setCupons] = useState<Cupom[]>(cuponsMock);
-  const [promocoes, setPromocoes] = useState<PromocaoBanner[]>(promocoesMock);
-
   useEffect(() => { setOpen(false); }, [setOpen]);
 
   return (
@@ -22,10 +17,10 @@ export default function CuponsPromocoes() {
           <TabsTrigger value="promocoes">Promoções e Banners</TabsTrigger>
         </TabsList>
         <TabsContent value="cupons">
-          <AbaCupons cupons={cupons} setCupons={setCupons} />
+          <AbaCupons />
         </TabsContent>
         <TabsContent value="promocoes">
-          <AbaPromocoes promocoes={promocoes} setPromocoes={setPromocoes} />
+          <AbaPromocoes />
         </TabsContent>
       </Tabs>
     </PageContainer>
