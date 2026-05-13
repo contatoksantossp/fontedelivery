@@ -3,45 +3,43 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { FaixaKm } from "./mockConfigData";
 import { toast } from "sonner";
-
-interface Props {
-  faixasCliente: FaixaKm[];
-  setFaixasCliente: React.Dispatch<React.SetStateAction<FaixaKm[]>>;
-  faixasEntregador: FaixaKm[];
-  setFaixasEntregador: React.Dispatch<React.SetStateAction<FaixaKm[]>>;
-}
+import { useFaixas, useUpsertFaixa, useDeleteFaixa, type FaixaKm } from "@/hooks/data/useConfiguracoes";
 
 function TabelaFaixas({
   titulo,
   descricao,
   labelPreco,
-  faixas,
-  setFaixas,
+  tipo,
 }: {
   titulo: string;
   descricao: string;
   labelPreco: string;
-  faixas: FaixaKm[];
-  setFaixas: React.Dispatch<React.SetStateAction<FaixaKm[]>>;
+  tipo: "cliente" | "entregador";
 }) {
+  const { data: faixas = [] } = useFaixas(tipo);
+  const upsert = useUpsertFaixa();
+  const del = useDeleteFaixa();
+
   const addFaixa = () => {
     const last = faixas[faixas.length - 1];
     const kmInicial = last ? last.kmFinal : 0;
-    setFaixas(prev => [
-      ...prev,
-      { id: `f${Date.now()}`, kmInicial, kmFinal: kmInicial + 5, preco: 0 },
-    ]);
+    upsert.mutate({
+      id: `f-${tipo}-${Date.now()}`,
+      tipo,
+      kmInicial,
+      kmFinal: kmInicial + 5,
+      preco: 0,
+    });
   };
 
   const removeFaixa = (id: string) => {
-    setFaixas(prev => prev.filter(f => f.id !== id));
+    del.mutate({ id, tipo });
     toast.success("Faixa removida");
   };
 
-  const updateFaixa = (id: string, field: keyof Omit<FaixaKm, "id">, value: number) => {
-    setFaixas(prev => prev.map(f => f.id === id ? { ...f, [field]: value } : f));
+  const updateFaixa = (f: FaixaKm, field: "kmInicial" | "kmFinal" | "preco", value: number) => {
+    upsert.mutate({ ...f, [field]: value });
   };
 
   return (
@@ -61,13 +59,13 @@ function TabelaFaixas({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {faixas.map(f => (
+            {faixas.map((f) => (
               <TableRow key={f.id}>
                 <TableCell>
                   <Input
                     type="number"
-                    value={f.kmInicial}
-                    onChange={e => updateFaixa(f.id, "kmInicial", Number(e.target.value))}
+                    defaultValue={f.kmInicial}
+                    onBlur={(e) => updateFaixa(f, "kmInicial", Number(e.target.value))}
                     className="w-20"
                     min={0}
                   />
@@ -75,8 +73,8 @@ function TabelaFaixas({
                 <TableCell>
                   <Input
                     type="number"
-                    value={f.kmFinal}
-                    onChange={e => updateFaixa(f.id, "kmFinal", Number(e.target.value))}
+                    defaultValue={f.kmFinal}
+                    onBlur={(e) => updateFaixa(f, "kmFinal", Number(e.target.value))}
                     className="w-20"
                     min={0}
                   />
@@ -86,8 +84,8 @@ function TabelaFaixas({
                     <span className="text-sm text-muted-foreground">R$</span>
                     <Input
                       type="number"
-                      value={f.preco}
-                      onChange={e => updateFaixa(f.id, "preco", Number(e.target.value))}
+                      defaultValue={f.preco}
+                      onBlur={(e) => updateFaixa(f, "preco", Number(e.target.value))}
                       className="w-24"
                       min={0}
                       step={0.5}
@@ -118,22 +116,20 @@ function TabelaFaixas({
   );
 }
 
-export function AbaConfiguracaoEntrega({ faixasCliente, setFaixasCliente, faixasEntregador, setFaixasEntregador }: Props) {
+export function AbaConfiguracaoEntrega() {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <TabelaFaixas
         titulo="Taxas do Cliente"
         descricao="Valor cobrado do cliente pela entrega conforme a distância"
         labelPreco="Preço (R$)"
-        faixas={faixasCliente}
-        setFaixas={setFaixasCliente}
+        tipo="cliente"
       />
       <TabelaFaixas
         titulo="Repasse do Entregador"
         descricao="Valor repassado ao entregador por cada entrega realizada"
         labelPreco="Repasse (R$)"
-        faixas={faixasEntregador}
-        setFaixas={setFaixasEntregador}
+        tipo="entregador"
       />
     </div>
   );
