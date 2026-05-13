@@ -9,11 +9,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
-import type { Movimentacao, MovimentacaoTipo } from "./mockEstoqueData";
-
-interface HistoricoProps {
-  movimentacoes: Movimentacao[];
-}
+import { useMovimentacoes, type MovimentacaoTipo } from "@/hooks/data/useEstoque";
 
 const tipoBadgeMap: Record<MovimentacaoTipo, { label: string; className: string }> = {
   entrada: { label: "Entrada", className: "bg-emerald-500/15 text-emerald-700 border-emerald-500/30" },
@@ -22,7 +18,8 @@ const tipoBadgeMap: Record<MovimentacaoTipo, { label: string; className: string 
   correcao: { label: "Correção", className: "bg-muted text-muted-foreground border-border" },
 };
 
-export function Historico({ movimentacoes }: HistoricoProps) {
+export function Historico() {
+  const { data: movimentacoes = [] } = useMovimentacoes();
   const [tipoFiltro, setTipoFiltro] = useState("todos");
   const [dateFrom, setDateFrom] = useState<Date | undefined>();
   const [dateTo, setDateTo] = useState<Date | undefined>();

@@ -1,13 +1,10 @@
 import { format } from "date-fns";
 import { Clock } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import type { FilaEsperaItem } from "./mockEstoqueData";
+import { useFilaEspera } from "@/hooks/data/useEstoque";
 
-interface FilaEsperaProps {
-  items: FilaEsperaItem[];
-}
-
-export function FilaEspera({ items }: FilaEsperaProps) {
+export function FilaEspera() {
+  const { data: items = [] } = useFilaEspera();
   if (items.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-16 text-muted-foreground gap-3">

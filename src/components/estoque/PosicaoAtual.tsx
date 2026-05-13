@@ -7,15 +7,17 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { categoriasMock, subcategoriasMock } from "@/components/catalogo/mockCatalogoData";
-import type { EstoqueItem } from "./mockEstoqueData";
+import { useEstoqueItems, useAjustarSaldo, useEditarMinimo, type EstoqueItem } from "@/hooks/data/useEstoque";
 
-interface PosicaoAtualProps {
-  items: EstoqueItem[];
-  onAjustarSaldo: (varianteId: string, delta: number) => void;
-  onEditarMinimo: (varianteId: string, novoMin: number) => void;
-}
-
-export function PosicaoAtual({ items, onAjustarSaldo, onEditarMinimo }: PosicaoAtualProps) {
+export function PosicaoAtual() {
+  const { data: items = [] } = useEstoqueItems();
+  const ajustar = useAjustarSaldo();
+  const editarMin = useEditarMinimo();
+  const onAjustarSaldo = (varianteId: string, delta: number) => {
+    const it = items.find((i) => i.varianteId === varianteId);
+    if (it) ajustar.mutate({ varianteId, delta, produtoNome: it.produtoNome, varianteNome: it.varianteNome });
+  };
+  const onEditarMinimo = (varianteId: string, novoMin: number) => editarMin.mutate({ varianteId, novoMin });
   const [busca, setBusca] = useState("");
   const [categoriaFiltro, setCategoriaFiltro] = useState("todas");
   const [subcategoriaFiltro, setSubcategoriaFiltro] = useState("todas");
