@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { X, ImageIcon, Upload } from "lucide-react";
 import { variantesMock, produtosMock } from "@/components/catalogo/mockCatalogoData";
-import type { PromocaoBanner, PromocaoProduto } from "./mockCuponsData";
+import type { PromocaoBanner, PromocaoProduto } from "@/hooks/data/useCupons";
 
 function BannerUpload({ src, onFileSelect }: { src: string; onFileSelect: (url: string) => void }) {
   const [error, setError] = useState(false);

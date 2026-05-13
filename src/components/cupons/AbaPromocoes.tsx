@@ -5,58 +5,37 @@ import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Plus, Pencil } from "lucide-react";
 import { PromocaoDialog } from "./PromocaoDialog";
-import type { PromocaoBanner } from "./mockCuponsData";
+import { usePromocoes, useUpsertPromocao, useTogglePromocao, type PromocaoBanner } from "@/hooks/data/useCupons";
 
-interface AbaPromocoesProps {
-  promocoes: PromocaoBanner[];
-  setPromocoes: React.Dispatch<React.SetStateAction<PromocaoBanner[]>>;
-}
-
-export function AbaPromocoes({ promocoes, setPromocoes }: AbaPromocoesProps) {
+export function AbaPromocoes() {
+  const { data: promocoes = [] } = usePromocoes();
+  const upsert = useUpsertPromocao();
+  const toggle = useTogglePromocao();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editando, setEditando] = useState<PromocaoBanner | null>(null);
 
-  const toggleAtivo = (id: string) => {
-    setPromocoes(prev => prev.map(p => p.id === id ? { ...p, ativo: !p.ativo } : p));
-  };
-
   const handleSalvar = (dados: Omit<PromocaoBanner, "id">) => {
     if (editando) {
-      setPromocoes(prev => prev.map(p => p.id === editando.id ? { ...p, ...dados } : p));
+      upsert.mutate({ ...editando, ...dados });
     } else {
-      setPromocoes(prev => [...prev, { ...dados, id: `p-${Date.now()}`, ordem: prev.length + 1 }]);
+      upsert.mutate({ ...dados, ordem: promocoes.length + 1 });
     }
     setEditando(null);
   };
 
-  const abrirEdicao = (promo: PromocaoBanner) => {
-    setEditando(promo);
-    setDialogOpen(true);
-  };
-
-  const abrirNovo = () => {
-    setEditando(null);
-    setDialogOpen(true);
-  };
-
-  const tipoLabel = (t: string) => {
-    if (t === "percentual") return "%";
-    if (t === "fixo") return "R$";
-    return "Info";
-  };
+  const tipoLabel = (t: string) => (t === "percentual" ? "%" : t === "fixo" ? "R$" : "Info");
 
   return (
     <div className="space-y-4">
       <div className="flex justify-end">
-        <Button onClick={abrirNovo}>
+        <Button onClick={() => { setEditando(null); setDialogOpen(true); }}>
           <Plus className="h-4 w-4 mr-1" /> Nova Promoção / Banner
         </Button>
       </div>
 
       <div className="flex overflow-x-auto gap-4 pb-2">
-        {promocoes.map(p => (
+        {promocoes.map((p) => (
           <Card key={p.id} className={`w-[380px] flex-shrink-0 overflow-hidden ${!p.ativo ? "opacity-60" : ""}`}>
-            {/* Banner image */}
             <div className="h-28 bg-muted relative overflow-hidden">
               <img src={p.imagem} alt={p.nome} className="w-full h-full object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
@@ -77,10 +56,10 @@ export function AbaPromocoes({ promocoes, setPromocoes }: AbaPromocoesProps) {
                 )}
               </div>
               <div className="flex items-center gap-2">
-                <Button size="icon" variant="ghost" onClick={() => abrirEdicao(p)}>
+                <Button size="icon" variant="ghost" onClick={() => { setEditando(p); setDialogOpen(true); }}>
                   <Pencil className="h-4 w-4" />
                 </Button>
-                <Switch checked={p.ativo} onCheckedChange={() => toggleAtivo(p.id)} />
+                <Switch checked={p.ativo} onCheckedChange={(v) => toggle.mutate({ id: p.id, ativo: v })} />
               </div>
             </CardHeader>
 
@@ -90,8 +69,7 @@ export function AbaPromocoes({ promocoes, setPromocoes }: AbaPromocoesProps) {
                   {p.produtos.map((prod, i) => (
                     <div key={i} className="flex items-center justify-between text-sm">
                       <span>
-                        {prod.produtoNome}{" "}
-                        <span className="text-muted-foreground">({prod.varianteNome})</span>
+                        {prod.produtoNome} <span className="text-muted-foreground">({prod.varianteNome})</span>
                       </span>
                       <div className="flex items-center gap-2">
                         <span className="line-through text-muted-foreground">R$ {prod.precoOriginal.toFixed(2)}</span>
@@ -106,12 +84,7 @@ export function AbaPromocoes({ promocoes, setPromocoes }: AbaPromocoesProps) {
         ))}
       </div>
 
-      <PromocaoDialog
-        open={dialogOpen}
-        onOpenChange={setDialogOpen}
-        promocao={editando}
-        onSalvar={handleSalvar}
-      />
+      <PromocaoDialog open={dialogOpen} onOpenChange={setDialogOpen} promocao={editando} onSalvar={handleSalvar} />
     </div>
   );
 }
